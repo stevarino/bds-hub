@@ -1,8 +1,9 @@
+#!/usr/bin/env node
 /**
- * Copies files during build.
+ * Installs the add on to a specified minecraft server.
  */
 
-import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync, exists } from 'fs';
+import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { dirname, join } from 'path';
 import { getFiles, parseArgs, readConfig, root } from './lib.js';
 import { O } from '../bds_hub_bp/scripts/types.js';

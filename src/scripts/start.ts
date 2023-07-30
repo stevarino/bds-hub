@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+/**
+ * Starts the companion server
+ */
 
 import { getServer } from '../server/server.js';
 import { readConfig, parseArgs } from './lib.js';
