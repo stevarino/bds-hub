@@ -35,6 +35,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "finish": "node dist/scripts/finishBuild.js",
     "install": "node dist/scripts/install.js",
-    "run": "node dist/scripts/start.js"
+    "run": "node dist/scripts/start.js",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish"
   }
 }
