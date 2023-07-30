@@ -5,8 +5,8 @@
 
 import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { dirname, join } from 'path';
-import { getFiles, parseArgs, readConfig, root } from './lib.js';
-import { O } from '../bds_hub_bp/scripts/types.js';
+import { getFiles, parseArgs, readConfig, root } from '../lib.js';
+import { O } from '../types.js';
 
 const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 const packName = 'bds_hub_bp';

@@ -4,13 +4,13 @@ import sqlite3 from 'sqlite3'
 import { open, Database } from 'sqlite'
 
 import LRU from './lru.js';
-import { Actions, EntityEvent, PositionTuple, O } from '../bds_hub_bp/scripts/types.js';
-import { root } from '../scripts/lib.js';
+import { Actions, EntityEvent, PositionTuple, O } from '../types.js';
+import { root } from '../lib.js';
 
 
 export async function openDatabase(filename: string) {
   const db = await open({ filename, driver: sqlite3.Database });
-  await db.migrate({migrationsPath: join(root, 'migrations/')});
+  await db.migrate({migrationsPath: join(root, 'dist', 'server', 'migrations')});
   return new DBHandle(db);
 }
 

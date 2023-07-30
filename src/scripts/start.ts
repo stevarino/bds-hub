@@ -4,7 +4,7 @@
  */
 
 import { getServer } from '../server/server.js';
-import { readConfig, parseArgs, isMain } from './lib.js';
+import { readConfig, parseArgs, isMain } from '../lib.js';
 
 export function start() {
   const { argv, argn } = parseArgs();

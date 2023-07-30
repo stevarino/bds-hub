@@ -1,5 +1,5 @@
 import * as http from 'node:http';
-import { ConfigFile, Constants, O, ServerStatus, Update, UpdateResponse } from '../bds_hub_bp/scripts/types.js';
+import { ConfigFile, Constants, O, ServerStatus, Update, UpdateResponse } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
 

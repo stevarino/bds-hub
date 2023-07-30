@@ -25,7 +25,7 @@ Runs a companion server for a BDS server. This add-on and companion server offer
 
  - [Bedrock Dedicated Server](https://www.minecraft.net/en-us/download/server/bedrock) (no realms, no LAN play sadly)
  - A Minecraft World with Beta APIs enabled
- - If Discord support is needed, [a set of bot credentials]J(https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)
+ - If Discord support is needed, [a set of bot credentials](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)
 
 ## Commands
 

@@ -1,5 +1,5 @@
 import {Client, Events, GatewayIntentBits, Partials, TextChannel} from 'discord.js';
-import { ConfigFile, O } from '../bds_hub_bp/scripts/types';
+import { ConfigFile, O } from '../types';
 
 // https://discordapi.com/permissions.html#67111936
 const PERMISSIONS = 67111936;
