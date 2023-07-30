@@ -8,14 +8,9 @@ import { dirname, join } from 'path';
 import { getFiles, parseArgs, readConfig, root } from './lib.js';
 import { O } from '../bds_hub_bp/scripts/types.js';
 
-const help = 'npm run install [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
+const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 const packName = 'bds_hub_bp';
 const addOn = join(root, 'dist', packName);
-
-if (process.argv.length < 3) {
-  console.error(help);
-  process.exit(1);
-}
 
 const {argv, argn} = parseArgs()
 if (argv.length === 0) {

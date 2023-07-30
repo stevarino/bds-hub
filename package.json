@@ -27,15 +27,19 @@
     "typescript": "^5.1.6"
   },
   "bin": {
-    "bdsHubnstall": "dist/scripts/install.js",
-    "bdsHubStart": "dist/scripts/start.js"
+    "hubInstall": "dist/scripts/install.js",
+    "hubStart": "dist/scripts/start.js",
+    "hubConfig": "dist/scripts/config.js"
   },
   "scripts": {
     "build": "tsc && npm run finish",
     "test": "echo \"Error: no test specified\" && exit 1",
     "finish": "node dist/scripts/finishBuild.js",
-    "installAddOn": "node dist/scripts/install.js",
-    "run": "node dist/scripts/start.js",
+
+    "hubInstall": "node dist/scripts/install.js",
+    "hubStart": "node dist/scripts/start.js",
+    "hubConfig": "node dist/scripts/config.js",
+
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish"

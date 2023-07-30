@@ -1,7 +1,7 @@
 
 
 import { existsSync, promises, readFileSync } from 'fs';
-import { dirname, isAbsolute, resolve } from 'path';
+import { isAbsolute, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from 'yaml'
 import { ConfigFile, O } from '../bds_hub_bp/scripts/types';
@@ -18,15 +18,20 @@ export async function getFiles(dir: string) {
   return Array.prototype.concat(...files) as string[];
 }
 
+export function configPath(path?: string): string {
+  let newPath = path ?? './bds_hub.config.yaml';
+  if (!isAbsolute(newPath)) {
+    newPath = resolve(process.cwd(), newPath);
+  }
+  return newPath;
+}
+
 export function readConfig(path?: string): ConfigFile  {
-  let configPath = path ?? './bedrock_stats.config.yaml';
-  if (!isAbsolute(configPath)) {
-    configPath = resolve(process.cwd(), configPath);
+  let p = configPath(path)
+  if (!existsSync(p)) {
+    throw new Error(`Unable to find config file ${p}`);
   }
-  if (!existsSync(configPath)) {
-    throw new Error(`Unable to find config file ${configPath}`);
-  }
-  return parse(readFileSync(configPath, 'utf8'));
+  return parse(readFileSync(p, 'utf8'));
 }
 
 export function parseArgs() {
@@ -48,4 +53,8 @@ export function parseArgs() {
     }
   }
   return args;
+}
+
+export function isMain(importMetaUrl: string) {
+  return process.argv[1] === fileURLToPath(importMetaUrl);
 }

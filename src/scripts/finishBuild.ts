@@ -8,9 +8,9 @@ import { getFiles, root } from './lib.js';
 
 const files = [
   [join(root, 'static'), join(root, 'dist')], 
-]
+];
 
-async function main() {
+(async () => {
   // copy static files
   for (const [from, to] of files) {
     const files = await getFiles(from);
@@ -22,6 +22,4 @@ async function main() {
       copyFileSync(f, target);
     }
   }
-}
-
-main();
+})();

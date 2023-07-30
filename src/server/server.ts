@@ -4,7 +4,7 @@ import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
 
 export async function getServer(config: ConfigFile) {
-  const db = await openDatabase(config.databaseFilename ?? 'bedrock_stats.db');
+  const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');
   return new Server(db, config);
 }
 

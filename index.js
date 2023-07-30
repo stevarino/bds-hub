@@ -1,10 +1,10 @@
 
 import { readFileSync } from 'fs';
-import { getServer } from './dist/server/server.js';
+import { getServer } from './dist/scripts/start.js';
 import { isAbsolute, resolve } from 'path';
 import { parse } from 'yaml'
 
-let configPath = './bedrock_stats.config.yaml';
+let configPath = './bds_hub.config.yaml';
 if (process.argv.length > 2) {
   configPath = process.argv[2];
 }
