@@ -7,19 +7,19 @@ Runs a companion server for a BDS server. This add-on and companion server offer
  - Discord Chat Bridge, allowing players to chat with their phones or while away (awesome for those on consoles)
  - Current server status such as time, weather, and who's online
  - Gathers statitistics such as:
- - - blocks broken
- - - blocks placed
- - - player deaths
- - - deaths caused by players
- - - damage to/from players
+   - blocks broken
+   - blocks placed
+   - player deaths
+   - deaths caused by players
+   - damage to/from players
  - Player location over time
  - Planned features:
- - - Ways to see all this information...
- - - Achievements
- - - Leadership boards
- - - Pieces of Flair
- - - Server health metrics
- - - [Prometheus support](https://prometheus.io/)
+   - Ways to see all this information...
+   - Achievements
+   - Leadership boards
+   - Pieces of Flair
+   - Server health metrics
+   - [Prometheus support](https://prometheus.io/)
 
 ## Requirements
 
