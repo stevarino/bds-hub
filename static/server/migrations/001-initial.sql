@@ -1,0 +1,24 @@
+CREATE TABLE Strings (
+  id INTEGER PRIMARY KEY,
+  value TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE Positions (
+  ts INTEGER NOT NULL,
+  player INTEGER NOT NULL,
+  x INTEGER NOT NULL,
+  y INTEGER NOT NULL,
+  z INTEGER NOT NULL,
+  dimension INTEGER NOT NULL
+);
+
+CREATE TABLE Events (
+  entity INTEGER NOT NULL,
+  action INTEGER NOT NULL,
+  object INTEGER DEFAULT 0,
+  extra INTEGER DEFAULT 0,
+  qty INTEGER DEFAULT 0
+);
+
+CREATE UNIQUE INDEX EventsLookup ON Events (
+  entity, action, object, extra);

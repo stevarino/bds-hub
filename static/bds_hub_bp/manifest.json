@@ -1,0 +1,33 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "BDS-Hub",
+    "description": "Aggregate stats about Bedrock (dynamic)",
+    "uuid": "4a76dd1a-92a0-4a3c-8339-1826295e67c1",
+    "version": [0, 1, 3],
+    "min_engine_version": [ 1, 20, 0 ]
+  },
+  "modules": [
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "95e1cbbc-599c-4516-b314-9c635d93a3c3",
+      "version": [0, 1, 3],
+      "entry": "scripts/script.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.4.0-beta"
+    },
+    {
+      "module_name": "@minecraft/server-admin",
+      "version": "1.0.0-beta"
+    },
+    {
+      "module_name": "@minecraft/server-net",
+      "version": "1.0.0-beta"
+    }
+  ]
+}

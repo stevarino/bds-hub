@@ -1,0 +1,40 @@
+{
+  "name": "bedrock-stats",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Stephen O'Connor",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "sqlite": "^5.0.1",
+    "sqlite3": "^5.1.6",
+    "yaml": "^2.3.1"
+  },
+  "devDependencies": {
+    "@minecraft/server": "^1.5.0-beta.1.20.20-preview.23",
+    "@minecraft/server-admin": "^1.0.0-beta.11940b24",
+    "@minecraft/server-net": "^1.0.0-beta.11940b24",
+    "@types/node": "^20.4.5",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
+    "adm-zip": "^0.5.10",
+    "ava": "^5.3.1",
+    "eslint": "^8.46.0",
+    "ts-loader": "^9.4.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "bin": {
+    "bdsHubnstall": "dist/scripts/install.js",
+    "bdsHubStart": "dist/scripts/start.js"
+  },
+  "scripts": {
+    "build": "tsc && npm run finish",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "finish": "node dist/scripts/finishBuild.js",
+    "install": "node dist/scripts/install.js",
+    "run": "node dist/scripts/start.js"
+  }
+}

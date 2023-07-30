@@ -1,0 +1,7 @@
+node_modules
+**/*.tsbuildinfo
+dist
+*.tgz
+.vscode
+*.db
+*.config.yaml

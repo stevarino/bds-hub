@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "composite": false,
+    "declaration": true,
+    "lib": [
+      "es2017",
+    ],
+    "target": "es2017",
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist/",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+
+    /* Completeness */
+    "skipLibCheck": true,
+    "rootDir": "src"
+  },
+  "include": [
+    "./src/**/*",
+  ]
+}
