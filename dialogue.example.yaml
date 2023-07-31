@@ -20,7 +20,7 @@ scenes:
 - id: knock_knock_2
   text: GROOOOOOOOAAAAAAAAAN
   buttons:
-    - text: Grown who?
+    - text: Groan who?
       scene: knock_knock_3
 - id: knock_knock_3
   text: The door was smashed in and a zombie lurches at you.

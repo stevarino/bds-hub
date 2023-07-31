@@ -3,7 +3,7 @@ import typia from "typia";
 export interface ConfigFile {
   /** Port for server and add on */
   port?: number,
-  /** Used to override add on requested domain, otherwise `localhost:{port}` */
+  /** Used to override add on requested domain, otherwise `127.0.0.1:{port}` */
   host?: string,
   databaseFilename?: string,
   discord?: {
