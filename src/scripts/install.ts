@@ -64,6 +64,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
       if (entry.pack_id === manifest.header.uuid) {
         found = true;
         if (JSON.stringify(entry.version) === JSON.stringify(manifest.header.version)) {
+          console.info('world_behavior_pack up to date: ', packs)
           needWrite = false;
           break;
         }
@@ -88,13 +89,14 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   
   // install permisisons file
   const permFile = join(configDir, 'permissions.json');
-  if (!existsSync(permFile)) {
+  if (!existsSync(permFile)) {  // TODO: change this to merge...
     console.info("Creating permissions file: ", permFile);
     writeFileSync(permFile, JSON.stringify({
       allowed_modules: [
         "@minecraft/server",
         "@minecraft/server-admin",
         "@minecraft/server-net",
+        "@minecraft/server-ui",
       ]
     }))
   }

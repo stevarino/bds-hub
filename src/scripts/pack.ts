@@ -44,11 +44,7 @@ async function rollupPack() {
   console.info('Rolling up behavior pack script');
   const bundle = await rollup({
     input: C.ADDON_SCRIPT,
-    external: [
-      '@minecraft/server',
-      '@minecraft/server-admin',
-      '@minecraft/server-net',
-    ],
+    external: /@minecraft/,
   });
   await bundle.write({ file: C.ADDON_ROLLUP });
 }
@@ -111,6 +107,8 @@ export function parseDialogues(config: ConfigFile) {
       `Missing scenes: ${JSON.stringify(missing)}`);
   }
 
+  console.info(`Loaded ${scenes.length} scenes...`)
+
   return { actors, scenes };
 }
 
@@ -134,6 +132,9 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Scene[
       const transition: Dialogue.Transition = Object.assign(
         {}, button);
       delete transition.text;
+      if (transition.scene !== undefined) {
+        transition.scene = `${C.TAG_PREFIX}${transition.scene}`
+      }
       transitions[btnId] = transition;
 
       scn.buttons.push({
