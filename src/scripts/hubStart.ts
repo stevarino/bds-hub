@@ -4,9 +4,10 @@
  */
 
 import { getServer } from '../server/server.js';
-import { readConfig, parseArgs, isMain } from '../lib.js';
+import { readConfig, parseArgs } from '../lib.js';
 
-export function start() {
+
+if (process.argv[1].includes('hubStart')) {
   const { argv, argn } = parseArgs(`
     Runs the hub server.
 
@@ -14,8 +15,4 @@ export function start() {
   `);
 
   getServer(readConfig(argn.config)).then(server => server.start());
-}
-
-if (isMain(import.meta.url)) {
-  start();
 }

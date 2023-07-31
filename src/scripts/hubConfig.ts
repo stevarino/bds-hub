@@ -4,10 +4,10 @@
  * Generates a set of config files.
  */
 
-import { existsSync, read, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { configPath, isMain, parseArgs, root } from '../lib.js';
+import { configPath, parseArgs, root } from '../lib.js';
 
 function main() {
   const { argv, argn } = parseArgs(`
@@ -25,6 +25,6 @@ function main() {
   writeFileSync(dPath, readFileSync(join(root, 'dialogue.example.yaml')))
 }
 
-if (isMain(import.meta.url)) {
+if (process.argv[1].includes('hubConfig')) {
   main();
 }

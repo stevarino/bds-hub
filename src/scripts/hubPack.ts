@@ -10,7 +10,7 @@ import yaml from 'yaml';
 
 import { rollup } from 'rollup';
 import * as C from '../constants.js';
-import { isMain, parseArgs, readConfig, write } from '../lib.js';
+import { parseArgs, readConfig, write } from '../lib.js';
 import { ConfigFile, Dialogue, O } from '../types.js';
 import assert from 'assert';
 
@@ -44,22 +44,9 @@ async function rollupPack() {
   console.info('Rolling up behavior pack script');
   const bundle = await rollup({
     input: C.ADDON_SCRIPT,
-    external: [
-      '@minecraft/server',
-      '@minecraft/server-admin',
-      '@minecraft/server-net',
-    ],
+    external: /@minecraft/,
   });
   await bundle.write({ file: C.ADDON_ROLLUP });
-}
-
-if (isMain(import.meta.url)) {
-  const { argn } = parseArgs(`
-    Compiles and assembles the behavior pack code.
-
-    npx hubPack [--config="/foo/bar/config.yaml]
-  `)
-  createPackFiles(readConfig(argn.config));
 }
 
 
@@ -111,6 +98,8 @@ export function parseDialogues(config: ConfigFile) {
       `Missing scenes: ${JSON.stringify(missing)}`);
   }
 
+  console.info(`Loaded ${scenes.length} scenes...`)
+
   return { actors, scenes };
 }
 
@@ -134,6 +123,9 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Scene[
       const transition: Dialogue.Transition = Object.assign(
         {}, button);
       delete transition.text;
+      if (transition.scene !== undefined) {
+        transition.scene = `${C.TAG_PREFIX}${transition.scene}`
+      }
       transitions[btnId] = transition;
 
       scn.buttons.push({
@@ -157,3 +149,11 @@ function md5sum(input: string|any) {
   return crypto.createHash('md5').update(input).digest('hex');
 }
 
+if (process.argv[1].includes('hubPack')) {
+  const { argn } = parseArgs(`
+    Compiles and assembles the behavior pack code.
+
+    npx hubPack [--config="/foo/bar/config.yaml]
+  `)
+  createPackFiles(readConfig(argn.config));
+}

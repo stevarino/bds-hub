@@ -1,10 +1,12 @@
-import { system, world, Entity, Player } from "@minecraft/server";
+import { system, world, Player } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 import { dialogueMap } from './dialogueMap.js';
 import * as C from './constants.js';
 
-function poll() {
+const DELAY = 10;
+
+export function poll() {
   system.runTimeout(poll, 5);
   for (const p of world.getAllPlayers()) {
     if (p.hasTag(C.TAG_PENDING)) {
@@ -28,6 +30,7 @@ function replyToTag(p: Player, tag: string) {
   const response = dialogueMap[tag];
   if (response === undefined) {
     console.warn('Failed to find response: ', tag);
+    return
   }
 
   if (response.action !== undefined) {
@@ -48,8 +51,10 @@ async function respondCommand(p: Player, command: string) {
 }
 
 async function respondScene(p: Player, scene: string) {
-  const command = `/exeute at @s as ${p.name} dialogue open @e[type=NPC,c=1] @s ${scene}`
-  respondCommand(p, command);
+  system.runTimeout(async () => {
+    const command = `/execute as ${p.name} run dialogue open @e[type=NPC,c=1] @s ${scene}`
+    respondCommand(p, command);
+  }, DELAY);
 }
 
 async function respondAction(p: Player, action: string) {
@@ -66,9 +71,11 @@ const actions: {[action: string]: (p: Player) => Promise<void>} = {
       .title('Time o\'clock!')
       .body(`The current time is ${new Date().toString()}`)
       .button('And now?');
-    const resp = await form.show(p);
-    if (resp.selection === 1) {
-      actions.DBSH_Time(p);
-    }
+    system.runTimeout(async () => {
+      const resp = await form.show(p);
+      if (resp.selection === 0) {
+        actions.DBSH_Time(p);
+      }
+    }, DELAY);
   }
 }

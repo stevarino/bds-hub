@@ -1,10 +1,15 @@
 
 // https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server
+// https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-net/minecraft-server-net
+
 import { variables } from "@minecraft/server-admin";
 import { system, world, Entity } from "@minecraft/server";
-// https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-net/minecraft-server-net
 import * as mcnet from "@minecraft/server-net";
-import * as types from '../types/packTypes.js'
+
+import * as dialogue from './dialogueResponder.js';
+import * as types from '../types/packTypes.js';
+
+dialogue.poll();
 
 const playerIdToName = new Map<string, string>();
 const playerNameToId = new Map<string, string>();
