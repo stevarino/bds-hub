@@ -10,12 +10,14 @@
     "discord.js": "^14.11.0",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
+    "typia": "^4.1.11",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
     "@minecraft/server": "^1.5.0-beta.1.20.20-preview.23",
     "@minecraft/server-admin": "^1.0.0-beta.11940b24",
     "@minecraft/server-net": "^1.0.0-beta.11940b24",
+    "@minecraft/server-ui": "^1.1.0",
     "@types/node": "^20.4.5",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
@@ -25,21 +27,26 @@
     "rollup": "^3.27.0",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
+    "ts-patch": "^3.0.2",
     "typescript": "^5.1.6"
   },
   "bin": {
     "hubInstall": "dist/scripts/install.js",
     "hubStart": "dist/scripts/start.js",
-    "hubConfig": "dist/scripts/config.js"
+    "hubConfig": "dist/scripts/config.js",
+    "hubPack": "dist/scripts/pack.js"
   },
   "scripts": {
-    "build": "tsc && npm run rollup && npm run finish",
+    "build": "tsc && npm run finish",
+    "prepare": "ts-patch install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "finish": "node dist/scripts/finishBuild.js",
     "rollup": "node dist/scripts/rollup.js",
+    "types": "npx typia generate --input src/types --output src/types_gen --project tsconfig.json",
     "hubInstall": "node dist/scripts/install.js",
     "hubStart": "node dist/scripts/start.js",
     "hubConfig": "node dist/scripts/config.js",
+    "hubPack": "node dist/scripts/pack.js",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish"

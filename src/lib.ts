@@ -1,10 +1,11 @@
 
 
-import { existsSync, promises, readFileSync } from 'fs';
-import { isAbsolute, resolve } from 'path';
+import { existsSync, mkdirSync, promises, readFileSync, writeFileSync } from 'fs';
+import { dirname, isAbsolute, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from 'yaml'
-import { ConfigFile, O } from './types';
+
+import { assertConfigFile, ConfigFile, O } from './types.js';
 
 export const root = fileURLToPath(import.meta.url).replace(/[/\\]dist[/\\].*$/, '');
 
@@ -31,10 +32,12 @@ export function readConfig(path?: string): ConfigFile  {
   if (!existsSync(p)) {
     throw new Error(`Unable to find config file ${p}`);
   }
-  return parse(readFileSync(p, 'utf8'));
+  const config = parse(readFileSync(p, 'utf8'));
+  assertConfigFile(config);
+  return config;
 }
 
-export function parseArgs() {
+export function parseArgs(help?: string) {
   const argArray = process.argv.slice(2);
   const args: {
     /** named args */
@@ -51,9 +54,21 @@ export function parseArgs() {
       args.argv.push(arg);
     }
   }
+
+  if (help !== undefined && (args.argn.h !== undefined || args.argn.help !== undefined)) {
+    help = help.replace(/^\s+/, '').replace(/\s+$/, '').replace(/^[ \t]+/m, '');
+    console.info(help);
+    process.exit(1);
+  }
+
   return args;
 }
 
 export function isMain(importMetaUrl: string) {
   return process.argv[1] === fileURLToPath(importMetaUrl);
+}
+
+export function write(filename: string, contents: string) {
+  mkdirSync(dirname(filename), {recursive: true});
+  writeFileSync(filename, contents);
 }

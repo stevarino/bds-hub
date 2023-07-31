@@ -1,26 +1,28 @@
 #!/usr/bin/env node
+
 /**
- * Starts the companion server
+ * Generates a set of config files.
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, read, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import { configPath, isMain, parseArgs, root } from '../lib.js';
 
 function main() {
-  const { argv, argn } = parseArgs();
-  console.log({argn, argv})
-  if (argn['h'] !== undefined || argn['help'] !== undefined) {
-    console.info('npx hubConfig  [--config="bds_hub.config.yaml"]');
-    process.exit(1);
-  }
+  const { argv, argn } = parseArgs(`
+    Generates a set of config files.
+
+    npx hubConfig  [--config="bds_hub.config.yaml
+  `);
   let path = configPath(argn['config']);
-  if (existsSync(path) && argn['force'] === undefined) {
+  const dPath = join(dirname(path), 'dialogue.config.yaml');
+  if ((existsSync(path) || existsSync(dPath)) && argn['force'] === undefined) {
     console.error('File already exists. Use --force to overwrite it.');
     process.exit(1);
   }
-  writeFileSync(path, readFileSync(join(root, 'bds_hub.config.example.yaml')))
+  writeFileSync(path, readFileSync(join(root, 'bds_hub.example.yaml')))
+  writeFileSync(dPath, readFileSync(join(root, 'dialogue.example.yaml')))
 }
 
 if (isMain(import.meta.url)) {

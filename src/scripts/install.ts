@@ -1,37 +1,29 @@
 #!/usr/bin/env node
+
 /**
  * Installs the add on to a specified minecraft server.
  */
 
 import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { dirname, join } from 'path';
-import { getFiles, parseArgs, readConfig, root } from '../lib.js';
+import * as C from '../constants.js';
+
+import { getFiles, isMain, parseArgs, readConfig } from '../lib.js';
 import { O } from '../types.js';
+import { createPackFiles } from './pack.js';
 
-const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
-const packName = 'bds_hub_bp';
-const addOn = join(root, 'dist', packName);
+/** Install behavior pack into server */
+async function install(mcDir: string, argn: O<string|undefined>) {
+  const config = readConfig(argn.config)
+  const manifest = JSON.parse(readFileSync(join(C.ADDON_OUTPUT, 'manifest.json'), 'utf-8'));
 
-const {argv, argn} = parseArgs()
-if (argv.length === 0) {
-  console.error(`Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`);
-  process.exit(1);
-}
-if (argv.length > 1) {
-  console.error(`Received multiple Minecraft directories: ${JSON.stringify(argv)}\n\n${help}`);
-  process.exit(1);
-}
-let mcDir = argv[0];
+  // build the pack code
+  await createPackFiles(config);
 
-async function main() {
-  const config = readConfig(argn['config'])
-  const manifest = JSON.parse(readFileSync(join(addOn, 'manifest.json'), 'utf-8'));
-
-  // copy bp to behavior_packs dir
-  const files = await getFiles(addOn);
+  // clean up old packs
   for (const dir of [
-      join(mcDir, 'behavior_packs', packName), 
-      join(mcDir, 'development_behavior_packs', packName)
+    join(mcDir, 'behavior_packs', C.ADDON_NAME), 
+    join(mcDir, 'development_behavior_packs', C.ADDON_NAME)
   ]) {
     if (existsSync(dir)) {
       console.info('Removing directory ', dir);
@@ -39,11 +31,13 @@ async function main() {
     }
   }
 
-  const bp_dir = argn['dev'] === undefined ? 'behavior_packs' : 'development_behavior_packs';
-  console.info('Copying to ', join(mcDir, bp_dir, packName));
+  // copy bp to behavior_packs server dir
+  const files = await getFiles(C.ADDON_OUTPUT);
+  const bp_dir = argn.dev === undefined ? 'behavior_packs' : 'development_behavior_packs';
+  console.info('Copying to ', join(mcDir, bp_dir, C.ADDON_NAME));
   for (const f of files) {
-    const part = f.slice(addOn.length + 1);
-    const target = join(mcDir, bp_dir, packName, part);
+    const part = f.slice(C.ADDON_OUTPUT.length + 1);
+    const target = join(mcDir, bp_dir, C.ADDON_NAME, part);
     mkdirSync(dirname(target), {recursive: true})
     copyFileSync(f, target);
   }
@@ -89,7 +83,9 @@ async function main() {
     }
   }
 
+
   const configDir = join(mcDir, 'config', manifest.modules[0].uuid);
+  
   // install permisisons file
   const permFile = join(configDir, 'permissions.json');
   if (!existsSync(permFile)) {
@@ -122,4 +118,23 @@ async function main() {
   }
 }
 
-main();
+if (isMain(import.meta.url)) {
+
+  const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
+
+  const {argv, argn} = parseArgs(`
+    Installs the behavior pack in the specified server directory.
+
+    ${help}
+  `)
+  if (argv.length === 0) {
+    console.error(`Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`);
+    process.exit(1);
+  }
+  if (argv.length > 1) {
+    console.error(`Received multiple Minecraft directories: ${JSON.stringify(argv)}\n\n${help}`);
+    process.exit(1);
+  }
+  let mcDir = argv[0];
+  install(argv[0], argn);
+}

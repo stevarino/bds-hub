@@ -1,10 +1,10 @@
 
 // https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server
 import { variables } from "@minecraft/server-admin";
-import * as mc from "@minecraft/server";
+import { system, world, Entity } from "@minecraft/server";
 // https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-net/minecraft-server-net
 import * as mcnet from "@minecraft/server-net";
-import * as types from '../types.js'
+import * as types from '../types/packTypes.js'
 
 const playerIdToName = new Map<string, string>();
 const playerNameToId = new Map<string, string>();
@@ -19,10 +19,10 @@ const PAYLOAD: types.Update = {
 };
 
 function poll() {
-  mc.system.runTimeout(poll, ticksPerPoll);
+  system.runTimeout(poll, ticksPerPoll);
   ticksPerPoll = Math.min(1.2 * ticksPerPoll, 20 * 60 * 5);
-  PAYLOAD.time = mc.world.getTimeOfDay();
-	for (const p of mc.world.getAllPlayers()) {
+  PAYLOAD.time = world.getTimeOfDay();
+	for (const p of world.getAllPlayers()) {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }
@@ -42,7 +42,7 @@ function poll() {
     ticksPerPoll = 20;
     const content = JSON.parse(res.body) as types.UpdateResponse;
     for (const msg of content.messages) {
-      mc.world.sendMessage(msg);
+      world.sendMessage(msg);
     }
   }).catch(e => {
     // not called.
@@ -56,7 +56,7 @@ if (variables.names.includes('host')) {
   throw new Error('Missing variable "host" - did you run the install script?');
 }
 
-function getEntityName(entity: mc.Entity) {
+function getEntityName(entity: Entity) {
   let name = playerIdToName.get(entity.id) ?? entity.nameTag;
   if (name === '') {
     name = entity.typeId;
@@ -83,7 +83,7 @@ function addEntityEvent(name: string, event: types.EntityEvent) {
 }
 
 // update player cache
-mc.world.afterEvents.playerSpawn.subscribe(e => {
+world.afterEvents.playerSpawn.subscribe(e => {
   playerIdToName.set(e.player.id, e.player.name);
   playerNameToId.set(e.player.name, e.player.id);
   if (!playerStartTime.has(e.player.name)) {
@@ -92,10 +92,10 @@ mc.world.afterEvents.playerSpawn.subscribe(e => {
 });
 
 // clean player cache
-mc.world.afterEvents.playerLeave.subscribe(e => {
+world.afterEvents.playerLeave.subscribe(e => {
   const now = new Date().getTime();
   const active = new Set<string>();
-  for (const p of mc.world.getAllPlayers()) {
+  for (const p of world.getAllPlayers()) {
     active.add(p.name);
   }
   for (const [name, id] of Array.from(playerNameToId.entries())) {
@@ -111,21 +111,21 @@ mc.world.afterEvents.playerLeave.subscribe(e => {
   }
 });
 
-mc.world.afterEvents.blockBreak.subscribe(e => {
+world.afterEvents.blockBreak.subscribe(e => {
   addEntityEvent(e.player.name, {
     action: types.Actions.breakBlock,
     object: e.brokenBlockPermutation.type.id,
   });
 });
 
-mc.world.afterEvents.blockPlace.subscribe(e => {
+world.afterEvents.blockPlace.subscribe(e => {
   addEntityEvent(e.player.name, {
     action: types.Actions.placeBlock,
     object: e.block.typeId,
   });
 });
 
-mc.world.afterEvents.entityDie.subscribe(e => {
+world.afterEvents.entityDie.subscribe(e => {
   const dead = playerIdToName.has(e.deadEntity.id);
   const killer = playerIdToName.has(e.damageSource.damagingEntity?.id ?? '');
   if (dead === false && killer === false) return;
@@ -139,7 +139,7 @@ mc.world.afterEvents.entityDie.subscribe(e => {
   addEntityEvent(getEntityName(e.deadEntity), event);
 });
 
-mc.world.afterEvents.entityHurt.subscribe(e => {
+world.afterEvents.entityHurt.subscribe(e => {
   const hurtee = playerIdToName.has(e.hurtEntity.id);
   const hurter = playerIdToName.has(e.damageSource.damagingEntity?.id ?? '');
   if (hurtee === false && hurter === false) return;
@@ -154,12 +154,12 @@ mc.world.afterEvents.entityHurt.subscribe(e => {
   addEntityEvent(getEntityName(e.hurtEntity), event);
 });
 
-mc.world.afterEvents.weatherChange.subscribe(e => {
+world.afterEvents.weatherChange.subscribe(e => {
   PAYLOAD.weather = e.lightning ? types.Constants.weatherLightning 
   : e.raining ? types.Constants.weatherRain : types.Constants.weatherClear;
 });
 
-mc.world.afterEvents.chatSend.subscribe(e => {
+world.afterEvents.chatSend.subscribe(e => {
   if (e.sendToTargets) return;
   PAYLOAD.messages.push(`**<${e.sender.name}>** ${e.message}`)
 });
