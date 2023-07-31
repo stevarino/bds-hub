@@ -86,7 +86,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
 
 
   const configDir = join(mcDir, 'config', manifest.modules[0].uuid);
-  
+  mkdirSync(configDir, {recursive: true});
   // install permisisons file
   const permFile = join(configDir, 'permissions.json');
   if (!existsSync(permFile)) {  // TODO: change this to merge...
