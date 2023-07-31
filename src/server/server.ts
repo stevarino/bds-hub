@@ -35,7 +35,7 @@ class Server {
       }
       res.statusCode = 404;
       res.write('Not found.');
-      res.end;
+      res.end();
     });
   }
 
@@ -51,12 +51,12 @@ class Server {
     let response: UpdateResponse = {
       messages: this.discord.inbound,
     }
-    const jsonResponse = JSON.stringify(response);
     this.discord.inbound.length = 0;
     let body = '';
     req.on('data', (chunk) => {
         body += chunk;
     });
+    const jsonResponse = JSON.stringify(response);
   
     req.on('end', () => {
       res.setHeader('Content-Type', 'text/plain');
@@ -96,7 +96,7 @@ class Server {
   showStatus(req: http.IncomingMessage, res: http.ServerResponse) {
     res.setHeader('Content-Type', 'application/json');
     res.write(JSON.stringify(this.status));
-    return res.end();
+    res.end();
   }
 
   async findEvents(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
