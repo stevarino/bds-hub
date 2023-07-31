@@ -64,10 +64,6 @@ export function parseArgs(help?: string) {
   return args;
 }
 
-export function isMain(importMetaUrl: string) {
-  return process.argv[1] === fileURLToPath(importMetaUrl);
-}
-
 export function write(filename: string, contents: string) {
   mkdirSync(dirname(filename), {recursive: true});
   writeFileSync(filename, contents);

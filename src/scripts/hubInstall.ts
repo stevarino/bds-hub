@@ -8,9 +8,9 @@ import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFi
 import { dirname, join } from 'path';
 import * as C from '../constants.js';
 
-import { getFiles, isMain, parseArgs, readConfig } from '../lib.js';
+import { getFiles, parseArgs, readConfig } from '../lib.js';
 import { O } from '../types.js';
-import { createPackFiles } from './pack.js';
+import { createPackFiles } from './hubPack.js';
 
 /** Install behavior pack into server */
 async function install(mcDir: string, argn: O<string|undefined>) {
@@ -120,7 +120,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   }
 }
 
-if (isMain(import.meta.url)) {
+if (process.argv[1].includes('hubInstall')) {
 
   const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 

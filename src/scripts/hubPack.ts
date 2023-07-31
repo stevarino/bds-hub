@@ -10,7 +10,7 @@ import yaml from 'yaml';
 
 import { rollup } from 'rollup';
 import * as C from '../constants.js';
-import { isMain, parseArgs, readConfig, write } from '../lib.js';
+import { parseArgs, readConfig, write } from '../lib.js';
 import { ConfigFile, Dialogue, O } from '../types.js';
 import assert from 'assert';
 
@@ -47,15 +47,6 @@ async function rollupPack() {
     external: /@minecraft/,
   });
   await bundle.write({ file: C.ADDON_ROLLUP });
-}
-
-if (isMain(import.meta.url)) {
-  const { argn } = parseArgs(`
-    Compiles and assembles the behavior pack code.
-
-    npx hubPack [--config="/foo/bar/config.yaml]
-  `)
-  createPackFiles(readConfig(argn.config));
 }
 
 
@@ -158,3 +149,11 @@ function md5sum(input: string|any) {
   return crypto.createHash('md5').update(input).digest('hex');
 }
 
+if (process.argv[1].includes('hubPack')) {
+  const { argn } = parseArgs(`
+    Compiles and assembles the behavior pack code.
+
+    npx hubPack [--config="/foo/bar/config.yaml]
+  `)
+  createPackFiles(readConfig(argn.config));
+}

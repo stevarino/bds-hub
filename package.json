@@ -31,10 +31,10 @@
     "typescript": "^5.1.6"
   },
   "bin": {
-    "hubInstall": "dist/scripts/install.js",
-    "hubStart": "dist/scripts/start.js",
-    "hubConfig": "dist/scripts/config.js",
-    "hubPack": "dist/scripts/pack.js"
+    "hubInstall": "dist/scripts/hubInstall.js",
+    "hubStart": "dist/scripts/hubStart.js",
+    "hubConfig": "dist/scripts/hubConfig.js",
+    "hubPack": "dist/scripts/hubPack.js"
   },
   "scripts": {
     "build": "tsc && npm run finish",
@@ -43,10 +43,10 @@
     "finish": "node dist/scripts/finishBuild.js",
     "rollup": "node dist/scripts/rollup.js",
     "types": "npx typia generate --input src/types --output src/types_gen --project tsconfig.json",
-    "hubInstall": "node dist/scripts/install.js",
-    "hubStart": "node dist/scripts/start.js",
-    "hubConfig": "node dist/scripts/config.js",
-    "hubPack": "node dist/scripts/pack.js",
+    "hubInstall": "node dist/scripts/hubInstall.js",
+    "hubStart": "node dist/scripts/hubStart.js",
+    "hubConfig": "node dist/scripts/hubConfig.js",
+    "hubPack": "node dist/scripts/hubPack.js",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish"
