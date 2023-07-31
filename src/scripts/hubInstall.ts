@@ -109,7 +109,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   if (existsSync(varFile)) {
     vars = JSON.parse(readFileSync(varFile, 'utf-8'));
   }
-  const host = config.host ?? `http://localhost:${config.port ?? 8888}/`;
+  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}/`;
   if (vars.host != host) {
     vars.host = host;
     needWrite = true;
