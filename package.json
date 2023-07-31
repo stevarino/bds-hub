@@ -8,6 +8,7 @@
   "type": "module",
   "dependencies": {
     "discord.js": "^14.11.0",
+    "rollup": "^3.27.0",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "typia": "^4.1.11",
@@ -24,7 +25,6 @@
     "adm-zip": "^0.5.10",
     "ava": "^5.3.1",
     "eslint": "^8.46.0",
-    "rollup": "^3.27.0",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
     "ts-patch": "^3.0.2",
