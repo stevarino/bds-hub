@@ -1,0 +1,13 @@
+---
+# See ConfigFile interface
+port: 8888
+discord:
+  token: secret
+  app_id: other_secret
+  nick: DiscordBot
+  channels:
+    - https://discord.com/channels/123/456
+  users:
+    "discord#0123": "xboxWinner360"
+dialogues:
+  - dialogue.config.yaml
