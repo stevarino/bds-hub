@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, promises, readFileSync, writeFileSync } from 'fs
 import { dirname, isAbsolute, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from 'yaml'
+import { strip } from './functions.js';
 
 import { assertConfigFile, ConfigFile, O } from './types.js';
 
@@ -37,6 +38,10 @@ export function readConfig(path?: string): ConfigFile  {
   return config;
 }
 
+export function isScriptRun(name: string) {
+  return (process.argv[1] as string).includes(name);
+}
+
 export function parseArgs(help?: string) {
   const argArray = process.argv.slice(2);
   const args: {
@@ -48,16 +53,15 @@ export function parseArgs(help?: string) {
   for (const arg of argArray) {
     if (arg.startsWith('-')) {
       // will always match something
-      const m = arg.match(/([^=]+)=?(.*)/) as RegExpMatchArray;
-      args.argn[m[1].replace(/^-+/, '')] = m[2];
+      const [_, lhv, rhv] = arg.match(/([^=]+)=?(.*)/) as [string, string, string];
+      args.argn[lhv.replace(/^-+/, '')] = rhv;
     } else {
       args.argv.push(arg);
     }
   }
 
   if (help !== undefined && (args.argn.h !== undefined || args.argn.help !== undefined)) {
-    help = help.replace(/^\s+/, '').replace(/\s+$/, '').replace(/^[ \t]+/m, '');
-    console.info(help);
+    console.info(strip(help));
     process.exit(1);
   }
 

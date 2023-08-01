@@ -70,10 +70,12 @@ function getEntityName(entity: Entity) {
 }
 
 function getPlayerUpdate(name: string) {
-  if (PAYLOAD.entities[name] === undefined) {
-    PAYLOAD.entities[name] = {events: []};
+  let update = PAYLOAD.entities[name];
+  if (update === undefined) {
+    update = {events: []};
+    PAYLOAD.entities[name] = update;
   }
-  return PAYLOAD.entities[name];
+  return update;
 }
 
 function addEntityEvent(name: string, event: types.EntityEvent) {

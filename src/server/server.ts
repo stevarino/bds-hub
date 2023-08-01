@@ -68,8 +68,9 @@ class Server {
 
   processPayload(payload: Update) {
     const now = new Date().getTime();
+    const weather = Constants[payload.weather] ?? Constants[Constants.weatherClear];
     this.status.time = payload.time;
-    this.status.weather = Constants[payload.weather].replace('weather', '');
+    this.status.weather = weather.replace('weather', '');
     const online: string[] = [];
     for (const [name, update] of Object.entries(payload.entities)) {
       if (update.pos !== undefined) {

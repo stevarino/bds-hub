@@ -6,7 +6,7 @@ import { copyFileSync, mkdirSync, lstatSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import { getFiles, root } from '../lib.js';
 
-const files = [
+const files: [string, string][] = [
   [join(root, 'static'), join(root, 'dist')], 
 ];
 

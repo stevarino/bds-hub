@@ -60,7 +60,7 @@ export class DBHandle {
     const rows = await this.db.all<{id: number, value: string}[]>(query, values);
     for (const row of rows) {
       this.cache.set(row.value, row.id);
-      result[lookups[row.value]] = row.id;
+      result[lookups[row.value] as string] = row.id;
     }
 
     return result;

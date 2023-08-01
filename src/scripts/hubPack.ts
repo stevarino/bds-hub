@@ -10,7 +10,7 @@ import yaml from 'yaml';
 
 import { rollup } from 'rollup';
 import * as C from '../constants.js';
-import { parseArgs, readConfig, write } from '../lib.js';
+import { isScriptRun, parseArgs, readConfig, write } from '../lib.js';
 import { ConfigFile, Dialogue, O } from '../types.js';
 import assert from 'assert';
 
@@ -56,6 +56,7 @@ export function parseDialogues(config: ConfigFile) {
   const definedIds = new Set<string>();
   const scenes: Dialogue.Scene[] = [];
   const actors: Dialogue.Actor[] = [];
+  const actorEntrys = new Set<string>();
 
   for (const df of config.dialogues ?? []) {
     console.info(`Parsing ${df}`);
@@ -73,6 +74,7 @@ export function parseDialogues(config: ConfigFile) {
     for (const actor of dialogueSet.actors ?? []) {
       actors.push(actor);
       referencedIds.add(actor.scene);
+      actorEntrys.add(actor.scene);
     }
 
     for (const scene of dialogueSet.scenes ?? []) {
@@ -80,6 +82,8 @@ export function parseDialogues(config: ConfigFile) {
         `Duplicate scene id\'s defiined: ${scene.id}`);
       definedIds.add(scene.id);
       scenes.push(scene);
+      scene._entrayPoint = actorEntrys.has(scene.id);
+
       let button: Dialogue.SuperButton;
       for (button of scene.buttons ?? []) {
         if (button.scene !== undefined) {
@@ -94,7 +98,8 @@ export function parseDialogues(config: ConfigFile) {
         missing.push(id);
       }
     }
-    assert(missing.length === 0, 
+    assert(
+      missing.length === 0, 
       `Missing scenes: ${JSON.stringify(missing)}`);
   }
 
@@ -110,22 +115,24 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Scene[
 
   for (const scene of scenes) {
     const scn: O<any> = {
-      scene_tag: `${C.TAG_PREFIX}${scene.id}`,
+      scene_tag: `${C.TAG_PREFIX}_${scene.id}`,
       text: scene.text,
       buttons: [],
+    }
+    if (scene._entrayPoint === true) {
+      scn.on_open_commands = [
+        `/tag @initiator add ${C.TAG_INIT}`,
+      ];
     }
     packScenes.push(scn);
     let button: Dialogue.SuperButton;
     for (button of scene.buttons ?? []) {
-      const btnId = `${C.TAG_PREFIX}${md5sum(button)}`;
+      const btnId = `${C.TAG_PREFIX}_${md5sum(button)}`;
       assert(transitions[btnId] === undefined, 'Bad build (!?!)');
 
       const transition: Dialogue.Transition = Object.assign(
         {}, button);
       delete transition.text;
-      if (transition.scene !== undefined) {
-        transition.scene = `${C.TAG_PREFIX}${transition.scene}`
-      }
       transitions[btnId] = transition;
 
       scn.buttons.push({
@@ -149,7 +156,7 @@ function md5sum(input: string|any) {
   return crypto.createHash('md5').update(input).digest('hex');
 }
 
-if (process.argv[1].includes('hubPack')) {
+if (isScriptRun('hubPack')) {
   const { argn } = parseArgs(`
     Compiles and assembles the behavior pack code.
 

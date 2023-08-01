@@ -8,7 +8,7 @@ import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFi
 import { dirname, join } from 'path';
 import * as C from '../constants.js';
 
-import { getFiles, parseArgs, readConfig } from '../lib.js';
+import { getFiles, isScriptRun, parseArgs, readConfig } from '../lib.js';
 import { O } from '../types.js';
 import { createPackFiles } from './hubPack.js';
 
@@ -120,7 +120,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   }
 }
 
-if (process.argv[1].includes('hubInstall')) {
+if (isScriptRun('hubInstall')) {
 
   const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 
@@ -129,7 +129,8 @@ if (process.argv[1].includes('hubInstall')) {
 
     ${help}
   `)
-  if (argv.length === 0) {
+
+  if (argv[0] === undefined) {
     console.error(`Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`);
     process.exit(1);
   }
@@ -137,6 +138,5 @@ if (process.argv[1].includes('hubInstall')) {
     console.error(`Received multiple Minecraft directories: ${JSON.stringify(argv)}\n\n${help}`);
     process.exit(1);
   }
-  let mcDir = argv[0];
   install(argv[0], argn);
 }
