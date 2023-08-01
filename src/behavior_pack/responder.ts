@@ -1,7 +1,7 @@
 import { system, world, Player } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
-import { dialogueMap } from './dialogueMap.js';
+import { transitions } from './transitions.js';
 import * as C from './constants.js';
 import { Args, Transition } from "./bpTypes.js";
 import { strip } from "../functions.js";
@@ -22,10 +22,12 @@ class Discussion {
     this.history.push(transition);
   }
   
+  /** Set a variable needed for this discussion */
   set(key: string, value: unknown) {
     this.vars[key] = value;
   }
 
+  /** Retrieve a variable for this discussion */
   get<T=unknown>(key: string, defaultValue?: T): T {
     const value = this.vars[key];
     if (value === undefined && defaultValue !== undefined) {
@@ -35,8 +37,9 @@ class Discussion {
     return value as T;
   }
 
+  /** Lookup a transition from transitions.ts */
   findTransition(tag: string) {
-    const transition = dialogueMap[tag];
+    const transition = transitions[tag];
     if (transition === undefined) {
       console.warn('Failed to find transition: ', tag);
     }

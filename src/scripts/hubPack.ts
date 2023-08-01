@@ -24,7 +24,7 @@ export async function createPackFiles(config: ConfigFile) {
 }
 
 function writeTransitionsFile(transitions: Dialogue.TransitionMap) {
-  write(C.ADDON_TRANSITIONS, `export const dialogueMap = ${
+  write(C.ADDON_TRANSITIONS, `export const transitions = ${
     JSON.stringify(transitions, undefined, 2)}`);
 }
 
