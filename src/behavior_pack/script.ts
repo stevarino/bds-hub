@@ -6,10 +6,10 @@ import { variables } from "@minecraft/server-admin";
 import { system, world, Entity } from "@minecraft/server";
 import * as mcnet from "@minecraft/server-net";
 
-import * as dialogue from './dialogueResponder.js';
+import * as responder from './responder.js';
 import * as types from '../types/packTypes.js';
 
-dialogue.poll();
+responder.poll();
 
 const playerIdToName = new Map<string, string>();
 const playerNameToId = new Map<string, string>();
