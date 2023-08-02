@@ -2,6 +2,7 @@ import * as http from 'node:http';
 import { ConfigFile, Constants, O, ServerStatus, Update, UpdateResponse } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
+import { EventRequest } from '../types/packTypes.js';
 
 export async function getServer(config: ConfigFile) {
   const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');
@@ -31,7 +32,7 @@ class Server {
       switch(url.pathname) {
         case '/update': return this.processUpdate(req, res);
         case '/status': return this.showStatus(req, res);
-        case '/events': return this.findEvents(req, res, url);
+        case '/events': return this.findEvents(req, res);
       }
       res.statusCode = 404;
       res.write('Not found.');
@@ -47,23 +48,30 @@ class Server {
     this.discord.start();
   }
 
-  processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
+  async readBody<T=unknown>(req: http.IncomingMessage) {
+    return await new Promise<T>(resolve => {
+      let body = '';
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        resolve(JSON.parse(body) as T);
+      });
+    });
+  }
+
+  async processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
     let response: UpdateResponse = {
       messages: this.discord.inbound,
     }
     this.discord.inbound.length = 0;
-    let body = '';
-    req.on('data', (chunk) => {
-        body += chunk;
-    });
+    
     const jsonResponse = JSON.stringify(response);
-  
-    req.on('end', () => {
-      res.setHeader('Content-Type', 'text/plain');
-      res.write(jsonResponse);
-      res.end();
-      this.processPayload(JSON.parse(body));
-    });
+    const body = await this.readBody<Update>(req);
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(jsonResponse);
+    res.end();
+    this.processPayload(body);
   }
 
   processPayload(payload: Update) {
@@ -100,9 +108,11 @@ class Server {
     res.end();
   }
 
-  async findEvents(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    res.setHeader('Content-Type', 'application/json');
-    res.write(JSON.stringify(await this.db.queryEvents()));
+  async findEvents(req: http.IncomingMessage, res: http.ServerResponse) {
+    const query = await this.readBody<EventRequest>(req);
+    const response = JSON.stringify(await this.db.queryEvents(query));
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(response);
     res.end();
   }
 }

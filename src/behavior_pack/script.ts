@@ -8,6 +8,7 @@ import * as mcnet from "@minecraft/server-net";
 
 import * as responder from './responder.js';
 import * as types from '../types/packTypes.js';
+import { request } from "./lib.js";
 
 responder.poll();
 
@@ -23,7 +24,9 @@ const PAYLOAD: types.Update = {
   messages: [],
 };
 
-function poll() {
+const HOST = variables.get('host');
+
+async function poll() {
   system.runTimeout(poll, ticksPerPoll);
   ticksPerPoll = Math.min(1.2 * ticksPerPoll, 20 * 60 * 5);
   PAYLOAD.time = world.getTimeOfDay();
@@ -31,28 +34,20 @@ function poll() {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }
-	const req = new mcnet.HttpRequest(`${variables.get('host')}/update`);
-  req.body = JSON.stringify(PAYLOAD);
+  const body = JSON.stringify(PAYLOAD);
   PAYLOAD.entities = {};
   PAYLOAD.messages = [];
-  req.headers = [
-    new mcnet.HttpHeader('Content-Type', 'application/json'),
-  ];
-  req.setTimeout(0.5);
-  mcnet.http.request(req).then(res => {
-    if (res.status != 200) {  // 2147954429 on error?
-      console.error(`Unable to contact server, sleeping for ${(Math.round(10 * ticksPerPoll / 20) / 10)}s`);
-      return;
-    }
-    ticksPerPoll = 20;
-    const content = JSON.parse(res.body) as types.UpdateResponse;
-    for (const msg of content.messages) {
-      world.sendMessage(msg);
-    }
-  }).catch(e => {
-    // not called.
-    console.error('Error received: ', e);
-  });
+  const res = await request<types.UpdateResponse>(
+    '/update', body, {'Content-Type': 'application/json'});
+
+  if (res === undefined) {  // 2147954429 on error?
+    console.error(`Unable to contact ${HOST}, sleeping for ${(Math.round(10 * ticksPerPoll / 20) / 10)}s`);
+    return;
+  }
+  ticksPerPoll = 20;
+  for (const msg of res.messages) {
+    world.sendMessage(msg);
+  }
 }
 
 if (variables.names.includes('host')) {

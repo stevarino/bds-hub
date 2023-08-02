@@ -1,0 +1,10 @@
+---
+scenes:
+- id: _Stats
+  text: I can tell you your past... What you've broken... What you've built...
+  buttons:
+    - text: Broken blocks
+      action: DBSH_Broken
+    - text: Placed blocks
+      action: DBSH_Placed
+     

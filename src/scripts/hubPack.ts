@@ -4,15 +4,16 @@
  * Compiles and assembles the behavior pack code.
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import crypto from 'node:crypto'
 import yaml from 'yaml';
 
 import { rollup } from 'rollup';
 import * as C from '../constants.js';
-import { isScriptRun, parseArgs, readConfig, write } from '../lib.js';
+import { isScriptRun, parseArgs, readConfig, root, write } from '../lib.js';
 import { ConfigFile, Dialogue, O } from '../types.js';
 import assert from 'assert';
+import { join } from 'path';
 
 export async function createPackFiles(config: ConfigFile) {
   // assemble all the json/javascript files for the pack
@@ -57,8 +58,11 @@ export function parseDialogues(config: ConfigFile) {
   const scenes: Dialogue.Scene[] = [];
   const actors: Dialogue.Actor[] = [];
   const actorEntrys = new Set<string>();
+  
+  const scenes_dir = join(root, 'dist/behavior_pack/scenes');
+  const globalScenes = readdirSync(scenes_dir).map(f => join(scenes_dir, f));
 
-  for (const df of config.dialogues ?? []) {
+  for (const df of [...globalScenes, ...(config.dialogues ?? [])]) {
     console.info(`Parsing ${df}`);
     let dialogueSet : Dialogue.DialogueFile;
     if (df.endsWith('.json')) {

@@ -51,3 +51,51 @@ export interface ServerStatus {
     online?: string[];
 }
 ;
+export type Button = BaseButton & (ActionButton | CommandButton | SceneButton);
+interface BaseButton {
+    text: string;
+}
+;
+interface ActionButton {
+    action: string;
+    args?: Args;
+}
+;
+export interface Args {
+    [key: string]: unknown;
+}
+;
+interface CommandButton {
+    command: string;
+}
+;
+interface SceneButton {
+    scene: string;
+}
+;
+export type SuperButton = Button & Partial<ActionButton & CommandButton & SceneButton>;
+;
+export type Transition = Partial<SuperButton>;
+export type TransitionMap = {
+    [key: string]: Transition;
+};
+export interface Trader {
+    trades: {
+        accepts: string[];
+        gives: string[];
+        ratio?: number;
+    }[];
+}
+export interface Event {
+    entity: string;
+    action: string;
+    object?: string;
+    extra?: string;
+    qty: Number;
+}
+export type EventField = keyof Event;
+export interface EventRequest {
+    select?: EventField[];
+    where?: Partial<Event>;
+    order?: EventField[];
+}

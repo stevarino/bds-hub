@@ -3,23 +3,36 @@ import { join } from 'node:path';
 import sqlite3 from 'sqlite3'
 import { open, Database } from 'sqlite'
 
-import LRU from './lru.js';
 import { Actions, EntityEvent, PositionTuple, O } from '../types.js';
 import { root } from '../lib.js';
+import { Event, EventField, EventRequest } from '../types/packTypes.js';
 
+
+type StringLookup = {id: number, value: string};
 
 export async function openDatabase(filename: string) {
   const db = await open({ filename, driver: sqlite3.Database });
   await db.migrate({migrationsPath: join(root, 'dist', 'server', 'migrations')});
-  return new DBHandle(db);
+
+  // cache all the things
+  const strings: StringLookup[] = await db.all(
+    'SELECT id, value FROM Strings');
+  
+  return new DBHandle(db, strings);
 }
 
 export class DBHandle {
   db: Database;
-  cache = new LRU<number>(10000);
 
-  constructor(db: Database) {
+  cache = new Map<number, string>();
+  revCache = new Map<string, number>();
+
+  constructor(db: Database, strings?: StringLookup[]) {
     this.db = db;
+    for (const {id, value} of strings ?? []) {
+      this.cache.set(id, value);
+      this.revCache.set(value, id);
+    }
   }
   
   /** Add a colon to each key */
@@ -41,7 +54,7 @@ export class DBHandle {
       // 0 is used as null as null does not void UNIQUE constraints
       result[key] = 0;
       if (str !== undefined) {
-        const lookup = this.cache.get(str);
+        const lookup = this.revCache.get(str);
         if (lookup === undefined) {
           lookups[str] = key;
           values.push(str);
@@ -58,9 +71,10 @@ export class DBHandle {
     await this.db.run(query, values);
     query = `SELECT id, value FROM "Strings" WHERE ${values.map(v => 'value = ?').join(' OR ')};`
     const rows = await this.db.all<{id: number, value: string}[]>(query, values);
-    for (const row of rows) {
-      this.cache.set(row.value, row.id);
-      result[lookups[row.value] as string] = row.id;
+    for (const {id, value} of rows) {
+      this.cache.set(id, value);
+      this.revCache.set(value, id);
+      result[lookups[value] as string] = id;
     }
 
     return result;
@@ -89,22 +103,53 @@ export class DBHandle {
     `,  this.formatParams(params));
   }
   
-  async queryEvents() {
-    const strings = await this.db.all<{id: number, value: string}[]>(
-      'SELECT id, value FROM Strings');
-    const lookup = Object.fromEntries(strings.map(r => [r.id, r.value]));
-    const values = await this.db.all(
-      'SELECT entity, action, object, extra, qty FROM Events');
-    const results = [];
-    for (const value of values) {
-      results.push({
-        entity: lookup[value.entity],
-        action: Actions[value.action],
-        object: lookup[value.object],
-        extra: lookup[value.extra],
-        qty: value.qty,
-      });
+  async queryEvents(query?: EventRequest) {
+    const where: string[] = [];
+    const params: number[] = [];
+    const numFields = ['action', 'qty'];
+
+    for (const [key, value] of Object.entries(query?.where ?? {})) {
+      if (!/^[a-z]+$/.test(key)) continue;
+      where.push(`AND ${key} = ?`)
+      const isNum = numFields.includes(key);
+      params.push(isNum ? Number(value) : (this.revCache.get(value as string) ?? 0));
     }
+    const qry = `SELECT entity, action, object, extra, qty FROM Events WHERE 1 = 1 ${
+      where.join(' ')};`;
+    const values: Record<string, number>[] = await this.db.all(qry, params);
+    const results: Partial<Event>[] = [];
+    for (const value of values) {
+      const record: Partial<Event> = {};
+      results.push(record);
+      for (const [k, v] of Object.entries(value)) {
+        if (k === 'action') {
+          record.action = Actions[v];
+        } else if (k === 'qty') {
+          record.qty = v;
+        } else {
+          record[k as Exclude<EventField,"qty"|"action">] = this.cache.get(v);
+        }
+      }
+      
+      for (const r of Object.keys(record) as EventField[]) {
+        if (query?.select !== undefined && !query.select.includes(r)) {
+          delete(record[r])
+        }
+      }
+    }
+    results.sort((a, b) => {
+      for (let f of (query?.order ?? []) as string[]) {
+        let rev = 1;
+        if (f.startsWith('-')) {
+          rev = -1;
+          f = f.slice(1);
+        }
+        if ((a[f as EventField] ?? '') < (b[f as EventField] ?? '')) return -1 * rev;
+        if ((a[f as EventField] ?? '') > (b[f as EventField] ?? '')) return 1 * rev;
+      }
+      return 0;
+    });
+
     return results;
   }
 }

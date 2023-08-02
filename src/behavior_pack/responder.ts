@@ -1,17 +1,18 @@
-import { system, world, Player } from "@minecraft/server";
+import { system, world, Player, EntityInventoryComponent, ItemEnchantsComponent, ItemStack } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 import { transitions } from './transitions.js';
 import * as C from './constants.js';
-import { Args, Transition } from "./bpTypes.js";
+import * as types from '../types/packTypes.js';
 import { strip } from "../functions.js";
+import { padToWidth, request } from "./lib.js";
 
 const DELAY = 10;
 const discussions: Record<string, Discussion> = {};
 
 class Discussion {
   player: Player;
-  history: Transition[] = [];
+  history: types.Transition[] = [];
   vars: {[key: string]: unknown} = {};
 
   constructor(p: Player, tag?: string) {
@@ -48,7 +49,10 @@ class Discussion {
 
   go(tag?: string) {
     if (tag === undefined) return;
-    const transition = this.findTransition(tag);
+    this.navigate(this.findTransition(tag));
+  }
+
+  navigate(transition?: types.Transition) {
     if (transition === undefined) return;
     this.history.push(transition);
     this.respond();
@@ -71,7 +75,7 @@ class Discussion {
     }
   }
 
-  async respondWithAction(action: string, args: Args) {
+  async respondWithAction(action: string, args: types.Args) {
     const actionFunc = actions[action];
     if (actionFunc === undefined) {
       return console.warn(`Missing action: ${action}`);
@@ -125,14 +129,14 @@ function getTag(p: Player) {
   }
   if (tags.length !== 1) {
     // if != 1, something broke, let the player try again
-    console.warn(`Unexpected fonnd tag result: ${JSON.stringify(tags)}`);
+    console.warn(`Unexpected found tag result: ${JSON.stringify(tags)}`);
     return undefined;
   }
   return tags[0];
 }
 
-const actions: {[action: string]: (d: Discussion, args: Args) => Promise<void>} = {
-  DBSH_Time, Trader
+const actions: {[action: string]: (d: Discussion, args: types.Args) => Promise<void>} = {
+  DBSH_Time, Trader, Trader2, DBSH_Broken, DBSH_Placed,
 }
 
 async function DBSH_Time(d: Discussion) {
@@ -145,6 +149,7 @@ async function DBSH_Time(d: Discussion) {
 
       You have asked me ${cnt} times.
 
+      ${d.player.getComponents().map(c => c.typeId).join('\n')}
       ---
     `))
     .button('And now?')
@@ -154,20 +159,122 @@ async function DBSH_Time(d: Discussion) {
     if (resp.selection === 0) {
       DBSH_Time(d);
     } else if (resp.selection === 1) {
+      d.back();
     }
   }, DELAY);
 }
 
-async function Trader(d: Discussion, args: Args) {
-  if (!Array.isArray(args.types)) {
-    console.error(`Missing types for Trade: ${JSON.stringify(args)}`);
-    return;
-  }
-  for (const t of args.types) {
+async function Trader(d: Discussion, args: types.Args) {
+  // if (!Array.isArray(args.types)) {
+  //   return console.error(`Missing types for Trade: ${JSON.stringify(args)}`);
+  // }
 
+  const component = d.player.getComponent('minecraft:inventory') as EntityInventoryComponent|undefined;
+  if (component === undefined) {
+    return console.error('Failed to fetch inventory!?!');
   }
 
-  for (const component of d.player.getComponents()) {
-    console.log(component.typeId, component.isValid)
+  const form = new ui.ActionFormData()
+    .title('Time o\'clock!')
+    .body(strip(`
+      containerType: ${component.containerType}
+      invenorySize: ${component.inventorySize}
+      private: ${component.private}
+      restrictToOwner: ${component.restrictToOwner}
+
+      emptySlotsCount: ${component.container.emptySlotsCount}
+      size: ${component.container.size}
+    `))
+    .button('Get items?')
+    .button('Back.');
+    system.runTimeout(async () => {
+      const resp = await form.show(d.player);
+      if (resp.selection === 0) {
+        d.navigate({action: 'Trader2'})
+      } else if (resp.selection === 1) {
+        d.back();
+      }
+    }, DELAY);
+}
+
+
+async function Trader2(d: Discussion, args: types.Args) {
+  const component = d.player.getComponent('minecraft:inventory') as EntityInventoryComponent|undefined;
+  if (component === undefined) {
+    return console.error('Failed to fetch inventory!?!');
   }
+
+  const test = new ItemStack('minecraft:red_mushroom_block', 1);
+
+  const items: string[] = [];
+  for (let i=0; i<component.inventorySize; i++) {
+    const item = component.container.getItem(i);
+    items.push(`${i}: ${item?.typeId} (${item?.nameTag}) ${item?.amount} ${JSON.stringify(item?.getTags())} ${
+      item?.getComponents().map(c => c.typeId).join(';')
+    }  {${
+      //@ts-ignore
+      item?.isStackableWith(test)}}`);
+  }
+
+  const form = new ui.ActionFormData()
+    .title('Time o\'clock!')
+    .body(strip(items.join('\n\n')))
+    .button('Get items?')
+    .button('Back.');
+    system.runTimeout(async () => {
+      const resp = await form.show(d.player);
+      if (resp.selection === 0) {
+        d.navigate({action: 'Trader2'})
+      } else if (resp.selection === 1) {
+        d.back();
+      }
+    }, DELAY);  
+}
+
+function getLines(result?: Partial<types.Event>[]) {
+  const lines: string[] = [];
+  for (const row of result ?? []) {
+    const label = padToWidth((row.object ?? 'error').replace('minecraft:', '') + ' ', 146, '.');
+    const qty = padToWidth(' ' + String(row.qty), 48, '.', true)
+    lines.push(label + qty);
+  }
+  return lines;
+}
+
+async function DBSH_Broken(d: Discussion) {
+  const query: types.EventRequest = {
+    select: ['object', 'qty'],
+    where: {
+      entity: d.player.name,
+      action: String(types.Actions.breakBlock),
+    },
+    order: ['object'],
+  };
+  const res = await request<types.Event[]>('/events', query);
+  const form = new ui.ActionFormData()
+    .title('Broken Bocks')
+    .body(getLines(res).join('\n') + '\n')
+    .button('Sorted by block');
+  system.runTimeout(async () => {
+    const resp = await form.show(d.player);
+  }, DELAY);
+}
+
+async function DBSH_Placed(d: Discussion) {
+  const query: types.EventRequest = {
+    select: ['object', 'qty'],
+    where: {
+      entity: d.player.name,
+      action: String(types.Actions.placeBlock),
+    },
+    order: ['object'],
+  };
+  const res = await request<types.Event[]>('/events', query);
+  const form = new ui.ActionFormData()
+    .title('Placed Bocks')
+    .body(getLines(res).join('\n'))
+    .button('Sorted by block');
+  system.runTimeout(async () => {
+    const resp = await form.show(d.player);
+  }, DELAY);  
 }

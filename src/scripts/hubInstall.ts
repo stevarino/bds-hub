@@ -6,11 +6,18 @@
 
 import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { dirname, join } from 'path';
-import * as C from '../constants.js';
 
 import { getFiles, isScriptRun, parseArgs, readConfig } from '../lib.js';
 import { O } from '../types.js';
+import * as C from '../constants.js';
 import { createPackFiles } from './hubPack.js';
+
+const modules = [
+  "@minecraft/server",
+  "@minecraft/server-admin",
+  "@minecraft/server-net",
+  "@minecraft/server-ui",
+];
 
 /** Install behavior pack into server */
 async function install(mcDir: string, argn: O<string|undefined>) {
@@ -92,12 +99,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   if (!existsSync(permFile)) {  // TODO: change this to merge...
     console.info("Creating permissions file: ", permFile);
     writeFileSync(permFile, JSON.stringify({
-      allowed_modules: [
-        "@minecraft/server",
-        "@minecraft/server-admin",
-        "@minecraft/server-net",
-        "@minecraft/server-ui",
-      ]
+      allowed_modules: modules
     }))
   }
 
@@ -109,7 +111,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   if (existsSync(varFile)) {
     vars = JSON.parse(readFileSync(varFile, 'utf-8'));
   }
-  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}/`;
+  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}`;
   if (vars.host != host) {
     vars.host = host;
     needWrite = true;

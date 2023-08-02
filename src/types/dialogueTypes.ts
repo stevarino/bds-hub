@@ -1,7 +1,7 @@
 import typia from "typia";
 
-import { Button } from '../behavior_pack/bpTypes.js';
-export * from '../behavior_pack/bpTypes.js';
+import { Button } from './packTypes.js';
+export * from './packTypes.js';
 
 export type Actor = BaseActor & ( TagActor | SelectorActor );
 interface BaseActor { scene: string };
