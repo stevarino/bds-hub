@@ -1,6 +1,7 @@
+/**
+ * Entry point for script
+ */
 
-// https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/minecraft-server
-// https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-net/minecraft-server-net
 
 import { variables } from "@minecraft/server-admin";
 import { system, world, Entity } from "@minecraft/server";
@@ -63,6 +64,7 @@ function getEntityName(entity: Entity) {
   return name;
 }
 
+/** Retrieves the update record for a given player */
 function getPlayerUpdate(name: string) {
   let update = PAYLOAD.entities[name];
   if (update === undefined) {
@@ -72,6 +74,7 @@ function getPlayerUpdate(name: string) {
   return update;
 }
 
+/** Adds a particular entity event */
 function addEntityEvent(name: string, event: types.EntityEvent) {
   const update = getPlayerUpdate(name);
   for (const e of update.events) {
@@ -153,6 +156,14 @@ world.afterEvents.entityHurt.subscribe(e => {
     event.object = getEntityName(e.damageSource.damagingEntity);
   }
   addEntityEvent(getEntityName(e.hurtEntity), event);
+});
+
+world.afterEvents.itemUse.subscribe(e => {
+  if (!e.itemStack.hasTag('minecraft:is_tool')) return;
+  addEntityEvent(e.source.name, {
+    action: types.Actions.use,
+    object: e.itemStack.typeId,
+  })
 });
 
 world.afterEvents.weatherChange.subscribe(e => {

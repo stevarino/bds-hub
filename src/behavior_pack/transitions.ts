@@ -4,8 +4,10 @@
  * Overwritten during the build process by scripts/hubPack.ts
  */
 
-import { SuperActor, TransitionMap } from '../types/packTypes.js';
+import { SuperActor, SuperItemUse, TransitionMap } from '../types/packTypes.js';
 
 export const transitions: TransitionMap = {}
 
 export const actors: SuperActor[] = []
+
+export const items: SuperItemUse[] = [];

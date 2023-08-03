@@ -63,12 +63,15 @@ export class Discussion {
   respond() {
     const transition = this.history[this.history.length-1];
     if (transition === undefined) return;
+
     if (transition.action !== undefined) {
       this.respondWithAction(transition.action, transition.args ?? {});
     } else if (transition.command !== undefined) {
       this.respondWithCommand(transition.command)
     } else if (transition.scene !== undefined) {
       this.respondWithScene(transition.scene);
+    } else if (transition.menu !== undefined) {
+      this.respondWithAction('DBSH_Menu', transition.menu as unknown as types.Args)
     }
   }
 

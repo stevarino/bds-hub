@@ -18,23 +18,27 @@ import { strip } from '../functions.js';
 
 export async function createPackFiles(config: ConfigFile) {
   // assemble all the json/javascript files for the pack
-  const { actors, scenes } = parseDialogues(config);
+  const { actors, scenes, items } = parseDialogues(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
   writeBehaviorPackScenes(packScenes);
-  writeTransitionsFile(transitions, actors);
+  writeTransitionsFile(transitions, actors, items);
   await rollupPack();
 }
 
-function writeTransitionsFile(transitions: Dialogue.TransitionMap, actors: Dialogue.Actor[]) {
-  const transitionStr = JSON.stringify(transitions, undefined, 2);
-  const actorStr = JSON.stringify(actors, undefined, 2);
-  const fmt = strip(`
-    /** Automatically generated file - do not edit */
+function writeTransitionsFile(transitions: Dialogue.TransitionMap, actors: Dialogue.Actor[], items: Dialogue.ItemUse[]) {
+  write(
+    C.ADDON_TRANSITIONS, strip(`
+      /** Automatically generated file - do not edit */
 
-    export const transitions = %1;
-    
-    export const actors = %2;`);
-  write(C.ADDON_TRANSITIONS, fmt.replace('%1', transitionStr).replace('%2', actorStr));
+      export const transitions = %1;
+      
+      export const actors = %2;
+      
+      export const items = %3;
+  `).replace('%1', JSON.stringify(transitions, undefined, 2))
+    .replace('%2', JSON.stringify(actors, undefined, 2))
+    .replace('%3', JSON.stringify(items, undefined, 2))
+  );
 }
 
 /** Write the behavior pack scene file */
@@ -65,6 +69,7 @@ export function parseDialogues(config: ConfigFile) {
   const definedIds = new Set<string>();
   const scenes: Dialogue.Scene[] = [];
   const actors: Dialogue.Actor[] = [];
+  const items: Dialogue.ItemUse[] = [];
   const actorEntrys = new Set<string>();
   
   const scenes_dir = join(root, 'dist/behavior_pack/scenes');
@@ -87,6 +92,10 @@ export function parseDialogues(config: ConfigFile) {
       actors.push(actor);
       referencedIds.add(actor.scene);
       actorEntrys.add(actor.scene);
+    }
+  
+    for (const item of dialogueSet.items ?? []) {
+      items.push(item);
     }
 
     for (const scene of dialogueSet.scenes ?? []) {
@@ -117,7 +126,7 @@ export function parseDialogues(config: ConfigFile) {
 
   console.info(`Loaded ${scenes.length} scenes...`)
 
-  return { actors, scenes };
+  return { actors, scenes, items };
 }
 
 /** Construct behavior pack dialogue file */

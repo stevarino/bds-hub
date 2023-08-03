@@ -1,3 +1,6 @@
+/**
+ * Pure types (no node_module dependencies) for use in behavior pack code
+ */
 export enum Actions {
     breakBlock = 0,
     placeBlock = 1,
@@ -5,9 +8,16 @@ export enum Actions {
     hurt = 3,
     pressurePlatePush = 4,
     targetBlockHit = 5,
-    online = 6
+    online = 6,
+    use = 7
 }
 ;
+export interface Menu {
+    menu: {
+        body?: string;
+        buttons: Button[];
+    };
+}
 export enum Constants {
     weatherClear = 0,
     weatherRain = 1,
@@ -51,12 +61,28 @@ export interface ServerStatus {
     online?: string[];
 }
 ;
-export type Button = BaseButton & (ActionButton | CommandButton | SceneButton);
+interface TagSelector {
+    tag: string;
+}
+interface NameSelector {
+    name: string;
+}
+interface SelectorSelector {
+    selector: string;
+}
+;
+interface BaseActor {
+    scene: string;
+}
+;
+export type Actor = BaseActor & (TagSelector | SelectorSelector | NameSelector);
+export type SuperActor = BaseActor & Partial<TagSelector & SelectorSelector & NameSelector>;
+export type Button = BaseButton & (Action | Command | Scene | Menu);
 interface BaseButton {
     text: string;
 }
 ;
-interface ActionButton {
+interface Action {
     action: string;
     args?: Args;
 }
@@ -65,15 +91,15 @@ export interface Args {
     [key: string]: unknown;
 }
 ;
-interface CommandButton {
+interface Command {
     command: string;
 }
 ;
-interface SceneButton {
+interface Scene {
     scene: string;
 }
 ;
-export type SuperButton = Button & Partial<ActionButton & CommandButton & SceneButton>;
+export type SuperButton = Button & Partial<Action & Command & Scene & Menu>;
 ;
 export type Transition = Partial<SuperButton>;
 export type TransitionMap = {
@@ -99,3 +125,9 @@ export interface EventRequest {
     where?: Partial<Event>;
     order?: EventField[];
 }
+interface BaseItemUse {
+    requireOp?: boolean;
+}
+;
+export type ItemUse = BaseItemUse & (TagSelector | NameSelector) & (Command | Action | Menu);
+export type SuperItemUse = Partial<BaseItemUse & TagSelector & NameSelector & Command & Action & Menu>;

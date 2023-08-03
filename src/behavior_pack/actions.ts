@@ -1,7 +1,7 @@
 /**
  * Actions - Programmed dialogue acitons
  */
-import { system, EntityInventoryComponent, ItemStack } from "@minecraft/server";
+import { system, EntityInventoryComponent, ItemStack, Player } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 import { padToWidth, request } from "./lib.js";
@@ -11,8 +11,32 @@ import { strip } from "../functions.js";
 import { DELAY } from "./constants.js";
 
 Object.assign(Discussion.actions, {
-  DBSH_Time, Trader, Trader2, DBSH_Broken, DBSH_Placed,
+  DBSH_Time, Trader, Trader2, DBSH_Broken, DBSH_Placed, DBSH_Menu
 });
+
+async function getFormResponse(player: Player, form: ui.ActionFormData) {
+  return await new Promise<ui.ActionFormResponse>(res => {
+    system.runTimeout(async () => {
+      res(await form.show(player));
+    }, DELAY);
+  })
+}
+
+async function DBSH_Menu(d: Discussion, menu: types.MenuDetails) {
+  const form = new ui.ActionFormData().title(menu.title);
+  if (menu.body !== undefined) form.body(menu.body);
+  const btnActions: types.SuperButton[] = [];
+  for (const btn of menu.buttons) {
+    if (btn.requireOp === true && !d.player.isOp()) continue;
+    form.button(btn.text);
+    btnActions.push(btn);
+  }
+  const res = await getFormResponse(d.player, form);
+  if (res.selection === undefined) return;
+  const action = btnActions[res.selection]
+  if (action === undefined) return;
+  d.navigate(action);
+}
 
 async function DBSH_Time(d: Discussion) {
   let cnt = d.get('timeActions', 0) + 1;
@@ -29,14 +53,12 @@ async function DBSH_Time(d: Discussion) {
     `))
     .button('And now?')
     .button('Back.');
-  system.runTimeout(async () => {
-    const resp = await form.show(d.player);
-    if (resp.selection === 0) {
-      DBSH_Time(d);
-    } else if (resp.selection === 1) {
-      d.back();
-    }
-  }, DELAY);
+  const resp = await getFormResponse(d.player, form);
+  if (resp.selection === 0) {
+    DBSH_Time(d);
+  } else if (resp.selection === 1) {
+    d.back();
+  }
 }
 
 async function Trader(d: Discussion, args: types.Args) {
@@ -62,14 +84,12 @@ async function Trader(d: Discussion, args: types.Args) {
     `))
     .button('Get items?')
     .button('Back.');
-    system.runTimeout(async () => {
-      const resp = await form.show(d.player);
-      if (resp.selection === 0) {
-        d.navigate({action: 'Trader2'})
-      } else if (resp.selection === 1) {
-        d.back();
-      }
-    }, DELAY);
+  const res = await getFormResponse(d.player, form);
+  if (res.selection === 0) {
+    d.navigate({action: 'Trader2'})
+  } else if (res.selection === 1) {
+    d.back();
+  }
 }
 
 
@@ -96,14 +116,12 @@ async function Trader2(d: Discussion, args: types.Args) {
     .body(strip(items.join('\n\n')))
     .button('Get items?')
     .button('Back.');
-    system.runTimeout(async () => {
-      const resp = await form.show(d.player);
-      if (resp.selection === 0) {
-        d.navigate({action: 'Trader2'})
-      } else if (resp.selection === 1) {
-        d.back();
-      }
-    }, DELAY);  
+  const res = await getFormResponse(d.player, form);
+  if (res.selection === 0) {
+    d.navigate({action: 'Trader2'})
+  } else if (res.selection === 1) {
+    d.back();
+  }
 }
 
 

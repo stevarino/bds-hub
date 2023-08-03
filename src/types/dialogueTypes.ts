@@ -1,6 +1,6 @@
 import typia from "typia";
 
-import { Button, Actor } from './packTypes.js';
+import { Button, Actor, ItemUse } from './packTypes.js';
 export * from './packTypes.js';
 
 export interface Scene {
@@ -13,7 +13,8 @@ export interface Scene {
 
 export interface DialogueFile {
   actors?: Actor[],
-  scenes?: Scene[]
+  scenes?: Scene[],
+  items?: ItemUse[],
 }
 
 export const assertDialogueFile = typia.createAssert<DialogueFile>();

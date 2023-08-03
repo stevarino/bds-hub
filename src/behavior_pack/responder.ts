@@ -7,7 +7,8 @@ import { system, world, Player, MinecraftDimensionTypes as Dimensions } from "@m
 import { TAG_INIT, TAG_PENDING, TAG_PREFIX } from './constants.js';
 import { Discussion } from './discussion.js';
 import './actions.js';
-import { actors } from "./transitions.js";
+import { actors, items } from "./transitions.js";
+import { SuperItemUse } from "../types/packTypes.js";
 
 const discussions: Record<string, Discussion> = {};
 
@@ -71,5 +72,28 @@ export async function assignActors() {
     i += 1;
   }
 }
+
+world.afterEvents.itemUse.subscribe(e => {
+  let itemUsed: SuperItemUse|undefined = undefined;
+  const names = [
+    e.itemStack.nameTag,
+    e.itemStack.typeId,
+    e.itemStack.typeId.replace('minecraft:', '')
+  ];
+  for (const item of items) {
+    if (( 
+        (item.tag !== undefined && e.itemStack.hasTag(item.tag))
+        || (item.name !== undefined && names.includes(item.name))
+      ) && (
+        item.requireOp === undefined || !item.requireOp || e.source.isOp()
+    )) {
+      itemUsed = item;
+      break;
+    }
+  }
+  if (itemUsed === undefined) return;
+  discussions[e.source.name] = new Discussion(e.source);
+  discussions[e.source.name]?.navigate(itemUsed);
+})
 
 assignActors();
