@@ -29,9 +29,6 @@ export async function request<T=unknown>(
   return JSON.parse(res.body) as T;
 }
 
-
-
-
 export function padToWidth(str: string, pixels: number, char: string = ' ', padLeft: boolean=false) {
   // source: very inaccurate squinting....
   const orig = str;
@@ -56,7 +53,6 @@ export function padToWidth(str: string, pixels: number, char: string = ' ', padL
     str = padLeft ? char + str : str + char;
     i += 1;
   }
-  console.log(orig, origTotal, i, total);
   return str;
 }
 

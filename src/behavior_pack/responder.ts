@@ -6,6 +6,7 @@ import * as C from './constants.js';
 import * as types from '../types/packTypes.js';
 import { strip } from "../functions.js";
 import { padToWidth, request } from "./lib.js";
+import { O } from "../types.js";
 
 const DELAY = 10;
 const discussions: Record<string, Discussion> = {};
@@ -233,48 +234,67 @@ async function Trader2(d: Discussion, args: types.Args) {
 
 function getLines(result?: Partial<types.Event>[]) {
   const lines: string[] = [];
-  for (const row of result ?? []) {
-    const label = padToWidth((row.object ?? 'error').replace('minecraft:', '') + ' ', 146, '.');
-    const qty = padToWidth(' ' + String(row.qty), 48, '.', true)
-    lines.push(label + qty);
+  let total = 0;
+
+  function justify(row: {object?: string, qty?: number}) {
+    return (
+      padToWidth((row.object ?? 'error').replace('minecraft:', '') + ': ', 146, '.') +
+      padToWidth(' ' + String(row.qty), 48, '.', true));
   }
+
+  for (const row of result ?? []) {
+    total += row.qty ?? 0;
+    lines.push(justify(row));
+  }
+  lines.unshift(justify({object: 'Total', qty: total}));
   return lines;
 }
 
-async function DBSH_Broken(d: Discussion) {
-  const query: types.EventRequest = {
-    select: ['object', 'qty'],
-    where: {
-      entity: d.player.name,
-      action: String(types.Actions.breakBlock),
-    },
-    order: ['object'],
+
+/***************************************************************
+ * Block place/break stats
+ **************************************************************/
+type StatsQuery = {field: number, sort: 'object'|'qty', action: string, title: string};
+async function DBSH_Broken(d: Discussion, args: types.Args) {
+  const query: StatsQuery = {
+    field: types.Actions.breakBlock,
+    sort: (args.sort ?? 'object') as 'object'|'qty',
+    action: 'DBSH_Broken',
+    title: 'Blocks Broken',
   };
-  const res = await request<types.Event[]>('/events', query);
-  const form = new ui.ActionFormData()
-    .title('Broken Bocks')
-    .body(getLines(res).join('\n') + '\n')
-    .button('Sorted by block');
-  system.runTimeout(async () => {
-    const resp = await form.show(d.player);
-  }, DELAY);
+  showBlockStats(d, query);
 }
 
-async function DBSH_Placed(d: Discussion) {
+async function DBSH_Placed(d: Discussion, args: types.Args) {
+  const query: StatsQuery = {
+    field: types.Actions.placeBlock,
+    sort: (args.sort ?? 'object') as 'object'|'qty',
+    action: 'DBSH_Placed',
+    title: 'Blocks Placed',
+  };
+  showBlockStats(d, query);
+}
+
+async function showBlockStats(d: Discussion, args: StatsQuery) {
+  const label: O<string> = { object: 'block', qty: 'count' };
   const query: types.EventRequest = {
     select: ['object', 'qty'],
     where: {
       entity: d.player.name,
-      action: String(types.Actions.placeBlock),
+      action: String(args.field),
     },
-    order: ['object'],
+    order: [args.sort],
   };
   const res = await request<types.Event[]>('/events', query);
   const form = new ui.ActionFormData()
-    .title('Placed Bocks')
-    .body(getLines(res).join('\n'))
-    .button('Sorted by block');
+    .title(args.title)
+    .body(getLines(res).join('\n') + '\n')
+    .button(`Sorted by ${label[args.sort]}`);
   system.runTimeout(async () => {
     const resp = await form.show(d.player);
-  }, DELAY);  
+    if (resp.selection === 0) {
+      args.sort = args.sort == 'object' ? 'qty' : 'object';
+      d.navigate({ action: 'DBSH_Broken', args });
+    }
+  }, DELAY);
 }
