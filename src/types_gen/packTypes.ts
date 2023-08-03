@@ -91,7 +91,7 @@ export interface Event {
     action: string;
     object?: string;
     extra?: string;
-    qty: Number;
+    qty: number;
 }
 export type EventField = keyof Event;
 export interface EventRequest {

@@ -14,19 +14,27 @@ import { isScriptRun, parseArgs, readConfig, root, write } from '../lib.js';
 import { ConfigFile, Dialogue, O } from '../types.js';
 import assert from 'assert';
 import { join } from 'path';
+import { strip } from '../functions.js';
 
 export async function createPackFiles(config: ConfigFile) {
   // assemble all the json/javascript files for the pack
   const { actors, scenes } = parseDialogues(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
   writeBehaviorPackScenes(packScenes);
-  writeTransitionsFile(transitions);
+  writeTransitionsFile(transitions, actors);
   await rollupPack();
 }
 
-function writeTransitionsFile(transitions: Dialogue.TransitionMap) {
-  write(C.ADDON_TRANSITIONS, `export const transitions = ${
-    JSON.stringify(transitions, undefined, 2)}`);
+function writeTransitionsFile(transitions: Dialogue.TransitionMap, actors: Dialogue.Actor[]) {
+  const transitionStr = JSON.stringify(transitions, undefined, 2);
+  const actorStr = JSON.stringify(actors, undefined, 2);
+  const fmt = strip(`
+    /** Automatically generated file - do not edit */
+
+    export const transitions = %1;
+    
+    export const actors = %2;`);
+  write(C.ADDON_TRANSITIONS, fmt.replace('%1', transitionStr).replace('%2', actorStr));
 }
 
 /** Write the behavior pack scene file */

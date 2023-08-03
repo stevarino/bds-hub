@@ -1,19 +1,12 @@
 import typia from "typia";
 import { Button } from './packTypes.js';
 export * from './packTypes.js';
-export type Actor = BaseActor & (TagActor | SelectorActor);
-interface BaseActor {
+export type Actor = {
     scene: string;
-}
-;
-interface TagActor {
-    tag: string;
-}
-;
-interface SelectorActor {
-    selector: string;
-}
-;
+    tag?: string;
+    name?: string;
+    selector?: string;
+};
 export interface Scene {
     id: string;
     text: string;
@@ -21,6 +14,7 @@ export interface Scene {
     // internal variable - marks if the scene is an initial scene
     _entrayPoint?: boolean;
 }
+;
 export interface DialogueFile {
     actors?: Actor[];
     scenes?: Scene[];
@@ -28,12 +22,11 @@ export interface DialogueFile {
 export const assertDialogueFile = (input: any): DialogueFile => {
     const __is = (input: any): input is DialogueFile => {
         const $join = (typia.createAssert as any).join;
-        const $io0 = (input: any): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any) => "object" === typeof elem && null !== elem && $iu0(elem))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any) => "object" === typeof elem && null !== elem && $io3(elem)));
-        const $io1 = (input: any): boolean => "string" === typeof input.scene && "string" === typeof input.tag;
-        const $io2 = (input: any): boolean => "string" === typeof input.scene && "string" === typeof input.selector;
-        const $io3 = (input: any): boolean => "string" === typeof input.id && "string" === typeof input.text && (undefined === input.buttons || Array.isArray(input.buttons) && input.buttons.every((elem: any) => "object" === typeof elem && null !== elem && $iu1(elem))) && (undefined === input._entrayPoint || "boolean" === typeof input._entrayPoint);
-        const $io4 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io5(input.args));
-        const $io5 = (input: any): boolean => Object.keys(input).every((key: any) => {
+        const $io0 = (input: any): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any) => "object" === typeof elem && null !== elem && $io1(elem))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any) => "object" === typeof elem && null !== elem && $io2(elem)));
+        const $io1 = (input: any): boolean => "string" === typeof input.scene && (undefined === input.tag || "string" === typeof input.tag) && (undefined === input.name || "string" === typeof input.name) && (undefined === input.selector || "string" === typeof input.selector);
+        const $io2 = (input: any): boolean => "string" === typeof input.id && "string" === typeof input.text && (undefined === input.buttons || Array.isArray(input.buttons) && input.buttons.every((elem: any) => "object" === typeof elem && null !== elem && $iu0(elem))) && (undefined === input._entrayPoint || "boolean" === typeof input._entrayPoint);
+        const $io3 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io4(input.args));
+        const $io4 = (input: any): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
             if (undefined === value)
                 return true;
@@ -41,22 +34,15 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 return true;
             return true;
         });
-        const $io6 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.command;
-        const $io7 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.scene;
+        const $io5 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.command;
+        const $io6 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.scene;
         const $iu0 = (input: any): any => (() => {
-            if (undefined !== input.tag)
-                return $io1(input);
-            if (undefined !== input.selector)
-                return $io2(input);
-            return false;
-        })();
-        const $iu1 = (input: any): any => (() => {
             if (undefined !== input.action)
-                return $io4(input);
+                return $io3(input);
             if (undefined !== input.command)
-                return $io6(input);
+                return $io5(input);
             if (undefined !== input.scene)
-                return $io7(input);
+                return $io6(input);
             return false;
         })();
         return "object" === typeof input && null !== input && false === Array.isArray(input) && $io0(input);
@@ -71,11 +57,11 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 value: input.actors
             })) && input.actors.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
                 path: _path + ".actors[" + _index1 + "]",
-                expected: "(BaseActor & SelectorActor | BaseActor & TagActor)",
+                expected: "Actor",
                 value: elem
-            })) && $au0(elem, _path + ".actors[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao1(elem, _path + ".actors[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".actors[" + _index1 + "]",
-                expected: "(BaseActor & SelectorActor | BaseActor & TagActor)",
+                expected: "Actor",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".actors",
@@ -89,7 +75,7 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 path: _path + ".scenes[" + _index2 + "]",
                 expected: "Scene",
                 value: elem
-            })) && $ao3(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao2(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".scenes[" + _index2 + "]",
                 expected: "Scene",
                 value: elem
@@ -102,21 +88,20 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 path: _path + ".scene",
                 expected: "string",
                 value: input.scene
-            })) && ("string" === typeof input.tag || $guard(_exceptionable, {
+            })) && (undefined === input.tag || "string" === typeof input.tag || $guard(_exceptionable, {
                 path: _path + ".tag",
-                expected: "string",
+                expected: "(string | undefined)",
                 value: input.tag
-            }));
-            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.scene || $guard(_exceptionable, {
-                path: _path + ".scene",
-                expected: "string",
-                value: input.scene
-            })) && ("string" === typeof input.selector || $guard(_exceptionable, {
+            })) && (undefined === input.name || "string" === typeof input.name || $guard(_exceptionable, {
+                path: _path + ".name",
+                expected: "(string | undefined)",
+                value: input.name
+            })) && (undefined === input.selector || "string" === typeof input.selector || $guard(_exceptionable, {
                 path: _path + ".selector",
-                expected: "string",
+                expected: "(string | undefined)",
                 value: input.selector
             }));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
                 path: _path + ".id",
                 expected: "string",
                 value: input.id
@@ -132,7 +117,7 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 path: _path + ".buttons[" + _index3 + "]",
                 expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",
                 value: elem
-            })) && $au1(elem, _path + ".buttons[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $au0(elem, _path + ".buttons[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".buttons[" + _index3 + "]",
                 expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",
                 value: elem
@@ -145,7 +130,7 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 expected: "(boolean | undefined)",
                 value: input._entrayPoint
             }));
-            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -157,12 +142,12 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 path: _path + ".args",
                 expected: "(Args | undefined)",
                 value: input.args
-            })) && $ao5(input.args, _path + ".args", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao4(input.args, _path + ".args", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".args",
                 expected: "(Args | undefined)",
                 value: input.args
             }));
-            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
                 const value = input[key];
                 if (undefined === value)
                     return true;
@@ -170,7 +155,7 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                     return true;
                 return true;
             });
-            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -179,7 +164,7 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 expected: "string",
                 value: input.command
             }));
-            const $ao7 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -189,23 +174,12 @@ export const assertDialogueFile = (input: any): DialogueFile => {
                 value: input.scene
             }));
             const $au0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
-                if (undefined !== input.tag)
-                    return $ao1(input, _path, true && _exceptionable);
-                if (undefined !== input.selector)
-                    return $ao2(input, _path, true && _exceptionable);
-                return $guard(_exceptionable, {
-                    path: _path,
-                    expected: "(BaseActor & TagActor | BaseActor & SelectorActor)",
-                    value: input
-                });
-            })();
-            const $au1 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
                 if (undefined !== input.action)
-                    return $ao4(input, _path, true && _exceptionable);
+                    return $ao3(input, _path, true && _exceptionable);
                 if (undefined !== input.command)
-                    return $ao6(input, _path, true && _exceptionable);
+                    return $ao5(input, _path, true && _exceptionable);
                 if (undefined !== input.scene)
-                    return $ao7(input, _path, true && _exceptionable);
+                    return $ao6(input, _path, true && _exceptionable);
                 return $guard(_exceptionable, {
                     path: _path,
                     expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",
@@ -227,12 +201,11 @@ export const assertDialogueFile = (input: any): DialogueFile => {
 export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> => { const assert = (input: any): DialogueFile => {
     const __is = (input: any): input is DialogueFile => {
         const $join = (typia.createAssertParse as any).join;
-        const $io0 = (input: any): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any) => "object" === typeof elem && null !== elem && $iu0(elem))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any) => "object" === typeof elem && null !== elem && $io3(elem)));
-        const $io1 = (input: any): boolean => "string" === typeof input.scene && "string" === typeof input.tag;
-        const $io2 = (input: any): boolean => "string" === typeof input.scene && "string" === typeof input.selector;
-        const $io3 = (input: any): boolean => "string" === typeof input.id && "string" === typeof input.text && (undefined === input.buttons || Array.isArray(input.buttons) && input.buttons.every((elem: any) => "object" === typeof elem && null !== elem && $iu1(elem))) && (undefined === input._entrayPoint || "boolean" === typeof input._entrayPoint);
-        const $io4 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io5(input.args));
-        const $io5 = (input: any): boolean => Object.keys(input).every((key: any) => {
+        const $io0 = (input: any): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any) => "object" === typeof elem && null !== elem && $io1(elem))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any) => "object" === typeof elem && null !== elem && $io2(elem)));
+        const $io1 = (input: any): boolean => "string" === typeof input.scene && (undefined === input.tag || "string" === typeof input.tag) && (undefined === input.name || "string" === typeof input.name) && (undefined === input.selector || "string" === typeof input.selector);
+        const $io2 = (input: any): boolean => "string" === typeof input.id && "string" === typeof input.text && (undefined === input.buttons || Array.isArray(input.buttons) && input.buttons.every((elem: any) => "object" === typeof elem && null !== elem && $iu0(elem))) && (undefined === input._entrayPoint || "boolean" === typeof input._entrayPoint);
+        const $io3 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io4(input.args));
+        const $io4 = (input: any): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
             if (undefined === value)
                 return true;
@@ -240,22 +213,15 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 return true;
             return true;
         });
-        const $io6 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.command;
-        const $io7 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.scene;
+        const $io5 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.command;
+        const $io6 = (input: any): boolean => "string" === typeof input.text && "string" === typeof input.scene;
         const $iu0 = (input: any): any => (() => {
-            if (undefined !== input.tag)
-                return $io1(input);
-            if (undefined !== input.selector)
-                return $io2(input);
-            return false;
-        })();
-        const $iu1 = (input: any): any => (() => {
             if (undefined !== input.action)
-                return $io4(input);
+                return $io3(input);
             if (undefined !== input.command)
-                return $io6(input);
+                return $io5(input);
             if (undefined !== input.scene)
-                return $io7(input);
+                return $io6(input);
             return false;
         })();
         return "object" === typeof input && null !== input && false === Array.isArray(input) && $io0(input);
@@ -270,11 +236,11 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 value: input.actors
             })) && input.actors.every((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
                 path: _path + ".actors[" + _index1 + "]",
-                expected: "(BaseActor & SelectorActor | BaseActor & TagActor)",
+                expected: "Actor",
                 value: elem
-            })) && $au0(elem, _path + ".actors[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao1(elem, _path + ".actors[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".actors[" + _index1 + "]",
-                expected: "(BaseActor & SelectorActor | BaseActor & TagActor)",
+                expected: "Actor",
                 value: elem
             })) || $guard(_exceptionable, {
                 path: _path + ".actors",
@@ -288,7 +254,7 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 path: _path + ".scenes[" + _index2 + "]",
                 expected: "Scene",
                 value: elem
-            })) && $ao3(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao2(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".scenes[" + _index2 + "]",
                 expected: "Scene",
                 value: elem
@@ -301,21 +267,20 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 path: _path + ".scene",
                 expected: "string",
                 value: input.scene
-            })) && ("string" === typeof input.tag || $guard(_exceptionable, {
+            })) && (undefined === input.tag || "string" === typeof input.tag || $guard(_exceptionable, {
                 path: _path + ".tag",
-                expected: "string",
+                expected: "(string | undefined)",
                 value: input.tag
-            }));
-            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.scene || $guard(_exceptionable, {
-                path: _path + ".scene",
-                expected: "string",
-                value: input.scene
-            })) && ("string" === typeof input.selector || $guard(_exceptionable, {
+            })) && (undefined === input.name || "string" === typeof input.name || $guard(_exceptionable, {
+                path: _path + ".name",
+                expected: "(string | undefined)",
+                value: input.name
+            })) && (undefined === input.selector || "string" === typeof input.selector || $guard(_exceptionable, {
                 path: _path + ".selector",
-                expected: "string",
+                expected: "(string | undefined)",
                 value: input.selector
             }));
-            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
+            const $ao2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || $guard(_exceptionable, {
                 path: _path + ".id",
                 expected: "string",
                 value: input.id
@@ -331,7 +296,7 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 path: _path + ".buttons[" + _index3 + "]",
                 expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",
                 value: elem
-            })) && $au1(elem, _path + ".buttons[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $au0(elem, _path + ".buttons[" + _index3 + "]", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".buttons[" + _index3 + "]",
                 expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",
                 value: elem
@@ -344,7 +309,7 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 expected: "(boolean | undefined)",
                 value: input._entrayPoint
             }));
-            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -356,12 +321,12 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 path: _path + ".args",
                 expected: "(Args | undefined)",
                 value: input.args
-            })) && $ao5(input.args, _path + ".args", true && _exceptionable) || $guard(_exceptionable, {
+            })) && $ao4(input.args, _path + ".args", true && _exceptionable) || $guard(_exceptionable, {
                 path: _path + ".args",
                 expected: "(Args | undefined)",
                 value: input.args
             }));
-            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
+            const $ao4 = (input: any, _path: string, _exceptionable: boolean = true): boolean => false === _exceptionable || Object.keys(input).every((key: any) => {
                 const value = input[key];
                 if (undefined === value)
                     return true;
@@ -369,7 +334,7 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                     return true;
                 return true;
             });
-            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao5 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -378,7 +343,7 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 expected: "string",
                 value: input.command
             }));
-            const $ao7 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
+            const $ao6 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.text || $guard(_exceptionable, {
                 path: _path + ".text",
                 expected: "string",
                 value: input.text
@@ -388,23 +353,12 @@ export const parseDialogueFile = (input: string): typia.Primitive<DialogueFile> 
                 value: input.scene
             }));
             const $au0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
-                if (undefined !== input.tag)
-                    return $ao1(input, _path, true && _exceptionable);
-                if (undefined !== input.selector)
-                    return $ao2(input, _path, true && _exceptionable);
-                return $guard(_exceptionable, {
-                    path: _path,
-                    expected: "(BaseActor & TagActor | BaseActor & SelectorActor)",
-                    value: input
-                });
-            })();
-            const $au1 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
                 if (undefined !== input.action)
-                    return $ao4(input, _path, true && _exceptionable);
+                    return $ao3(input, _path, true && _exceptionable);
                 if (undefined !== input.command)
-                    return $ao6(input, _path, true && _exceptionable);
+                    return $ao5(input, _path, true && _exceptionable);
                 if (undefined !== input.scene)
-                    return $ao7(input, _path, true && _exceptionable);
+                    return $ao6(input, _path, true && _exceptionable);
                 return $guard(_exceptionable, {
                     path: _path,
                     expected: "(BaseButton & ActionButton | BaseButton & CommandButton | BaseButton & SceneButton)",

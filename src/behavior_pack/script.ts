@@ -4,7 +4,6 @@
 
 import { variables } from "@minecraft/server-admin";
 import { system, world, Entity } from "@minecraft/server";
-import * as mcnet from "@minecraft/server-net";
 
 import * as responder from './responder.js';
 import * as types from '../types/packTypes.js';

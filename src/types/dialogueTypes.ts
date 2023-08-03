@@ -1,12 +1,7 @@
 import typia from "typia";
 
-import { Button } from './packTypes.js';
+import { Button, Actor } from './packTypes.js';
 export * from './packTypes.js';
-
-export type Actor = BaseActor & ( TagActor | SelectorActor );
-interface BaseActor { scene: string };
-interface TagActor { tag: string };
-interface SelectorActor { selector: string };
 
 export interface Scene {
   id: string,

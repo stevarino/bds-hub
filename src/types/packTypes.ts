@@ -1,3 +1,7 @@
+/**
+ * Pure types (no node_module dependencies) for use in behavior pack code
+ */
+
 export enum Actions {
   breakBlock=0,
   placeBlock=1,
@@ -49,6 +53,15 @@ export interface ServerStatus {
   weather?: string,
   online?: string[],
 };
+
+
+export type Actor = BaseActor & ( TagActor | SelectorActor | NamedActor );
+interface BaseActor  { scene: string };
+interface TagActor { tag: string };
+interface NamedActor { name: string };
+interface SelectorActor { selector: string };
+export type SuperActor = BaseActor & Partial<TagActor & NamedActor & SelectorActor>;
+
 
 
 export type Button = BaseButton & ( ActionButton | CommandButton | SceneButton );
