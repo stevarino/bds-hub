@@ -34,7 +34,13 @@ async function poll() {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }
-  const body = JSON.stringify(PAYLOAD);
+  let body;
+  try {
+    body = JSON.stringify(PAYLOAD);
+  } catch {
+    console.log('Invalid payload? ', PAYLOAD);
+    return;
+  }
   PAYLOAD.entities = {};
   PAYLOAD.messages = [];
   const res = await request<types.UpdateResponse>(
