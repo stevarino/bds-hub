@@ -110,7 +110,7 @@ class Server {
 
   async findEvents(req: http.IncomingMessage, res: http.ServerResponse) {
     const query = await this.readBody<EventRequest>(req);
-    const response = JSON.stringify(await this.db.queryEvents(query));
+    const response = JSON.stringify((await this.db.queryEvents(query)) ?? []);
     res.setHeader('Content-Type', 'text/plain');
     res.write(response);
     res.end();
