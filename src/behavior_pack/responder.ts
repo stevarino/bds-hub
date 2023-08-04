@@ -2,11 +2,12 @@
  * Handles high-level dialogue stuff.
  */
 
-import { system, world, Player, MinecraftDimensionTypes as Dimensions } from "@minecraft/server";
+import { system, world, Player } from "@minecraft/server";
 
-import { TAG_INIT, TAG_PENDING, TAG_PREFIX } from './constants.js';
+import { TAG_INIT, TAG_PENDING, TAG_PREFIX, DIMENSION } from './constants.js';
 import { Discussion } from './discussion.js';
 import './actions.js';
+import './telebot.js';
 import { actors, items } from "./transitions.js";
 import { SuperItemUse } from "../types/packTypes.js";
 
@@ -18,7 +19,7 @@ export function poll() {
     // initial scene - create a fresh discussion object
     if (p.hasTag(TAG_INIT)) {
       p.removeTag(TAG_INIT);
-      discussions[p.name] = new Discussion(p, getTag(p));
+      discussions[p.name] = new Discussion(p, getTag(p, false));
     }
     // a request from the user, waiting for a response
     if (p.hasTag(TAG_PENDING)) {
@@ -34,7 +35,7 @@ export function poll() {
 }
 
 /** Searches for the singular(?) tag from a scene  */
-function getTag(p: Player) {
+function getTag(p: Player, alert: boolean=true) {
   const tags = [];
   for (const t of p.getTags()) {
     if (t.startsWith(TAG_PREFIX)) {
@@ -44,12 +45,13 @@ function getTag(p: Player) {
   }
   if (tags.length !== 1) {
     // if != 1, something broke, let the player try again
-    console.warn(`Unexpected found tag result: ${JSON.stringify(tags)}`);
+    if (alert) console.warn(`Unexpected found tag result: ${JSON.stringify(tags)}`);
     return undefined;
   }
   return tags[0];
 }
 
+Object.assign(Discussion.actions, {AssignActors: assignActors});
 export async function assignActors() {
   let i = 0;
   for (const actor of actors) {
@@ -59,16 +61,14 @@ export async function assignActors() {
     if (actor.name !== undefined) selector = `name="${actor.name}"`;
     if (actor.selector !== undefined) selector = `"${actor.selector}"`;
     if (selector == undefined) continue;
-    for (const dimension of [Dimensions.overworld, Dimensions.nether, Dimensions.theEnd]) {
+    for (const dimension of Object.keys(DIMENSION)) {
       const dim = world.getDimension(dimension);
       await new Promise<void>(async (res) => {
-        const result = await dim.runCommandAsync(
-          `dialogue change @e[type=minecraft:npc,${selector}] ${actor.scene}`);
+        const result = await dim.runCommandAsync(`dialogue change @e[type=minecraft:npc,${selector}] ${TAG_PREFIX}_${actor.scene}`);
         count += result.successCount;
         res();
       });
     }
-    console.info(`Actor [${i}]: ${count} entities assigned`);
     i += 1;
   }
 }

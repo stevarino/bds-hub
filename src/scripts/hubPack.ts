@@ -10,35 +10,49 @@ import yaml from 'yaml';
 
 import { rollup } from 'rollup';
 import * as C from '../constants.js';
-import { isScriptRun, parseArgs, readConfig, root, write } from '../lib.js';
-import { ConfigFile, Dialogue, O } from '../types.js';
+import { getFiles, isScriptRun, parseArgs, readConfig, root, write } from '../lib.js';
+import { ConfigFile, Dialogue, MenuDetails, MenuRef, O } from '../types.js';
 import assert from 'assert';
 import { join } from 'path';
 import { strip } from '../functions.js';
 
 export async function createPackFiles(config: ConfigFile) {
   // assemble all the json/javascript files for the pack
-  const { actors, scenes, items } = parseDialogues(config);
+  const { actors, scenes, items, menus } = await parseDialogueFiles(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
   writeBehaviorPackScenes(packScenes);
-  writeTransitionsFile(transitions, actors, items);
+  writeTransitionsFile(transitions, actors, items, menus);
   await rollupPack();
 }
 
-function writeTransitionsFile(transitions: Dialogue.TransitionMap, actors: Dialogue.Actor[], items: Dialogue.ItemUse[]) {
-  write(
-    C.ADDON_TRANSITIONS, strip(`
+function writeTransitionsFile(
+    transitions: Dialogue.TransitionMap,
+    actors: Dialogue.Actor[],
+    items: Dialogue.ItemUse[],
+    menus: {[ref: string]: MenuDetails},
+) {
+  const template = strip(`
       /** Automatically generated file - do not edit */
 
-      export const transitions = %1;
+      export const transitions = %;
       
-      export const actors = %2;
+      export const actors = %;
       
-      export const items = %3;
-  `).replace('%1', JSON.stringify(transitions, undefined, 2))
-    .replace('%2', JSON.stringify(actors, undefined, 2))
-    .replace('%3', JSON.stringify(items, undefined, 2))
-  );
+      export const items = %;
+      
+      export const menus = %;
+  `).split('%');
+  const inputs = [
+    JSON.stringify(transitions, undefined, 2),
+    JSON.stringify(actors, undefined, 2),
+    JSON.stringify(items, undefined, 2),
+    JSON.stringify(menus, undefined, 2),
+  ];
+  const output = [];
+  for (let i=0; i<template.length; i++) {
+    output.push(template[i], inputs[i] ?? '');
+  }
+  write(C.ADDON_TRANSITIONS, output.join(''));
 }
 
 /** Write the behavior pack scene file */
@@ -64,16 +78,19 @@ async function rollupPack() {
 
 
 /** Parse and validate dialogue files */
-export function parseDialogues(config: ConfigFile) {
+export async function parseDialogueFiles(config: ConfigFile) {
   const referencedIds = new Set<string>();
   const definedIds = new Set<string>();
   const scenes: Dialogue.Scene[] = [];
   const actors: Dialogue.Actor[] = [];
   const items: Dialogue.ItemUse[] = [];
   const actorEntrys = new Set<string>();
+  const menus: Dialogue.MenuMap = {}
+  const menuRefs: MenuRef[] = []
   
   const scenes_dir = join(root, 'dist/behavior_pack/scenes');
-  const globalScenes = readdirSync(scenes_dir).map(f => join(scenes_dir, f));
+  
+  const globalScenes = await getFiles(scenes_dir);
 
   for (const df of [...globalScenes, ...(config.dialogues ?? [])]) {
     console.info(`Parsing ${df}`);
@@ -97,6 +114,10 @@ export function parseDialogues(config: ConfigFile) {
     for (const item of dialogueSet.items ?? []) {
       items.push(item);
     }
+  
+    for (const [ref, menu] of Object.entries(dialogueSet.menus ?? {})) {
+      menus[ref] = menu;
+    }
 
     for (const scene of dialogueSet.scenes ?? []) {
       assert(!definedIds.has(scene.id),
@@ -119,14 +140,12 @@ export function parseDialogues(config: ConfigFile) {
         missing.push(id);
       }
     }
-    assert(
-      missing.length === 0, 
-      `Missing scenes: ${JSON.stringify(missing)}`);
+    assert(missing.length === 0,  `Missing scenes: ${JSON.stringify(missing)}`);
   }
 
   console.info(`Loaded ${scenes.length} scenes...`)
 
-  return { actors, scenes, items };
+  return { actors, scenes, items, menus };
 }
 
 /** Construct behavior pack dialogue file */
@@ -151,8 +170,8 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Scene[
       const btnId = `${C.TAG_PREFIX}_${md5sum(button)}`;
       assert(transitions[btnId] === undefined, 'Bad build (!?!)');
 
-      const transition: Dialogue.Transition = Object.assign(
-        {}, button);
+      const transition: Dialogue.Transition = Object.assign({}, button);
+      //@ts-ignore -- text exists on button
       delete transition.text;
       transitions[btnId] = transition;
 

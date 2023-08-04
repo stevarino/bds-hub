@@ -1,6 +1,7 @@
 /**
  * Pure types (no node_module dependencies) for use in behavior pack code
  */
+/** Enum for tracked actions */
 export enum Actions {
     breakBlock = 0,
     placeBlock = 1,
@@ -12,18 +13,14 @@ export enum Actions {
     use = 7
 }
 ;
-export interface Menu {
-    menu: {
-        body?: string;
-        buttons: Button[];
-    };
-}
+/** Enum for Weather (and other things?) */
 export enum Constants {
     weatherClear = 0,
     weatherRain = 1,
     weatherLightning = 2
 }
 ;
+/** A polled update sent to the Hub Server */
 export interface Update {
     time: number;
     weather: number;
@@ -33,34 +30,125 @@ export interface Update {
     messages: string[];
 }
 ;
+/** Entity position */
 export type PositionTuple = [
     dimension: string,
     x: number,
     y: number,
     z: number
 ];
+/** Position and events for a given player */
 export interface EntityUpdate {
     pos?: PositionTuple;
     events: EntityEvent[];
 }
 ;
-export interface EntityEvent {
+type Entity = {
+    entity: string;
+};
+type ActionRef = {
     action: Actions;
-    qty?: number;
+};
+type ActionStr = {
+    action: string;
+};
+type EventDetails = {
     object?: string;
     extra?: string;
+    qty?: number;
+};
+/** What happened by or to a given player */
+export type EntityEvent = ActionRef & EventDetails;
+export type Event = Entity & ActionStr & EventDetails;
+export type EventField = keyof Event;
+export interface EventRequest {
+    select?: EventField[];
+    where?: Partial<Event>;
+    order?: EventField[];
 }
-;
+/** Response from the server */
 export interface UpdateResponse {
+    /** Incoming Discord messsages to display */
     messages: string[];
 }
 ;
+/** Generic Server Status output by /status */
 export interface ServerStatus {
     time?: number;
     weather?: string;
     online?: string[];
 }
 ;
+/*******************************************************************************
+ * Interface types (menus, dialogues, forms, etc)
+*******************************************************************************/
+/** Optional, if response requires OP priveleges */
+type requireOp = {
+    requireOp?: boolean;
+};
+/** Pack-side function */
+export interface Action {
+    action: string;
+    args?: Args;
+}
+;
+export interface Args {
+    [key: string]: unknown;
+}
+;
+/** Minecraft command */
+export interface Command {
+    command: string;
+}
+;
+/** Minecraft dialogue entry */
+export interface Scene {
+    scene: string;
+}
+;
+export interface GiveArgs {
+    item: string;
+    qty?: number;
+    tags?: string[];
+    nameTag?: string;
+    lore?: [
+        string
+    ] | [
+        string,
+        string
+    ] | [
+        string,
+        string,
+        string
+    ];
+}
+/** Describes a menu to open up */
+export interface Menu {
+    menu: MenuDetails;
+}
+;
+export interface MenuDetails {
+    title: string;
+    body?: string;
+    /**
+     * @minItems 1
+     * @maxItems 6
+     */
+    buttons: Button[];
+}
+;
+export interface MenuRef {
+    menuRef: string;
+}
+export type MenuMap = {
+    [menu_ref: string]: MenuDetails;
+};
+export interface IsOp {
+    ifIsOp: {
+        then: Transition;
+        else: Transition;
+    };
+}
 interface TagSelector {
     tag: string;
 }
@@ -71,63 +159,26 @@ interface SelectorSelector {
     selector: string;
 }
 ;
-interface BaseActor {
-    scene: string;
-}
-;
-export type Actor = BaseActor & (TagSelector | SelectorSelector | NameSelector);
-export type SuperActor = BaseActor & Partial<TagSelector & SelectorSelector & NameSelector>;
-export type Button = BaseButton & (Action | Command | Scene | Menu);
-interface BaseButton {
-    text: string;
-}
-;
-interface Action {
-    action: string;
-    args?: Args;
-}
-;
-export interface Args {
-    [key: string]: unknown;
-}
-;
-interface Command {
-    command: string;
-}
-;
-interface Scene {
-    scene: string;
-}
-;
-export type SuperButton = Button & Partial<Action & Command & Scene & Menu>;
-;
-export type Transition = Partial<SuperButton>;
+/** A dialogue response */
+export type BaseTransition = Scene | Action | Command | Menu | MenuRef | IsOp;
+export type Transition = Partial<Scene & Action & Command & Menu & MenuRef & IsOp>;
 export type TransitionMap = {
     [key: string]: Transition;
 };
+export type Actor = {
+    scene: string;
+} & (TagSelector | SelectorSelector | NameSelector);
+export type SuperActor = Actor & Partial<TagSelector & SelectorSelector & NameSelector>;
+export type Button = {
+    text: string;
+} & requireOp & BaseTransition;
+export type SuperButton = Button & Transition;
 export interface Trader {
     trades: {
+        gives: string;
         accepts: string[];
-        gives: string[];
         ratio?: number;
     }[];
 }
-export interface Event {
-    entity: string;
-    action: string;
-    object?: string;
-    extra?: string;
-    qty: number;
-}
-export type EventField = keyof Event;
-export interface EventRequest {
-    select?: EventField[];
-    where?: Partial<Event>;
-    order?: EventField[];
-}
-interface BaseItemUse {
-    requireOp?: boolean;
-}
-;
-export type ItemUse = BaseItemUse & (TagSelector | NameSelector) & (Command | Action | Menu);
-export type SuperItemUse = Partial<BaseItemUse & TagSelector & NameSelector & Command & Action & Menu>;
+export type ItemUse = requireOp & (TagSelector | NameSelector) & BaseTransition;
+export type SuperItemUse = Partial<requireOp & TagSelector & NameSelector & Transition>;

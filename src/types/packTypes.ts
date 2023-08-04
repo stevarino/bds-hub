@@ -86,34 +86,57 @@ export interface ServerStatus {
 type requireOp = { requireOp?: boolean }
 
 /** Pack-side function */
-interface Action { action: string, args?: Args };
+export interface Action { action: string, args?: Args };
+export interface Args {[key: string]: unknown};
 /** Minecraft command */
-interface Command { command: string };
+export interface Command { command: string };
 /** Minecraft dialogue entry */
-interface Scene { scene: string };
+export interface Scene { scene: string };
+
+export interface GiveArgs {
+  item: string,
+  qty?: number,
+  tags?: string[],
+  nameTag?: string,
+  lore?: [string] | [string, string] | [string, string, string],
+  enchantments?: {[enchantmentId: string]: number},
+}
 
 /** Describes a menu to open up */
 export interface Menu { menu: MenuDetails };
 export interface MenuDetails {
   title: string,
   body?: string,
+  /**
+   * @minItems 1
+   * @maxItems 6
+   */
   buttons: Button[],
 };
+
+export interface MenuRef { menuRef: string }
+export type MenuMap = {[menu_ref: string]: MenuDetails};
+
+export interface IsOp {
+  ifIsOp: {
+    then: Transition,
+    else: Transition,
+  }
+}
 
 interface TagSelector { tag: string }
 interface NameSelector { name: string }
 interface SelectorSelector { selector: string };
 
 /** A dialogue response */
-type BaseTransition = Action | Command | Scene | Menu;
-export type Transition = Partial< Action & Command & Scene & Menu >;
+export type BaseTransition = Scene | Action | Command | Menu | MenuRef | IsOp;
+export type Transition = Partial< Scene & Action & Command & Menu & MenuRef & IsOp >;
 export type TransitionMap = {[key: string]: Transition};
 
 export type Actor = { scene: string } & ( TagSelector | SelectorSelector | NameSelector );
 export type SuperActor = Actor & Partial< TagSelector & SelectorSelector & NameSelector >;
 
-export type Button = { text: string } & requireOp & ( BaseTransition );
-export interface Args {[key: string]: unknown};
+export type Button = { text: string } & requireOp &  BaseTransition;
 export type SuperButton = Button & Transition;
 
 export interface Trader {
@@ -124,5 +147,5 @@ export interface Trader {
   }[],
 }
 
-export type ItemUse = requireOp & (TagSelector | NameSelector) & (Command | Action | Menu);
-export type SuperItemUse = Partial<requireOp & TagSelector & NameSelector & Command & Action & Menu>;
+export type ItemUse = requireOp & (TagSelector | NameSelector) & BaseTransition;
+export type SuperItemUse = Partial<requireOp & TagSelector & NameSelector & Transition>;

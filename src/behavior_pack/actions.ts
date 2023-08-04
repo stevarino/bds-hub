@@ -1,28 +1,21 @@
 /**
  * Actions - Programmed dialogue acitons
  */
-import { system, EntityInventoryComponent, ItemStack, Player } from "@minecraft/server";
+import { Enchantment, EntityInventoryComponent, ItemEnchantsComponent, ItemStack, world } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
-import { padToWidth, request } from "./lib.js";
+import { getEntityTags, getFormResponse, padToWidth, request } from "./lib.js";
 import * as types from '../types/packTypes.js';
 import { Discussion } from "./discussion.js";
 import { strip } from "../functions.js";
-import { DELAY } from "./constants.js";
+import { DIMENSION, ID_TAG, TELEBOT_TAG } from "./constants.js";
 
 Object.assign(Discussion.actions, {
-  DBSH_Time, Trader, Trader2, DBSH_Broken, DBSH_Placed, DBSH_Menu
+  Time, InventoryInspect, BlocksBroken, BlocksPlaced, Menu, Teleport, Give
 });
 
-async function getFormResponse(player: Player, form: ui.ActionFormData) {
-  return await new Promise<ui.ActionFormResponse>(res => {
-    system.runTimeout(async () => {
-      res(await form.show(player));
-    }, DELAY);
-  })
-}
-
-async function DBSH_Menu(d: Discussion, menu: types.MenuDetails) {
+async function Menu(d: Discussion, menu: types.MenuDetails) {
+  console.log(`OP: ${d.player.name} ${d.player.isOp()}`);
   const form = new ui.ActionFormData().title(menu.title);
   if (menu.body !== undefined) form.body(menu.body);
   const btnActions: types.SuperButton[] = [];
@@ -38,7 +31,7 @@ async function DBSH_Menu(d: Discussion, menu: types.MenuDetails) {
   d.navigate(action);
 }
 
-async function DBSH_Time(d: Discussion) {
+async function Time(d: Discussion) {
   let cnt = d.get('timeActions', 0) + 1;
   d.set('timeActions', cnt);
   const form = new ui.ActionFormData()
@@ -47,53 +40,19 @@ async function DBSH_Time(d: Discussion) {
       The current time is ${new Date().toString()}.
 
       You have asked me ${cnt} times.
-
-      ${d.player.getComponents().map(c => c.typeId).join('\n')}
       ---
     `))
     .button('And now?')
     .button('Back.');
   const resp = await getFormResponse(d.player, form);
   if (resp.selection === 0) {
-    DBSH_Time(d);
+    Time(d);
   } else if (resp.selection === 1) {
     d.back();
   }
 }
 
-async function Trader(d: Discussion, args: types.Args) {
-  // if (!Array.isArray(args.types)) {
-  //   return console.error(`Missing types for Trade: ${JSON.stringify(args)}`);
-  // }
-
-  const component = d.player.getComponent('minecraft:inventory') as EntityInventoryComponent|undefined;
-  if (component === undefined) {
-    return console.error('Failed to fetch inventory!?!');
-  }
-
-  const form = new ui.ActionFormData()
-    .title('Time o\'clock!')
-    .body(strip(`
-      containerType: ${component.containerType}
-      invenorySize: ${component.inventorySize}
-      private: ${component.private}
-      restrictToOwner: ${component.restrictToOwner}
-
-      emptySlotsCount: ${component.container.emptySlotsCount}
-      size: ${component.container.size}
-    `))
-    .button('Get items?')
-    .button('Back.');
-  const res = await getFormResponse(d.player, form);
-  if (res.selection === 0) {
-    d.navigate({action: 'Trader2'})
-  } else if (res.selection === 1) {
-    d.back();
-  }
-}
-
-
-async function Trader2(d: Discussion, args: types.Args) {
+async function InventoryInspect(d: Discussion) {
   const component = d.player.getComponent('minecraft:inventory') as EntityInventoryComponent|undefined;
   if (component === undefined) {
     return console.error('Failed to fetch inventory!?!');
@@ -104,23 +63,72 @@ async function Trader2(d: Discussion, args: types.Args) {
   const items: string[] = [];
   for (let i=0; i<component.inventorySize; i++) {
     const item = component.container.getItem(i);
-    items.push(`${i}: ${item?.typeId} (${item?.nameTag}) ${item?.amount} ${JSON.stringify(item?.getTags())} ${
-      item?.getComponents().map(c => c.typeId).join(';')
-    }  {${
-      //@ts-ignore
-      item?.isStackableWith(test)}}`);
+    if (item === undefined) {
+      JSON.stringify({index: i, type: undefined});
+      continue;
+    }
+    const enchantments = item.getComponent('minecraft:enchantments') as ItemEnchantsComponent|undefined;
+    const enchantmentList: {[key: string]: number} = {};
+    if (enchantments !== undefined) {
+      for (const e of enchantments.enchantments) {
+        enchantmentList[e.type.id] = e.level;
+      }
+    }
+    items.push(JSON.stringify({
+      index: i,
+      type: item.typeId,
+      nameTag: item?.nameTag,
+      amount: item?.amount,
+      tags: item?.getTags(),
+      components: item?.getComponents().map(c => c.typeId),
+      stackableTest: item?.isStackableWith(test),
+      enchantments: enchantmentList,
+    }, undefined, 2));
+  }
+  await getFormResponse(d.player, new ui.ActionFormData()
+    .title('Inventory Inspector')
+    .body(strip(items.join('\n\n')))
+    .button('Thanks!'));
+}
+
+/** 
+ * (Op function) Displays a menu of teleport targets (players/npc's) and teleports the
+ * player to the selected target.
+*/
+async function Teleport(d: Discussion, args: types.Args) {
+  const targets = [];
+  const form = new ui.ActionFormData().title('Teleport to:');
+  for (const p of world.getAllPlayers()) {
+    targets.push(`"${p.name}"`);
+    form.button(`Player: ${p.name}`);
   }
 
-  const form = new ui.ActionFormData()
-    .title('Time o\'clock!')
-    .body(strip(items.join('\n\n')))
-    .button('Get items?')
-    .button('Back.');
+  for (const dimension of Object.values(DIMENSION)) {
+    const dim = world.getDimension(dimension);
+    for (const bot of dim.getEntities({type: 'minecraft:npc', tags: [TELEBOT_TAG]})) {
+      const tags = getEntityTags(bot);
+      if (tags[ID_TAG] !== undefined) {
+        targets.push(`@e[tag="${tags[ID_TAG][0]}"]`);
+        form.button(`Bot: ${bot.nameTag}`);
+      }
+    }
+  }
+
   const res = await getFormResponse(d.player, form);
-  if (res.selection === 0) {
-    d.navigate({action: 'Trader2'})
-  } else if (res.selection === 1) {
-    d.back();
+  if (res.selection === undefined) return;
+  d.player.dimension.runCommand(`teleport "${d.player.name}" ${targets[res.selection]}`)
+}
+
+async function Give(d: Discussion, args: types.GiveArgs) {
+  const stack = new ItemStack(args.item, args.qty ?? 1);
+  if (args.lore !== undefined) stack.setLore(args.lore);
+  if (args.nameTag !== undefined) stack.nameTag = args.nameTag;
+  const entity = d.player.dimension.spawnItem(stack, d.player.location);
+  for (const tag of args.tags ?? []) {
+    entity.addTag(tag);
+  }
+  for (const [enchantment, level] of Object.entries(args.enchantments ?? {})) {
+    new Enchantment(enchantment, level)
   }
 }
 
@@ -148,7 +156,7 @@ function getLines(result?: Partial<types.Event>[]) {
   return lines;
 }
 
-async function DBSH_Broken(d: Discussion, args: types.Args) {
+async function BlocksBroken(d: Discussion, args: types.Args) {
   const query: StatsQuery = {
     field: types.Actions.breakBlock,
     sort: (args.sort ?? 'object') as 'object'|'qty',
@@ -158,7 +166,7 @@ async function DBSH_Broken(d: Discussion, args: types.Args) {
   showBlockStats(d, query);
 }
 
-async function DBSH_Placed(d: Discussion, args: types.Args) {
+async function BlocksPlaced(d: Discussion, args: types.Args) {
   const query: StatsQuery = {
     field: types.Actions.placeBlock,
     sort: (args.sort ?? 'object') as 'object'|'qty',
@@ -183,11 +191,9 @@ async function showBlockStats(d: Discussion, args: StatsQuery) {
     .title(args.title)
     .body(getLines(res).join('\n') + '\n')
     .button(`Sorted by ${label[args.sort]}`);
-  system.runTimeout(async () => {
-    const resp = await form.show(d.player);
-    if (resp.selection === 0) {
-      args.sort = args.sort == 'object' ? 'qty' : 'object';
-      d.navigate({ action: 'DBSH_Broken', args });
-    }
-  }, DELAY);
+  const resp = await getFormResponse(d.player, form);
+  if (resp.selection === 0) {
+    args.sort = args.sort == 'object' ? 'qty' : 'object';
+    showBlockStats(d, args);
+  }
 }
