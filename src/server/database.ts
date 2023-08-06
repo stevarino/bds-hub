@@ -3,9 +3,9 @@ import { join } from 'node:path';
 import sqlite3 from 'sqlite3'
 import { open, Database } from 'sqlite'
 
-import { Actions, EntityEvent, PositionTuple, O } from '../types.js';
-import { root } from '../lib.js';
-import { Event, EventField, EventRequest } from '../types/packTypes.js';
+import { Dialogue, O } from '../types.js';
+import { root } from '../scripts/lib.js';
+import { Event, EventField, EventRequest } from '../behavior_pack/src/types/packTypes.js';
 
 
 type StringLookup = {id: number, value: string};
@@ -80,7 +80,7 @@ export class DBHandle {
     return result;
   }
   
-  async addEvent(entity: string, event: EntityEvent) {
+  async addEvent(entity: string, event: Dialogue.PlayerEvent) {
     const params = await this.stringsToIds({
       entity, object: event.object, extra: event.extra
     });
@@ -93,7 +93,7 @@ export class DBHandle {
     `, this.formatParams(params));
   }
   
-  async addPosition(ts: number, player: string, position: PositionTuple) {
+  async addPosition(ts: number, player: string, position: Dialogue.PositionTuple) {
     const [dimension, x, y, z] = position;
     const params = await this.stringsToIds({player, dimension});
     Object.assign(params, {x, y, z, ts});
@@ -123,7 +123,7 @@ export class DBHandle {
       results.push(record);
       for (const [k, v] of Object.entries(value)) {
         if (k === 'action') {
-          record.action = Actions[v];
+          record.action = Dialogue.Actions[v];
         } else if (k === 'qty') {
           record.qty = v;
         } else {
@@ -151,5 +151,20 @@ export class DBHandle {
     });
 
     return results;
+  }
+
+  async setKey(key: string, value: string) {
+    await this.db.run(`
+      INSERT INTO KeyValue (key, value)
+      VALUES (:key, :value)
+      ON CONFLICT DO UPDATE SET value = :value;
+    `, this.formatParams({ key, value }));
+  }
+
+  async getKey(key: string) {
+    const result = await this.db.get<{value: string}>(
+      'SELECT value FROM KeyValue WHERE key = :key;', this.formatParams({key}
+    ));
+    return result?.value;
   }
 }

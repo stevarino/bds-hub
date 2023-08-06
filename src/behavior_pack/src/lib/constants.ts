@@ -1,5 +1,3 @@
-import { MinecraftDimensionTypes } from "@minecraft/server";
-
 export const TAG_PREFIX = 'BDSH_';
 export const TAG_PENDING = `${TAG_PREFIX}_PENDING`;
 export const TAG_INIT = `${TAG_PREFIX}_INIT`;
@@ -15,3 +13,4 @@ export enum DIMENSION {
 export const TELEBOT_TAG = 'DBSH_TeleBot';
 export const ID_TAG = 'DBSH_ID';
 export const OWNER_TAG = 'DBSH_OWNER';
+export const SEP = '___';

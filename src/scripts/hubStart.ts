@@ -4,7 +4,7 @@
  */
 
 import { getServer } from '../server/server.js';
-import { readConfig, parseArgs, isScriptRun } from '../lib.js';
+import { readConfig, parseArgs, isScriptRun } from './lib.js';
 
 
 if (isScriptRun('hubStart')) {

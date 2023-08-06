@@ -14,7 +14,6 @@ Runs a companion server for a BDS server. This add-on and companion server offer
    - damage to/from players
  - Player location over time
  - Planned features:
-   - Ways to see all this information...
    - Achievements
    - Leadership boards
    - Pieces of Flair
@@ -93,3 +92,6 @@ npx hubStart --config=my_config.yaml
 // start your minecraft world
 ```
 
+## Custom Dialogues and Menus
+
+A key part of 

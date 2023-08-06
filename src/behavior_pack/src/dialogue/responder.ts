@@ -4,17 +4,20 @@
 
 import { system, world, Player } from "@minecraft/server";
 
-import { TAG_INIT, TAG_PENDING, TAG_PREFIX, DIMENSION } from './constants.js';
+import { TAG_INIT, TAG_PENDING, TAG_PREFIX, DIMENSION } from '../lib/constants.js';
+import * as lib from '../lib.js'
 import { Discussion } from './discussion.js';
 import './actions.js';
-import './telebot.js';
-import { actors, items } from "./transitions.js";
+import '../bots.js';
+import { script } from "./script.js";
 import { SuperItemUse } from "../types/packTypes.js";
+
+lib.StartupEvent.addListener(checkPlayersForEvents);
 
 const discussions: Record<string, Discussion> = {};
 
-export function poll() {
-  system.runTimeout(poll, 5);
+export function checkPlayersForEvents() {
+  system.runTimeout(checkPlayersForEvents, 10);
   for (const p of world.getAllPlayers()) {
     // initial scene - create a fresh discussion object
     if (p.hasTag(TAG_INIT)) {
@@ -54,7 +57,7 @@ function getTag(p: Player, alert: boolean=true) {
 Object.assign(Discussion.actions, {AssignActors: assignActors});
 export async function assignActors() {
   let i = 0;
-  for (const actor of actors) {
+  for (const actor of script.actors) {
     let count = 0;
     let selector: string|undefined = undefined;
     if (actor.tag !== undefined) selector = `tag="${actor.tag}"`;
@@ -80,12 +83,20 @@ world.afterEvents.itemUse.subscribe(e => {
     e.itemStack.typeId,
     e.itemStack.typeId.replace('minecraft:', '')
   ];
-  for (const item of items) {
+  for (const item of script.items) {
+    let loreSet = false;
+    if (item.lore !== undefined) {
+      const itemLore = e.itemStack.getLore();
+      for (let i=0; i<item.lore.length; i++) {
+        if (item.lore[i] !== undefined && itemLore[i] === item.lore[i]) {
+          loreSet = true;
+        }
+      }
+    }
     if (( 
-        (item.tag !== undefined && e.itemStack.hasTag(item.tag))
-        || (item.name !== undefined && names.includes(item.name))
+        (item.name !== undefined && names.includes(item.name)) || loreSet
       ) && (
-        item.requireOp === undefined || !item.requireOp || e.source.isOp()
+        item.require_tag === undefined || e.source.hasTag(item.require_tag)
     )) {
       itemUsed = item;
       break;
@@ -94,6 +105,17 @@ world.afterEvents.itemUse.subscribe(e => {
   if (itemUsed === undefined) return;
   discussions[e.source.name] = new Discussion(e.source);
   discussions[e.source.name]?.navigate(itemUsed);
+});
+
+world.afterEvents.chatSend.subscribe(e => {
+  for (const chat of script.chats) {
+    if (chat.require_tag === undefined || e.sender.hasTag(chat.require_tag)) {
+      if (chat.equals === e.message) {
+        discussions[e.sender.name] = new Discussion(e.sender);
+        discussions[e.sender.name]?.handleTransition(chat)
+      }
+    }
+  }
 })
 
 assignActors();

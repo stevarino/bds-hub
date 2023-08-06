@@ -8,22 +8,24 @@ scenes:
     - text: Placed blocks
       action: DBSH_Placed
 - id: DBSH_TeleBotGreeting
+  npc_name: TeleBot
   text: Beep boop where would you like to go?
   buttons:
    - text: Let's go!
-     action: DBSH_TeleBot
+     action: TeleBotTravel
 actors:
   - scene: DBSH_TeleBotGreeting
-    tag: DBSH_TeleBot
-menus:
+    tag: BDSH__BotType___TeleBot
+actions:
   admin_menu:
-    title: Admin Menu
-    buttons:
-    - text: Creative Mode
-      command: gamemode c @p
-    - text: Survival Mode
-      command: gamemode s @p
-    - text: Teleport To
-      action: Teleport
-    - text: Create TeleBot
-      action: CreateTeleBot
+    menu:
+      title: Admin Menu
+      buttons:
+      - text: Creative Mode
+        command: gamemode c @p
+      - text: Survival Mode
+        command: gamemode s @p
+      - text: Teleport To
+        action: Teleport
+      - text: Create TeleBot
+        action: CreateTeleBot

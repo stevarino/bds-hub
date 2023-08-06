@@ -2,15 +2,22 @@
  * Entry point for script
  */
 
-
-import { variables } from "@minecraft/server-admin";
 import { system, world, Entity } from "@minecraft/server";
 
-import * as responder from './responder.js';
-import * as types from '../types/packTypes.js';
-import { request } from "./lib.js";
+import { StartupEvent, request, setup, timeout, HOST, STATE } from "./lib.js";
+import  './dialogue/responder.js';
+import * as types from './types/packTypes.js';
 
-responder.poll();
+(async function start() {
+  await timeout(10);
+  await setup();
+  StartupEvent.emit(null);
+  if (HOST !== undefined) {
+    poll();
+  } else {
+    throw new Error('Missing variable "host" - did you run the install script?');
+  }  
+})()
 
 const playerIdToName = new Map<string, string>();
 const playerNameToId = new Map<string, string>();
@@ -24,8 +31,6 @@ const PAYLOAD: types.Update = {
   messages: [],
 };
 
-const HOST = variables.get('host');
-
 async function poll() {
   system.runTimeout(poll, ticksPerPoll);
   ticksPerPoll = Math.min(1.2 * ticksPerPoll, 20 * 60 * 5);
@@ -38,14 +43,18 @@ async function poll() {
   try {
     body = JSON.stringify(PAYLOAD);
   } catch {
-    console.log('Invalid payload? ', PAYLOAD);
+    console.error(`Invalid payload? ${body}}`);
     return;
   }
   PAYLOAD.entities = {};
   PAYLOAD.messages = [];
-  const res = await request<types.UpdateResponse>(
-    '/update', body, {'Content-Type': 'application/json'});
-
+  let res;
+  try {
+    res = await request<types.UpdateResponse>('/update', body);
+  } catch(e) {
+    console.error('Failed to poll: ', e);
+    return;
+  }
   if (res === undefined) {  // 2147954429 on error?
     console.error(`Unable to contact ${HOST}, sleeping for ${(Math.round(10 * ticksPerPoll / 20) / 10)}s`);
     return;
@@ -54,12 +63,6 @@ async function poll() {
   for (const msg of res.messages) {
     world.sendMessage(msg);
   }
-}
-
-if (variables.names.includes('host')) {
-  poll();
-} else {
-  throw new Error('Missing variable "host" - did you run the install script?');
 }
 
 function getEntityName(entity: Entity) {
@@ -81,7 +84,7 @@ function getPlayerUpdate(name: string) {
 }
 
 /** Adds a particular entity event */
-function addEntityEvent(name: string, event: types.EntityEvent) {
+function addEntityEvent(name: string, event: types.PlayerEvent) {
   const update = getPlayerUpdate(name);
   for (const e of update.events) {
     if (e.action === event.action && e.extra === event.extra && e.object === event.extra) {
@@ -94,6 +97,7 @@ function addEntityEvent(name: string, event: types.EntityEvent) {
 
 // update player cache
 world.afterEvents.playerSpawn.subscribe(e => {
+  STATE.addPlayers([e.player.name]);
   playerIdToName.set(e.player.id, e.player.name);
   playerNameToId.set(e.player.name, e.player.id);
   if (!playerStartTime.has(e.player.name)) {
@@ -139,7 +143,7 @@ world.afterEvents.entityDie.subscribe(e => {
   const dead = playerIdToName.has(e.deadEntity.id);
   const killer = playerIdToName.has(e.damageSource.damagingEntity?.id ?? '');
   if (dead === false && killer === false) return;
-  const event: types.EntityEvent = {
+  const event: types.PlayerEvent = {
     action: types.Actions.killed,
     extra: e.damageSource.cause,
   };
@@ -153,7 +157,7 @@ world.afterEvents.entityHurt.subscribe(e => {
   const hurtee = playerIdToName.has(e.hurtEntity.id);
   const hurter = playerIdToName.has(e.damageSource.damagingEntity?.id ?? '');
   if (hurtee === false && hurter === false) return;
-  const event: types.EntityEvent = {
+  const event: types.PlayerEvent = {
     action: types.Actions.hurt,
     extra: e.damageSource.cause,
     qty: e.damage,

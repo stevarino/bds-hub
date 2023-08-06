@@ -7,7 +7,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { configPath, isScriptRun, parseArgs, root } from '../lib.js';
+import { configPath, isScriptRun, parseArgs, root } from './lib.js';
 
 function main() {
   const { argv, argn } = parseArgs(`
