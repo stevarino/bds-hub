@@ -12,6 +12,7 @@ import { cwd } from 'process';
 
 import yaml from 'yaml';
 import archiver from 'archiver';
+//@ts-ignore -- probably something in my tsconfig is wrong. :-/
 import { rollup } from 'rollup';
 
 import * as Constants from '../constants.js';
@@ -119,10 +120,9 @@ async function rollupPack() {
 export async function parseDialogueFiles(config: ConfigFile) {
   const referencedIds = new Set<string>();
   const definedIds = new Set<string>();
-  const scenes: Dialogue.Scene[] = [];
+  const scenes: Dialogue.ScriptScene[] = [];
   const actors: Dialogue.Actor[] = [];
   const items: Dialogue.ItemUse[] = [];
-  const actorEntrys = new Set<string>();
   const chats: Dialogue.Chat[] = [];
   const actions: Dialogue.TransitionMap = {};
   
@@ -130,43 +130,38 @@ export async function parseDialogueFiles(config: ConfigFile) {
   
   const globalScenes = await lib.getFiles(scenes_dir);
 
-  for (const df of [...globalScenes, ...(config.dialogues ?? [])]) {
+  for (const df of [...globalScenes, ...(config.script_files ?? [])]) {
     console.info(`Parsing ${df}`);
-    let dialogueSet : Dialogue.DialogueFile;
+    let scripts : Dialogue.ScriptFile;
     if (df.endsWith('.json')) {
-      dialogueSet = Dialogue.parseDialogueFile(
-        fs.readFileSync(df, 'utf-8')) as Dialogue.DialogueFile;
+      scripts = Dialogue.parseDialogueFile(
+        fs.readFileSync(df, 'utf-8')) as Dialogue.ScriptFile;
     } else if (df.endsWith('.yaml') || df.endsWith('.yml')) {
-      dialogueSet = yaml.parse(fs.readFileSync(df, 'utf-8'));
-      Dialogue.assertDialogueFile(dialogueSet);
+      scripts = yaml.parse(fs.readFileSync(df, 'utf-8'));
+      Dialogue.assertDialogueFile(scripts);
     } else {
       throw new Error('Unrecognized file type: ' + df);
     }
   
-    for (const actor of dialogueSet.actors ?? []) {
+    items.push(...(scripts.items ?? []));
+    chats.push(...(scripts.chats ?? []));
+  
+    for (const actor of scripts.actors ?? []) {
       actors.push(actor);
+      const hash = md5sum(actor);
+      actor._hash = hash;
       referencedIds.add(actor.scene);
-      actorEntrys.add(actor.scene);
     }
   
-    for (const item of dialogueSet.items ?? []) {
-      items.push(item);
-    }
-  
-    for (const chat of dialogueSet.chats ?? []) {
-      chats.push(chat);
-    }
-  
-    for (const [ref, menu] of Object.entries(dialogueSet.actions ?? {})) {
+    for (const [ref, menu] of Object.entries(scripts.actions ?? {})) {
       actions[ref] = menu;
     }
 
-    for (const scene of dialogueSet.scenes ?? []) {
+    for (const scene of scripts.scenes ?? []) {
       assert(!definedIds.has(scene.id),
         `Duplicate scene id\'s defiined: ${scene.id}`);
       definedIds.add(scene.id);
       scenes.push(scene);
-      scene._entrayPoint = actorEntrys.has(scene.id);
 
       let button: Dialogue.SuperButton;
       for (button of scene.buttons ?? []) {
@@ -183,6 +178,26 @@ export async function parseDialogueFiles(config: ConfigFile) {
       }
     }
     assert(missing.length === 0,  `Missing scenes: ${JSON.stringify(missing)}`);
+
+    // scene-actor mapping - creates an actor-specific scene.
+    for (const actor of actors) {
+      for (const scene of scenes) {
+        if (scene._actor !== undefined) {
+          continue;
+        }
+        if (scene.id === actor.scene) {
+          const newScene = Object.assign({}, scene);
+          newScene._actor = actor._hash;
+          newScene.id = actor._hash as string;
+          actor.scene = newScene.id; 
+          if (actor.npc_name !== undefined) {
+            newScene.npc_name = actor.npc_name;
+          }
+          scenes.push(newScene);
+          break;
+        }
+      }
+    }
   }
 
   console.info(`Loaded ${scenes.length} scenes...`)
@@ -190,30 +205,44 @@ export async function parseDialogueFiles(config: ConfigFile) {
   return { actors, scenes, items, chats, actions };
 }
 
+type AssembledScene = {
+  scene_tag: string,
+  text: string,
+  npc_name?: string,
+  on_open_commands?: string[],
+  buttons: {
+    name: string,
+    commands: string[]
+  }[],
+}
+
 /** Construct behavior pack dialogue file */
-export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Scene[]) {
+export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.ScriptScene[]) {
   const packScenes: any[] = [];
   const transitions: Dialogue.TransitionMap = {};
 
   for (const scene of scenes) {
-    const scn: O<any> = {
-      scene_tag: `${Constants.TAG_PREFIX}_${scene.id}`,
+    const scn: AssembledScene = {
+      scene_tag: Constants.ID('SCENE', scene.id),
       text: scene.text,
       buttons: [],
     }
     if (scene.npc_name !== undefined) {
       scn.npc_name = scene.npc_name
     }
-    if (scene._entrayPoint === true) {
+    if (scene._actor !== undefined) {
       scn.on_open_commands = [
+        `/tag @initiator add ${Constants.ID('ACTOR', scene._actor)}`,
+        `/tag @initiator add ${scn.scene_tag}`,
         `/tag @initiator add ${Constants.TAG_INIT}`,
       ];
     }
     packScenes.push(scn);
+    transitions[scn.scene_tag] = { scene: scene.id };
+
     let button: Dialogue.SuperButton;
     for (button of scene.buttons ?? []) {
-      const btnId = `${Constants.TAG_PREFIX}_${md5sum(button)}`;
-      assert(transitions[btnId] === undefined, 'Bad build (!?!)');
+      const btnId = `${Constants.ID('BTN', md5sum(button))}`;
 
       const transition: Dialogue.Transition = Object.assign({}, button);
       //@ts-ignore -- text exists on button

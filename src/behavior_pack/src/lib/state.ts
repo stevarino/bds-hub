@@ -51,6 +51,10 @@ class State {
     this.needsPush = false;
     return true;
   }
+
+  getPlayers() {
+    return [...this.players]
+  }
   
   async addPlayers(players: string[], autosave=true) {
     let mutated = false;
@@ -61,6 +65,10 @@ class State {
     if (mutated && autosave) return await this.save();
     if (mutated) this.needsPush = true;
     return false;
+  }
+
+  getBots() {
+    return Array.from(Object.values(this.bots));
   }
 
   async addBots(bots: types.BotState[], autosave=true) {
@@ -76,6 +84,12 @@ class State {
     return false;
   }
 
+  async rmBot(botId: string, autosave=true) {
+    delete this.bots[botId];
+    if (autosave) return await this.save();
+    this.needsPush = true;
+  }
+
   async addAccounts(accounts: types.AccountState[], autosave=true) {
     for (const acct of accounts ?? []) {
       const live = this.accounts[acct.id];
@@ -85,13 +99,5 @@ class State {
         live.ammount += acct.ammount;
       }
     }
-  }
-
-  getPlayers() {
-    return [...this.players]
-  }
-
-  getBots() {
-    return Array.from(Object.values(this.bots));
   }
 }

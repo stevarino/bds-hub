@@ -1,10 +1,10 @@
 /**
- * Handles high-level dialogue stuff.
+ * Handles low-level dialogue stuff at the Minecraft level (tags, events).
  */
 
 import { system, world, Player } from "@minecraft/server";
 
-import { TAG_INIT, TAG_PENDING, TAG_PREFIX, DIMENSION } from '../lib/constants.js';
+import { TAG_INIT, TAG_PENDING, TAG_PREFIX } from '../lib/constants.js';
 import * as lib from '../lib.js'
 import { Discussion } from './discussion.js';
 import './actions.js';
@@ -19,10 +19,14 @@ const discussions: Record<string, Discussion> = {};
 export function checkPlayersForEvents() {
   system.runTimeout(checkPlayersForEvents, 10);
   for (const p of world.getAllPlayers()) {
+    const ids = lib.parseIds(p);
     // initial scene - create a fresh discussion object
     if (p.hasTag(TAG_INIT)) {
       p.removeTag(TAG_INIT);
-      discussions[p.name] = new Discussion(p, getTag(p, false));
+      const scene = findScene(p, ids, false);
+      const discussion = new Discussion(p, scene);
+      discussion.actor = findActor(p, ids, false);
+      discussions[p.name] = discussion;
     }
     // a request from the user, waiting for a response
     if (p.hasTag(TAG_PENDING)) {
@@ -32,48 +36,49 @@ export function checkPlayersForEvents() {
         discussion = new Discussion(p);
         discussions[p.name] = discussion
       }
-      discussion.go(getTag(p));
+      const btn = findBtn(p, ids);
+      if (btn !== undefined) return discussion.go(btn);
+      const scene = findScene(p, ids);
+      if (scene !== undefined) return discussion.go(scene);
     }
+  }
+}
+
+/** Searches for the singular(?) scene from tags  */
+function findScene(player: Player, ids: lib.Tag, alert=false) {
+  return findOneAndClear(player, ids, 'SCENE', alert)?.id();
+}
+
+/** Searches for the singular(?) button from tags  */
+function findBtn(player: Player, ids: lib.Tag, alert=false) {
+  return findOneAndClear(player, ids, 'BTN', alert)?.id();
+}
+
+/** Searches for the singular(?) actor from tags  */
+function findActor(player: Player, ids: lib.Tag, alert=false) {
+  return findOneAndClear(player, ids, 'ACTOR', alert)?.path;
+}
+
+function findOneAndClear(player: Player, ids: lib.Tag, type: string, alert=false) {
+  let tags = findTags(ids, type);
+  if (tags.length !== 1) {
+    if (alert) console.warn(`Unexpected ${type} result: ${JSON.stringify(tags.map(t => t.id()))}`);
+  }
+  for (const tag of tags) {
+    player.removeTag(tag.id());
+  }
+  if (tags.length === 1) {
+    return tags[0];
   }
 }
 
 /** Searches for the singular(?) tag from a scene  */
-function getTag(p: Player, alert: boolean=true) {
-  const tags = [];
-  for (const t of p.getTags()) {
-    if (t.startsWith(TAG_PREFIX)) {
-      tags.push(t);
-      p.removeTag(t);
-    }
+function findTags(ids: lib.Tag, type: string) {
+  let tags: lib.Tag[] = [];
+  if (ids.has(type)) {
+    tags = ids.get(type).values();
   }
-  if (tags.length !== 1) {
-    // if != 1, something broke, let the player try again
-    if (alert) console.warn(`Unexpected found tag result: ${JSON.stringify(tags)}`);
-    return undefined;
-  }
-  return tags[0];
-}
-
-Object.assign(Discussion.actions, {AssignActors: assignActors});
-export async function assignActors() {
-  let i = 0;
-  for (const actor of script.actors) {
-    let count = 0;
-    let selector: string|undefined = undefined;
-    if (actor.tag !== undefined) selector = `tag="${actor.tag}"`;
-    if (actor.name !== undefined) selector = `name="${actor.name}"`;
-    if (actor.selector !== undefined) selector = `"${actor.selector}"`;
-    if (selector == undefined) continue;
-    for (const dimension of Object.keys(DIMENSION)) {
-      const dim = world.getDimension(dimension);
-      await new Promise<void>(async (res) => {
-        const result = await dim.runCommandAsync(`dialogue change @e[type=minecraft:npc,${selector}] ${TAG_PREFIX}_${actor.scene}`);
-        count += result.successCount;
-        res();
-      });
-    }
-    i += 1;
-  }
+  return tags;
 }
 
 world.afterEvents.itemUse.subscribe(e => {
@@ -107,6 +112,10 @@ world.afterEvents.itemUse.subscribe(e => {
   discussions[e.source.name]?.navigate(itemUsed);
 });
 
+// world.afterEvents.dataDrivenEntityTriggerEvent.subscribe(e => {
+//   console.log(e.entity.typeId, e.id);
+// })
+
 world.afterEvents.chatSend.subscribe(e => {
   for (const chat of script.chats) {
     if (chat.require_tag === undefined || e.sender.hasTag(chat.require_tag)) {
@@ -118,4 +127,3 @@ world.afterEvents.chatSend.subscribe(e => {
   }
 })
 
-assignActors();

@@ -7,14 +7,16 @@ import { ActionFormData } from "@minecraft/server-ui";
 
 import { script } from './script.js';
 import * as types from '../types/packTypes.js';
-import { DELAY, TAG_PREFIX } from "../lib/constants.js";
-import { getFormResponse, showErrorMessage, timeout } from "../lib.js";
+import { DELAY, ID } from "../lib/constants.js";
+import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
 
 
 export class Discussion {
   static actions: {[action: string]: (d: Discussion, args: types.Args) => Promise<void>} = {};
 
   player: mc.Player;
+  actor?: string;
+  bot?: string;
   history: types.Transition[] = [];
   vars: {[key: string]: unknown} = {};
 
@@ -25,7 +27,7 @@ export class Discussion {
     if (transition === undefined) return;
     this.history.push(transition);
   }
-  
+
   /** Set a variable needed for this discussion */
   set(key: string, value: unknown) {
     this.vars[key] = value;
@@ -43,7 +45,7 @@ export class Discussion {
 
   /** Lookup a transition from transitions.ts */
   findTransition(tag: string): types.Transition|undefined {
-    const transition = script.actions[tag];
+    const transition = script.transitions[tag];
     if (transition === undefined) {
       console.warn('Failed to find transition: ', tag);
     }
@@ -69,26 +71,6 @@ export class Discussion {
 
   async handleTransition(transition: types.Transition) {
     await findAndRunTransition(this, transition);
-  }
-
-  async respondWithAction(action: string, args: types.Args) {
-    const actionFunc = Discussion.actions[action];
-    if (actionFunc === undefined) {
-      return console.warn(`Missing action: ${action}`);
-    }
-    actionFunc(this, args);
-  }
-
-  async respondWithCommand(command: string) {
-    command = command.replace(/\b@p\b/, this.player.name);
-    this.player.dimension.runCommandAsync(command);    
-  }
-
-  async respondWithScene(scene: string) {
-    scene = `${TAG_PREFIX}_${scene}`;
-    await timeout(DELAY);
-    const command = `/execute as ${this.player.name} run dialogue open @e[type=NPC,c=1] @s ${scene}`
-    await this.respondWithCommand(command);
   }
 }
 
@@ -145,8 +127,31 @@ async function respondCommand(d: Discussion, action: types.Command) {
 
 async function respondScene(d: Discussion, action: types.Scene) {
   await timeout(DELAY);
-  const command = `/execute as ${d.player.name} run dialogue open @e[type=NPC,c=1] @s ${TAG_PREFIX}_${action.scene}`
-  await d.respondWithCommand(command);
+  // default open - find the nearest npc to the player...
+  let command = `execute at "${d.player.name}" run dialogue open @e[type=NPC,c=1] @p ${ID('SCENE', action.scene)}`
+  if (d.actor !== undefined && ActorBotMap[d.actor] !== undefined) {
+    const bots = ActorBotMap[d.actor];
+    let bot: types.BotState|undefined;
+    if (bots !== undefined) {
+      bot = STATE.bots[bots[0] as string] as types.BotState;
+      let dist = distance(d.player.location, positionToVec3(bot.location));
+      for (let i=1; i<bots.length; i++) {
+        const bot2 = STATE.bots[bots[i] as string] as types.BotState;
+        const dist2 = distance(d.player.location, positionToVec3(bot2.location));
+        if (dist2 < dist) {
+          dist = dist2;
+          bot = bot2;
+        }
+      }
+      if (bot !== undefined) {
+        d.actor = bot.id;
+      }
+    }
+  }
+  if (d.actor !== undefined) {
+    command = `dialogue open @e[tag="${d.actor}"] @p ${ID('SCENE', action.scene)}`;
+  }
+  await respondCommand(d, {command});
 }
 
 async function respondIfTagged(d: Discussion, action: types.HasTag) {

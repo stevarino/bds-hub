@@ -10,6 +10,19 @@ export interface Command { command: string };
 /** Minecraft dialogue entry */
 export interface Scene { scene: string };
 
+export interface ScriptScene {
+  id: string,
+  text: string,
+  npc_name?: string,
+  /**
+   * @minItems 1
+   * @maxItems 6
+   */
+  buttons: Button[],
+  /** Internal */
+  _actor?: string,
+}
+
 export interface GiveArgs {
   item: string,
   qty?: number,
@@ -97,10 +110,16 @@ export type BaseTransition = Scene | Action | Command | Menu | HasTag | HasItem 
 export type Transition = Partial< Scene & Action & Command & Menu & HasTag & HasItem & Wait & Sequence & Sound & Random & ApplyTag & RemoveTag >;
 export type TransitionMap = {[key: string]: Transition};
 
-export type Actor = { scene: string } & ( TagSelector | SelectorSelector | NameSelector );
+export type Actor = { 
+  scene: string,
+  npc_name?: string,
+  /** Internal */
+  _hash?: string,
+  _scene?: string
+} & ( TagSelector | SelectorSelector | NameSelector );
 export type SuperActor = Actor & Partial< TagSelector & SelectorSelector & NameSelector >;
 
-type RequireTag = { require_tag?: string }
+type RequireTag = { require_tag?: string };
 export type Button = { text: string } & RequireTag &  BaseTransition;
 export type SuperButton = Button & Transition;
 

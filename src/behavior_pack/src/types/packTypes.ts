@@ -14,7 +14,7 @@ export interface WorldState {
 
 export enum BotType {
   TeleBot = 'TeleBot',
-  Greater = 'Greater',
+  Greeter = 'Greeter',
 }
 
 export interface BotState {
@@ -23,6 +23,7 @@ export interface BotState {
   owner?: string,
   location: PositionTuple,
   type: BotType,
+  tags?: string[],
   offset?: [number, number, number];
 }
 

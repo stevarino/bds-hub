@@ -16,7 +16,7 @@ export interface ConfigFile {
     users: {[discordUsername: string]: string},
   }
   // list of files to be included as dialogues (accepts json and yaml)
-  dialogues?: string[]
+  script_files?: string[]
 };
 
 export const assertConfigFile = typia.createAssert<ConfigFile>();

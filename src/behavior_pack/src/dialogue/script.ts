@@ -7,6 +7,7 @@
 import { Chat, SuperActor, SuperItemUse, TransitionMap } from '../types/packTypes.js';
 
 type Script = {
+  transitions: TransitionMap,
   actions: TransitionMap,
   actors: SuperActor[],
   items: SuperItemUse[]
@@ -14,6 +15,7 @@ type Script = {
 }
 
 export const script: Script = {
+  transitions: {},
   actions: {},
   actors: [],
   items: [],
