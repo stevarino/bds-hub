@@ -1,0 +1,104 @@
+---
+actors:
+  - tag: greeter_npc
+    scene: greeter
+scenes:
+  - id: greeter
+    npc_name: Old Man Jimmy
+    text: Hello, welcome to the Mushroom Self-Governing Federation. Would you like to know the time?
+    buttons:
+      - text: What time is it??
+        action: Time
+      - text: Anything special?
+        scene: magic_1
+      - text: Got any jokes?
+        scene: knock_knock
+      - text: Impressions?
+        # this is under the examples folder
+        scene: sound_test
+  - id: knock_knock
+    text: Knock knock
+    buttons:
+      - text: Who's there?
+        scene: knock_knock_2
+  - id: knock_knock_2
+    text: GROOOOOOOOAAAAAAAAAN
+    buttons:
+      - text: Groan who?
+        scene: knock_knock_3
+  - id: knock_knock_3
+    text: The door was smashed in and a zombie lurches at you.
+    buttons:
+      - text: ...
+        command: /damage @p 4
+  - id: magic_1
+    text: Oh, no... Not really. Just me and my mushrooms and my magic book.
+    buttons:
+      - text: Okay thanks!
+        scene: greeter
+      - text: Nevermind...
+        scene: greeter
+      - text: Wait, what?
+        scene: book
+  - id: book
+    text: Oh yes. The book. Do you want it? You can only have it once, its very dear to me...
+    buttons:
+      - text: Please!
+        if_has_tag: received_book
+        then:
+          scene: book_once
+        else:
+          sequence:
+            - action: give_book_action
+            - apply_tag: received_book
+  - id: book_once
+    text: Didn't I give you one already?
+    buttons:
+      - text: My mistake...
+        scene: greeter
+      - text: Nooooooo
+        if_has_item:
+          lore: [null, "§ksecret password§r"]
+        then:
+          scene: book_see_it
+        else:
+          sequence:
+            - apply_tag: book_liar
+            - scene: give_book
+  - id: book_see_it
+    text: I can see it!!! It's in your pockets!
+    buttons:
+      - text: My mistake...
+        scene: greeter
+items:
+  - lore: [null, "§ksecret password§r"]
+    menu:
+      title: Ye Olde Magic Booke
+      buttons:
+        - text: Admin Settings
+          require_tag:: admin
+          action: admin_menu
+        - text: Bot Management
+          if_has_tag: admin
+          then:
+            action: ManageBots
+            args:
+              admin: true
+          else:
+            action: ManageBots
+        - text: Blocks Broken
+          action: BlocksBroken
+        - text: Blocks Placed
+          action: BlocksPlaced
+chats:
+  - equals: boop
+    require_tag: admin
+    action: give_book_action
+actions:
+  give_book_action:
+    action: Give
+    args:
+      item: enchanted_book
+      name: Ye Olde Magic Booke
+      lore: ["Just an old book.", "§ksecret password§r", "Nothing special"]
+      enchantments: { vanishing: 1 }

@@ -1,0 +1,20 @@
+scenes:
+- id: demo_if_has_tag
+  text: Let's see if you're tagged?
+  buttons:
+    - text: Check me out!
+      if_has_tag: test_tag
+      then:
+        scene: demo_is_tagged
+      else: 
+        scene: demo_is_not_tagged
+- id: demo_is_tagged
+  text: You are tagged!
+  buttons:
+    - text: Untag me!
+      remove_tag: test_tag
+- id: demo_is_not_tagged
+  text: You are not tagged?
+  buttons:
+    - text: Tag me up!
+      apply_tag: test_tag

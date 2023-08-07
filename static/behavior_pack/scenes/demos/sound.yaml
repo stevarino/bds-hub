@@ -1,0 +1,36 @@
+scenes:
+- id: sound_test
+  text: Want to hear some impressions?
+  buttons:
+  - text: What does the cow say?
+    sequence:
+      - sound: mob.cow.say
+      - scene: sound_test
+  - text: What does the fox say?
+    sequence:
+      - sound: mob.cow.say
+        pitch: 2
+      - scene: sound_test
+  - text: What else you got?
+    sequence:
+      - random:
+        - sound: mob.ghast.affectionate_scream
+        - sound: mob.goat.death.screamer
+        - sound: mob.horse.death
+        - sound: mob.llama.spit
+        - sound: mob.piglin.admiring_item
+        - sound: mob.pillager.celebrate
+        - sound: mob.sheep.say
+        - sound: mob.shulker.ambient
+        - sound: mob.slime.big
+        - sound: mob.villager.death
+        - sound: mob.villager.haggle
+        - sound: mob.villager.hit
+        - sound: mob.villager.idle
+        - sound: mob.villager.no
+        - sound: mob.villager.yes
+        - sound: mob.wolf.bark
+        - sound: mob.wolf.whine
+        - sound: mob.zombie.say
+        - sound: random.burp
+      - scene: sound_test

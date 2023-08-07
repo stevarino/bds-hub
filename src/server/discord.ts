@@ -46,7 +46,7 @@ export class DiscordClient {
       if (match === null) {
         throw new Error(`Invalid discord channel: ${channel}`);
       }
-      const [url, g, ch] = [match[0], match[1], match[2]];
+      const [url, g, ch] = [match[0], match[1], match[2]] as [string, string, string];
       if (!guilds.has(g)) {
         const guild = await client.guilds.fetch({guild: g});
         const profile = await guild.members.fetch(client.user.id);

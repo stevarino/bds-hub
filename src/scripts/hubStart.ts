@@ -4,10 +4,10 @@
  */
 
 import { getServer } from '../server/server.js';
-import { readConfig, parseArgs } from '../lib.js';
+import { readConfig, parseArgs, isScriptRun } from './lib.js';
 
 
-if (process.argv[1].includes('hubStart')) {
+if (isScriptRun('hubStart')) {
   const { argv, argn } = parseArgs(`
     Runs the hub server.
 
