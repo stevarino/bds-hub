@@ -1,0 +1,31 @@
+---
+scenes:
+- id: _Stats
+  text: I can tell you your past... What you've broken... What you've built...
+  buttons:
+    - text: Broken blocks
+      action: DBSH_Broken
+    - text: Placed blocks
+      action: DBSH_Placed
+- id: DBSH_TeleBotGreeting
+  npc_name: TeleBot
+  text: Beep boop where would you like to go?
+  buttons:
+   - text: Let's go!
+     action: TeleBotTravel
+actors:
+  - scene: DBSH_TeleBotGreeting
+    tag: BDSH__BotType___TeleBot
+actions:
+  admin_menu:
+    menu:
+      title: Admin Menu
+      buttons:
+      - text: Creative Mode
+        command: gamemode c @p
+      - text: Survival Mode
+        command: gamemode s @p
+      - text: Teleport To
+        action: Teleport
+      - text: Create TeleBot
+        action: CreateTeleBot

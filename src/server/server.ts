@@ -1,12 +1,15 @@
 import * as http from 'node:http';
-import { ConfigFile, Constants, O, ServerStatus, Update, UpdateResponse } from '../types.js';
+import { ConfigFile, O, Dialogue } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
+import { EventRequest, WorldState } from '../behavior_pack/src/types/packTypes.js';
 
 export async function getServer(config: ConfigFile) {
   const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');
   return new Server(db, config);
 }
+
+const defaultWeather = Dialogue.Constants[Dialogue.Constants.weatherClear];
 
 class Server {
   server: http.Server;
@@ -18,7 +21,9 @@ class Server {
   /** Last observed location of player (name -> json-str) */
   posCache: O<string> = {};
   /** Up-to-date info about the current server state */
-  status: ServerStatus = {};
+  status: Dialogue.ServerStatus = {};
+
+  worldState?: WorldState;
 
   constructor(db: DBHandle, config: ConfigFile) {
     this.db = db;
@@ -28,15 +33,22 @@ class Server {
 
     this.server = http.createServer((req, res) => {
       const url = new URL(req.url ?? '', 'http://example.com');
+      req.on('close', () => {
+        console.info(`${res.statusCode} ${req.method} ${req.url} ${
+          req.headers['content-length'] ?? ''}`);
+      });
       switch(url.pathname) {
         case '/update': return this.processUpdate(req, res);
         case '/status': return this.showStatus(req, res);
-        case '/events': return this.findEvents(req, res, url);
+        case '/events': return this.findEvents(req, res);
+        case '/read_state': return this.getWorldState(req, res);
+        case '/write_state': return this.setWorldState(req, res);
       }
       res.statusCode = 404;
       res.write('Not found.');
       res.end();
     });
+
   }
 
   start() {
@@ -47,29 +59,37 @@ class Server {
     this.discord.start();
   }
 
-  processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
-    let response: UpdateResponse = {
-      messages: this.discord.inbound,
-    }
-    this.discord.inbound.length = 0;
-    let body = '';
-    req.on('data', (chunk) => {
+  async readBody<T=unknown>(req: http.IncomingMessage) {
+    return await new Promise<T>(resolve => {
+      let body = '';
+      req.on('data', (chunk) => {
         body += chunk;
-    });
-    const jsonResponse = JSON.stringify(response);
-  
-    req.on('end', () => {
-      res.setHeader('Content-Type', 'text/plain');
-      res.write(jsonResponse);
-      res.end();
-      this.processPayload(JSON.parse(body));
+      });
+      req.on('end', () => {
+        resolve(JSON.parse(body) as T);
+      });
     });
   }
 
-  processPayload(payload: Update) {
+  async processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
+    let response: Dialogue.UpdateResponse = {
+      messages: this.discord.inbound,
+    }
+    this.discord.inbound.length = 0;
+    
+    const jsonResponse = JSON.stringify(response);
+    const body = await this.readBody<Dialogue.Update>(req);
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(jsonResponse);
+    res.end();
+    this.processPayload(body);
+  }
+
+  processPayload(payload: Dialogue.Update) {
     const now = new Date().getTime();
+    const weather = Dialogue.Constants[payload.weather] ?? defaultWeather;
     this.status.time = payload.time;
-    this.status.weather = Constants[payload.weather].replace('weather', '');
+    this.status.weather = weather.replace('weather', '');
     const online: string[] = [];
     for (const [name, update] of Object.entries(payload.entities)) {
       if (update.pos !== undefined) {
@@ -99,9 +119,28 @@ class Server {
     res.end();
   }
 
-  async findEvents(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    res.setHeader('Content-Type', 'application/json');
-    res.write(JSON.stringify(await this.db.queryEvents()));
+  async findEvents(req: http.IncomingMessage, res: http.ServerResponse) {
+    const query = await this.readBody<EventRequest>(req);
+    const response = JSON.stringify((await this.db.queryEvents(query)) ?? []);
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(response);
+    res.end();
+  }
+
+  async getWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
+    if (this.worldState === undefined) {
+      this.worldState = JSON.parse((await this.db.getKey('WorldState')) ?? '{}');
+    }
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(JSON.stringify(this.worldState));
+    res.end();
+  }
+
+  async setWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
+    this.worldState = await this.readBody<WorldState>(req);
+    this.db.setKey('WorldState', JSON.stringify(this.worldState));
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(JSON.stringify({'response': 'okay'}));
     res.end();
   }
 }

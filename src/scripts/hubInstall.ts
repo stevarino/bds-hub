@@ -6,41 +6,49 @@
 
 import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
 import { dirname, join } from 'path';
-import * as C from '../constants.js';
 
-import { getFiles, parseArgs, readConfig } from '../lib.js';
+import { getFiles, isScriptRun, parseArgs, readConfig } from './lib.js';
 import { O } from '../types.js';
+import { ADDON_NAME, ADDON_OUTPUT } from '../constants.js';
 import { createPackFiles } from './hubPack.js';
+
+const modules = [
+  "@minecraft/server",
+  "@minecraft/server-admin",
+  "@minecraft/server-net",
+  "@minecraft/server-ui",
+];
 
 /** Install behavior pack into server */
 async function install(mcDir: string, argn: O<string|undefined>) {
-  const config = readConfig(argn.config)
-  const manifest = JSON.parse(readFileSync(join(C.ADDON_OUTPUT, 'manifest.json'), 'utf-8'));
+  const config = readConfig(argn.config);
+  const packName = ADDON_NAME + '.mcaddon';
 
   // build the pack code
   await createPackFiles(config);
+  
+  const manifest = JSON.parse(readFileSync(join(ADDON_OUTPUT, 'manifest.json'), 'utf-8'));
 
   // clean up old packs
   for (const dir of [
-    join(mcDir, 'behavior_packs', C.ADDON_NAME), 
-    join(mcDir, 'development_behavior_packs', C.ADDON_NAME)
+    join(mcDir, 'behavior_packs', ADDON_NAME), 
+    join(mcDir, 'development_behavior_packs', ADDON_NAME)
   ]) {
     if (existsSync(dir)) {
       console.info('Removing directory ', dir);
       rmSync(dir, { recursive: true, force: true });
     }
+    if (existsSync(packName)) {
+      rmSync(packName);
+    }
   }
 
   // copy bp to behavior_packs server dir
-  const files = await getFiles(C.ADDON_OUTPUT);
-  const bp_dir = argn.dev === undefined ? 'behavior_packs' : 'development_behavior_packs';
-  console.info('Copying to ', join(mcDir, bp_dir, C.ADDON_NAME));
-  for (const f of files) {
-    const part = f.slice(C.ADDON_OUTPUT.length + 1);
-    const target = join(mcDir, bp_dir, C.ADDON_NAME, part);
-    mkdirSync(dirname(target), {recursive: true})
-    copyFileSync(f, target);
-  }
+  const files = await getFiles(ADDON_OUTPUT);
+  const bpDir = argn.dev === undefined ? 'behavior_packs' : 'development_behavior_packs';
+  const mcBpDir = join(mcDir, bpDir, packName);
+  console.info('Copying to ', mcBpDir);
+  copyFileSync(join(dirname(ADDON_OUTPUT), packName), mcBpDir)
 
   // check allowed_modules
   const permissionsFile = join(mcDir, 'config', 'default', 'permissions.json');
@@ -87,29 +95,45 @@ async function install(mcDir: string, argn: O<string|undefined>) {
 
   const configDir = join(mcDir, 'config', manifest.modules[0].uuid);
   mkdirSync(configDir, {recursive: true});
+  if (!existsSync(join(configDir, '/readme.txt'))) {
+    writeFileSync(join(configDir, '/readme.txt'), `Used by ${packName}`)
+  }
   // install permisisons file
+  let contents: {allowed_modules?: string[]} = {
+    allowed_modules: modules
+  };
+  let needWrite = false;
   const permFile = join(configDir, 'permissions.json');
-  if (!existsSync(permFile)) {  // TODO: change this to merge...
+  if (!existsSync(permFile)) {
     console.info("Creating permissions file: ", permFile);
-    writeFileSync(permFile, JSON.stringify({
-      allowed_modules: [
-        "@minecraft/server",
-        "@minecraft/server-admin",
-        "@minecraft/server-net",
-        "@minecraft/server-ui",
-      ]
-    }))
+    needWrite = true;
+  } else {
+    contents = JSON.parse(readFileSync(permFile, 'utf-8'));
+    if (contents.allowed_modules === undefined) {
+      needWrite = true;
+      contents.allowed_modules = modules;
+    } else {
+      for (const m of modules) {
+        if (!contents.allowed_modules.includes(m)) {
+          contents.allowed_modules.push(m);
+          needWrite = true;
+        }
+      }
+    }
+    if (needWrite) {
+      writeFileSync(permFile, JSON.stringify(contents));
+    }
   }
 
   // install variables file
   const varFile = join(configDir, 'variables.json');
-  let needWrite = false;
+  needWrite = false;
   mkdirSync(configDir, {recursive: true});
   let vars: O<unknown> = {};
   if (existsSync(varFile)) {
     vars = JSON.parse(readFileSync(varFile, 'utf-8'));
   }
-  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}/`;
+  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}`;
   if (vars.host != host) {
     vars.host = host;
     needWrite = true;
@@ -120,7 +144,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   }
 }
 
-if (process.argv[1].includes('hubInstall')) {
+if (isScriptRun('hubInstall')) {
 
   const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 
@@ -129,7 +153,8 @@ if (process.argv[1].includes('hubInstall')) {
 
     ${help}
   `)
-  if (argv.length === 0) {
+
+  if (argv[0] === undefined) {
     console.error(`Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`);
     process.exit(1);
   }
@@ -137,6 +162,5 @@ if (process.argv[1].includes('hubInstall')) {
     console.error(`Received multiple Minecraft directories: ${JSON.stringify(argv)}\n\n${help}`);
     process.exit(1);
   }
-  let mcDir = argv[0];
   install(argv[0], argn);
 }

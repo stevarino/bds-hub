@@ -17,13 +17,13 @@ export interface ConfigFile {
         };
     };
     // list of files to be included as dialogues (accepts json and yaml)
-    dialogues?: string[];
+    script_files?: string[];
 }
 ;
 export const assertConfigFile = (input: any): ConfigFile => {
     const __is = (input: any): input is ConfigFile => {
         const $join = (typia.createAssert as any).join;
-        const $io0 = (input: any): boolean => (undefined === input.port || "number" === typeof input.port) && (undefined === input.host || "string" === typeof input.host) && (undefined === input.databaseFilename || "string" === typeof input.databaseFilename) && (undefined === input.discord || "object" === typeof input.discord && null !== input.discord && $io1(input.discord)) && (undefined === input.dialogues || Array.isArray(input.dialogues) && input.dialogues.every((elem: any) => "string" === typeof elem));
+        const $io0 = (input: any): boolean => (undefined === input.port || "number" === typeof input.port) && (undefined === input.host || "string" === typeof input.host) && (undefined === input.databaseFilename || "string" === typeof input.databaseFilename) && (undefined === input.discord || "object" === typeof input.discord && null !== input.discord && $io1(input.discord)) && (undefined === input.script_files || Array.isArray(input.script_files) && input.script_files.every((elem: any) => "string" === typeof elem));
         const $io1 = (input: any): boolean => "string" === typeof input.token && "string" === typeof input.app_id && (Array.isArray(input.channels) && input.channels.every((elem: any) => "string" === typeof elem)) && (undefined === input.nick || "string" === typeof input.nick) && ("object" === typeof input.users && null !== input.users && false === Array.isArray(input.users) && $io2(input.users));
         const $io2 = (input: any): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
@@ -59,18 +59,18 @@ export const assertConfigFile = (input: any): ConfigFile => {
                 path: _path + ".discord",
                 expected: "(__type | undefined)",
                 value: input.discord
-            })) && (undefined === input.dialogues || (Array.isArray(input.dialogues) || $guard(_exceptionable, {
-                path: _path + ".dialogues",
+            })) && (undefined === input.script_files || (Array.isArray(input.script_files) || $guard(_exceptionable, {
+                path: _path + ".script_files",
                 expected: "(Array<string> | undefined)",
-                value: input.dialogues
-            })) && input.dialogues.every((elem: any, _index1: number) => "string" === typeof elem || $guard(_exceptionable, {
-                path: _path + ".dialogues[" + _index1 + "]",
+                value: input.script_files
+            })) && input.script_files.every((elem: any, _index1: number) => "string" === typeof elem || $guard(_exceptionable, {
+                path: _path + ".script_files[" + _index1 + "]",
                 expected: "string",
                 value: elem
             })) || $guard(_exceptionable, {
-                path: _path + ".dialogues",
+                path: _path + ".script_files",
                 expected: "(Array<string> | undefined)",
-                value: input.dialogues
+                value: input.script_files
             }));
             const $ao1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.token || $guard(_exceptionable, {
                 path: _path + ".token",
