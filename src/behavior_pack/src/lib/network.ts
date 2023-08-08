@@ -17,7 +17,10 @@ export async function request<T = unknown>(endpoint: string, body?: string|objec
   const req = new mcnet.HttpRequest(HOST + endpoint);
   req.setTimeout(0.5);
 
-  if (body !== undefined) req.setBody(body);
+  if (body !== undefined) {
+    req.setBody(body);
+    req.setMethod(mcnet.HttpRequestMethod.Post);
+  }
   if (headers !== undefined) {
     const headerObjs: mcnet.HttpHeader[] = [];
     for (const [k, v] of Object.entries(headers)) {

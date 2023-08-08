@@ -60,13 +60,17 @@ class Server {
   }
 
   async readBody<T=unknown>(req: http.IncomingMessage) {
-    return await new Promise<T>(resolve => {
+    return await new Promise<T|undefined>(resolve => {
       let body = '';
       req.on('data', (chunk) => {
         body += chunk;
       });
       req.on('end', () => {
-        resolve(JSON.parse(body) as T);
+        try {
+          resolve(JSON.parse(body) as T);
+        } catch (e) {
+          resolve(undefined);
+        }
       });
     });
   }
@@ -82,7 +86,9 @@ class Server {
     res.setHeader('Content-Type', 'text/plain');
     res.write(jsonResponse);
     res.end();
-    this.processPayload(body);
+    if (body !== undefined) {
+      this.processPayload(body);
+    }
   }
 
   processPayload(payload: Dialogue.Update) {
@@ -115,16 +121,14 @@ class Server {
 
   showStatus(req: http.IncomingMessage, res: http.ServerResponse) {
     res.setHeader('Content-Type', 'application/json');
-    res.write(JSON.stringify(this.status));
-    res.end();
+    res.end(JSON.stringify(this.status));
   }
 
   async findEvents(req: http.IncomingMessage, res: http.ServerResponse) {
     const query = await this.readBody<EventRequest>(req);
     const response = JSON.stringify((await this.db.queryEvents(query)) ?? []);
     res.setHeader('Content-Type', 'text/plain');
-    res.write(response);
-    res.end();
+    res.end(response);
   }
 
   async getWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -132,15 +136,16 @@ class Server {
       this.worldState = JSON.parse((await this.db.getKey('WorldState')) ?? '{}');
     }
     res.setHeader('Content-Type', 'text/plain');
-    res.write(JSON.stringify(this.worldState));
-    res.end();
+    res.end(JSON.stringify(this.worldState));
   }
 
   async setWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
     this.worldState = await this.readBody<WorldState>(req);
-    this.db.setKey('WorldState', JSON.stringify(this.worldState));
     res.setHeader('Content-Type', 'text/plain');
-    res.write(JSON.stringify({'response': 'okay'}));
-    res.end();
+    if (this.worldState === undefined) {
+      return res.end(JSON.stringify({'response': 'fail'}));
+    }
+    await this.db.setKey('WorldState', JSON.stringify(this.worldState));
+    res.end(JSON.stringify({'response': 'okay'}));
   }
 }
