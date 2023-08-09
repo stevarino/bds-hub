@@ -77,7 +77,7 @@ class Server {
 
   async processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
     let response: Dialogue.UpdateResponse = {
-      messages: this.discord.inbound,
+      messages: [...this.discord.inbound],
     }
     this.discord.inbound.length = 0;
     
