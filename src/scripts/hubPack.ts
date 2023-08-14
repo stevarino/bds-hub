@@ -26,7 +26,8 @@ const DIRS: [string, string][] = [
 ]
 
 /** Assemble all the files for the add-on pack */
-export async function createPackFiles(config: ConfigFile) {
+export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
+  if (argn === undefined) argn = {};
   await copyStatic();
   const { actors, scenes, items, chats, actions } = await parseDialogueFiles(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
@@ -40,7 +41,9 @@ export async function createPackFiles(config: ConfigFile) {
   });
   await rollupPack();
   await zipPack();
-  // fs.rmSync(Constants.ADDON_TEMP, { force: true, recursive: true });
+  if (argn['preserveTempFiles'] === undefined) {
+    fs.rmSync(Constants.ADDON_TEMP, { force: true, recursive: true });
+  }
 }
 
 async function copyStatic() {
@@ -318,7 +321,7 @@ if (lib.isScriptRun('hubPack')) {
   const { argn } = lib.parseArgs(`
     Compiles and assembles the behavior pack code.
 
-    npx hubPack [--config="/foo/bar/config.yaml]
+    npx hubPack [--config="/foo/bar/config.yaml] [--preserveTempFiles]
   `);
-  createPackFiles(lib.readConfig(argn.config));
+  createPackFiles(lib.readConfig(argn.config), argn);
 }
