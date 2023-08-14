@@ -116,7 +116,7 @@ items:
       title: Ye Olde Magic Booke
       buttons:
         - text: Admin Settings
-          require_tag:: admin
+          require_tag: admin
           action: admin_menu
         - text: Bot Management
           if_has_tag: admin
