@@ -4,9 +4,9 @@ scenes:
   text: I can tell you your past... What you've broken... What you've built...
   buttons:
     - text: Broken blocks
-      action: DBSH_Broken
+      action: BlocksBroken
     - text: Placed blocks
-      action: DBSH_Placed
+      action: BlocksPlaced
 - id: DBSH_TeleBotGreeting
   npc_name: TeleBot
   text: Beep boop where would you like to go?
@@ -27,5 +27,5 @@ actions:
         command: gamemode s @p
       - text: Teleport To
         action: Teleport
-      - text: Create TeleBot
-        action: CreateTeleBot
+      - text: Create Bot
+        action: CreateBot

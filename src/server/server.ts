@@ -1,5 +1,5 @@
 import * as http from 'node:http';
-import { ConfigFile, O, Dialogue } from '../types.js';
+import { ConfigFile, Obj, Dialogue } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
 import { EventRequest, WorldState } from '../behavior_pack/src/types/packTypes.js';
@@ -17,9 +17,9 @@ class Server {
   config: ConfigFile;
   discord: DiscordClient;
   /** Time of last update for a given player (name -> ts) */
-  playerCache: O<number> = {};
+  playerCache: Obj<number> = {};
   /** Last observed location of player (name -> json-str) */
-  posCache: O<string> = {};
+  posCache: Obj<string> = {};
   /** Up-to-date info about the current server state */
   status: Dialogue.ServerStatus = {};
 

@@ -8,7 +8,7 @@ import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFi
 import { dirname, join } from 'path';
 
 import { getFiles, isScriptRun, parseArgs, readConfig } from './lib.js';
-import { O } from '../types.js';
+import { Obj } from '../types.js';
 import { ADDON_NAME, ADDON_OUTPUT } from '../constants.js';
 import { createPackFiles } from './hubPack.js';
 
@@ -20,7 +20,7 @@ const modules = [
 ];
 
 /** Install behavior pack into server */
-async function install(mcDir: string, argn: O<string|undefined>) {
+async function install(mcDir: string, argn: Obj<string|undefined>) {
   const config = readConfig(argn.config);
   const packName = ADDON_NAME + '.mcaddon';
 
@@ -129,7 +129,7 @@ async function install(mcDir: string, argn: O<string|undefined>) {
   const varFile = join(configDir, 'variables.json');
   needWrite = false;
   mkdirSync(configDir, {recursive: true});
-  let vars: O<unknown> = {};
+  let vars: Obj<unknown> = {};
   if (existsSync(varFile)) {
     vars = JSON.parse(readFileSync(varFile, 'utf-8'));
   }

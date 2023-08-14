@@ -12,12 +12,13 @@ import { cwd } from 'process';
 
 import yaml from 'yaml';
 import archiver from 'archiver';
-//@ts-ignore -- probably something in my tsconfig is wrong. :-/
 import { rollup } from 'rollup';
 
 import * as Constants from '../constants.js';
 import * as lib from './lib.js';
-import { ConfigFile, Dialogue, O } from '../types.js';
+import { ConfigFile, Dialogue, failValidation, Obj, typiaErrorsFormat } from '../types.js';
+
+import { actionList } from './buildArtifacts.js';
 
 const DIRS: [string, string][] = [
   [join(lib.root, 'dist/behavior_pack/static'), Constants.ADDON_OUTPUT],
@@ -51,7 +52,7 @@ async function copyStatic() {
       bumpManifest(to);
       return true;
     }
-    console.info('Copying ', part);
+    // console.info('Copying ', part);
     return false;
   });
 }
@@ -79,19 +80,9 @@ function bumpManifest(path: string) {
 }
 
 function writeTransitionsFile(script: unknown) {
-  const template = lib.strip(`
-      /** Automatically generated file - do not edit */
-
-      export const script = %;
-  `).split('%');
-  const inputs = [
-    JSON.stringify(script, undefined, 2),
-  ];
-  const output = [];
-  for (let i=0; i<template.length; i++) {
-    output.push(template[i], inputs[i] ?? '');
-  }
-  lib.write(Constants.ADDON_SCRIPT, output.join(''));
+  lib.updateConstantsFile(Constants.ADDON_SCRIPT, {
+    script: script
+  });
 }
 
 /** Write the behavior pack scene file */
@@ -115,6 +106,48 @@ async function rollupPack() {
   await bundle.write({ file: Constants.ADDON_ROLLUP });
 }
 
+function loadScriptFile(filename: string) {
+  console.info(`Parsing ${filename}`);
+  let script : Dialogue.ScriptFile;
+  if (filename.endsWith('.json')) {
+    script = JSON.parse(
+      fs.readFileSync(filename, 'utf-8')) as Dialogue.ScriptFile;
+  } else if (filename.endsWith('.yaml') || filename.endsWith('.yml')) {
+    script = yaml.parse(fs.readFileSync(filename, 'utf-8'));
+  } else {
+    throw new Error('Unrecognized file type: ' + filename);
+  }
+
+  return script;
+}
+
+function validateScript(filename: string, script: Dialogue.ScriptFile) {
+  const errors: string[] = []
+  const result = Dialogue.validateScript(script);
+  errors.push(...typiaErrorsFormat(result));
+
+  lib.validateDeep(script, {
+    action: obj => {
+      const errors: string[] = [];
+      const actionName = (obj as Dialogue.Action).action;
+      if (!actionList.includes(actionName)) {
+        errors.push(`Unrecognized action: ${actionName}`);
+      }
+      const argValidator = Dialogue.ActionArgs[actionName];
+      if (argValidator !== undefined) {
+        errors.push(...typiaErrorsFormat(
+          argValidator((obj as Dialogue.Action).args)));
+      }
+      return errors;
+    },
+  }).forEach(([path, msg]) => {
+    errors.push(`${path} : ${msg}`)
+  });
+  const errorObj: Obj<string[]> = {};
+  if (errors.length !== 0) errorObj[filename] = errors;
+  return errorObj;
+}
+
 
 /** Parse and validate dialogue files */
 export async function parseDialogueFiles(config: ConfigFile) {
@@ -130,34 +163,26 @@ export async function parseDialogueFiles(config: ConfigFile) {
   
   const globalScenes = await lib.getFiles(scenes_dir);
 
+  const scriptFiles: Obj<Dialogue.ScriptFile> = {};
   for (const df of [...globalScenes, ...(config.script_files ?? [])]) {
-    console.info(`Parsing ${df}`);
-    let scripts : Dialogue.ScriptFile;
-    if (df.endsWith('.json')) {
-      scripts = Dialogue.parseDialogueFile(
-        fs.readFileSync(df, 'utf-8')) as Dialogue.ScriptFile;
-    } else if (df.endsWith('.yaml') || df.endsWith('.yml')) {
-      scripts = yaml.parse(fs.readFileSync(df, 'utf-8'));
-      Dialogue.assertDialogueFile(scripts);
-    } else {
-      throw new Error('Unrecognized file type: ' + df);
-    }
+    let script = loadScriptFile(df);
+    scriptFiles[df] = script;
+    items.push(...(script.items ?? []));
+    chats.push(...(script.chats ?? []));
   
-    items.push(...(scripts.items ?? []));
-    chats.push(...(scripts.chats ?? []));
-  
-    for (const actor of scripts.actors ?? []) {
+    for (const actor of script.actors ?? []) {
       actors.push(actor);
       const hash = md5sum(actor);
       actor._hash = hash;
       referencedIds.add(actor.scene);
     }
   
-    for (const [ref, menu] of Object.entries(scripts.actions ?? {})) {
+    for (const [ref, menu] of Object.entries(script.actions ?? {})) {
       actions[ref] = menu;
+      actionList.push(ref);
     }
 
-    for (const scene of scripts.scenes ?? []) {
+    for (const scene of script.scenes ?? []) {
       assert(!definedIds.has(scene.id),
         `Duplicate scene id\'s defiined: ${scene.id}`);
       definedIds.add(scene.id);
@@ -198,6 +223,15 @@ export async function parseDialogueFiles(config: ConfigFile) {
         }
       }
     }
+  }
+
+  const errors: Obj<string[]> = {};
+  for (const [filename, script] of Object.entries(scriptFiles)) {
+    Object.assign(errors, validateScript(filename, script));
+  }
+
+  if (Object.keys(errors).length !== 0) {
+    failValidation(errors);
   }
 
   console.info(`Loaded ${scenes.length} scenes...`)

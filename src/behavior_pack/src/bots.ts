@@ -3,7 +3,7 @@ import { world, system, Entity } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 import { Args, BotState, BotType } from "./types/packTypes.js";
-import { Discussion } from "./dialogue/discussion.js";
+import { defineActions, Discussion } from "./dialogue/discussion.js";
 import { getFormResponse, StartupEvent, STATE, timeout, strip } from './lib.js';
 import { ID, TAG_PREFIX } from "./lib/constants.js";
 import { ActorBotMap, BotInitiated, BotIsOnline } from "./lib/runtimeState.js";
@@ -11,7 +11,7 @@ import { script } from "./dialogue/script.js";
 
 StartupEvent.addListener(syncBots);
 
-Object.assign(Discussion.actions, { TeleBotTravel, CreateBot, ManageBots, ResyncBots });
+defineActions({ TeleBotTravel, CreateBot, ManageBots, ResyncBots });
 
 /** Ensures that the script has been applied to a bot */
 async function syncBots() {
@@ -108,7 +108,8 @@ async function TeleBotTravel(d: Discussion) {
       .title('BOT 404 NOT FOUND')
       .body('Oh no! Could not load any telebots...')
       .button1('Okay :-(');
-    return await getFormResponse(d.player, popup);
+    await getFormResponse(d.player, popup);
+    return;
   }
   const res = await getFormResponse(d.player, form);
   if (res.selection === undefined) return;
@@ -165,7 +166,7 @@ async function CreateBot(d: Discussion) {
 }
 
 /** A menu for selecting bots for editing */
-export async function ManageBots(d: Discussion, args: Args) {
+export async function ManageBots(d: Discussion, args: Args): Promise<void> {
   const bots: BotState[] = [];
 
   const form = new ui.ActionFormData().title('Bot Selection');
@@ -179,7 +180,8 @@ export async function ManageBots(d: Discussion, args: Args) {
   }
   if (bots.length === 0) {
     form.body('No bots found! :-(').button('Okay');
-    return await getFormResponse(d.player, form);
+    await getFormResponse(d.player, form);
+    return;
   }
   const res = await getFormResponse(d.player, form);
   if (res.selection === undefined) return;
@@ -188,7 +190,8 @@ export async function ManageBots(d: Discussion, args: Args) {
     selection = selection - 1;
   }
   if (selection === -1) {
-    return await CreateBot(d);
+    await CreateBot(d);
+    return;
   }
   const bot = bots[selection] as BotState;
   let [x, y, z] = bot.offset ?? [0, 0, 0]
@@ -226,7 +229,8 @@ export async function ManageBots(d: Discussion, args: Args) {
         STATE.rmBot(bot.id);
         const entity = await loadBot(bot);
         try {
-          return entity?.kill()
+          entity?.kill()
+          return;
         } finally {
           unloadBot(bot);
         }
@@ -251,8 +255,9 @@ export async function ManageBots(d: Discussion, args: Args) {
       newName = strip(newName);
       for (const b of STATE.getBots()) {
         if (b.id !== bot.id && b.name === newName) {
-          return getFormResponse(d.player, new ui.MessageFormData()
+          getFormResponse(d.player, new ui.MessageFormData()
             .title('Error').body('Bot name already taken!').button1('Oops.'));
+          return;
         }
       }
     }

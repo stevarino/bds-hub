@@ -10,6 +10,25 @@ import * as types from '../types/packTypes.js';
 import { DELAY, ID } from "../lib/constants.js";
 import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
 
+type ActionSig = (
+  ((d: Discussion, args: types.Args) => Promise<void>) |
+  ((d: Discussion) => Promise<void>));
+const ACTIONS: {[action: string]: ActionSig} = {};
+
+/** 
+ * Registers an action with the global ACTIONS collection.
+ * 
+ * Also used as a symbol for scripts file validation.
+ * 
+ * Works similarly to a decorator, but typescript only supports decorators on
+ * classes/methods/etc.
+ */
+export function defineActions(actions: {[name: string]: ActionSig}) {
+  for (const [name, func] of Object.entries(actions)) {
+    ACTIONS[name] = func;
+    return func;
+  }
+}
 
 export class Discussion {
   static actions: {[action: string]: (d: Discussion, args: types.Args) => Promise<void>} = {};

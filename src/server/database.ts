@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import sqlite3 from 'sqlite3'
 import { open, Database } from 'sqlite'
 
-import { Dialogue, O } from '../types.js';
+import { Dialogue, Obj } from '../types.js';
 import { root } from '../scripts/lib.js';
 import { Event, EventField, EventRequest } from '../behavior_pack/src/types/packTypes.js';
 
@@ -36,7 +36,7 @@ export class DBHandle {
   }
   
   /** Add a colon to each key */
-  formatParams<T = O<string>|O<number>>(params: T): T {
+  formatParams<T = Obj<string>|Obj<number>>(params: T): T {
     return Object.fromEntries(
       Object.entries(params as object).map(
         ([k, v]) => [k.startsWith(':') ? k : ':' + k, v]
@@ -45,10 +45,10 @@ export class DBHandle {
   }
 
   /** Given a set of strings, returns the corresponding id number (or 0 on undefined) */
-  async stringsToIds(strings: O<string|undefined>) {
-    const lookups: O<string> = {};
+  async stringsToIds(strings: Obj<string|undefined>) {
+    const lookups: Obj<string> = {};
     const values: string[] = []
-    const result: O<number> = {};
+    const result: Obj<number> = {};
   
     for (const [key, str] of Object.entries(strings)) {
       // 0 is used as null as null does not void UNIQUE constraints

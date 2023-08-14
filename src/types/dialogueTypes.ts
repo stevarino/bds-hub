@@ -11,5 +11,7 @@ export interface ScriptFile {
   actions?: types.TransitionMap,
 }
 
-export const assertDialogueFile = typia.createAssert<ScriptFile>();
-export const parseDialogueFile = typia.createAssertParse<ScriptFile>();
+export const ActionArgs: {[key: string]: (input: unknown) => typia.IValidation} = {
+  Give: typia.createValidateEquals<types.GiveArgs>(),
+}
+export const validateScript = typia.createValidateEquals<ScriptFile>();

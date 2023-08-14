@@ -6,14 +6,15 @@ import * as ui from "@minecraft/server-ui";
 
 import * as lib from "../lib.js";
 import * as types from '../types/packTypes.js';
-import { Discussion } from "./discussion.js";
+import { defineActions, Discussion } from "./discussion.js";
 import { BotIsOnline } from "../lib/runtimeState.js";
 
-Object.assign(Discussion.actions, {
-  Time, InventoryInspect, BlocksBroken, BlocksPlaced, Menu, Teleport, Give
-});
+defineActions({
+  Time, InventoryInspect, BlocksBroken, BlocksPlaced, Teleport,
+  Menu, Give });
 
-async function Menu(d: Discussion, menu: types.MenuDetails) {
+async function Menu(d: Discussion, args: types.Args) {
+  const menu = args as unknown as types.MenuDetails;
   const form = new ui.ActionFormData().title(menu.title);
   if (menu.body !== undefined) form.body(menu.body);
   const btnActions: types.SuperButton[] = [];
@@ -108,13 +109,14 @@ async function Teleport(d: Discussion, args: types.Args) {
   await d.player.dimension.runCommand(`teleport "${d.player.name}" ${targets[res.selection]}`)
 }
 
-async function Give(d: Discussion, args: types.GiveArgs) {
-  const stack = new mc.ItemStack(args.item, args.qty ?? 1);
+async function Give(d: Discussion, args: types.Args) {
+  const giveArgs = args as unknown as types.GiveArgs;
+  const stack = new mc.ItemStack(giveArgs.item, giveArgs.qty ?? 1);
   let enchants = stack.getComponent("minecraft:enchantments") as mc.ItemEnchantsComponent;
-  if (args.lore !== undefined) stack.setLore(args.lore);
-  if (args.name !== undefined) stack.nameTag = args.name;
+  if (giveArgs.lore !== undefined) stack.setLore(giveArgs.lore);
+  if (giveArgs.name !== undefined) stack.nameTag = giveArgs.name;
   const entity = d.player.dimension.spawnItem(stack, d.player.location);
-  for (const [enchantment, level] of Object.entries(args.enchantments ?? {})) {
+  for (const [enchantment, level] of Object.entries(giveArgs.enchantments ?? {})) {
     enchants.enchantments.addEnchantment(
       new mc.Enchantment(enchantment, level));
   }
@@ -148,7 +150,7 @@ async function BlocksBroken(d: Discussion, args: types.Args) {
   const query: StatsQuery = {
     field: types.Actions.breakBlock,
     sort: (args.sort ?? 'object') as 'object'|'qty',
-    action: 'DBSH_Broken',
+    action: 'BlocksBroken',
     title: 'Blocks Broken',
   };
   await showBlockStats(d, query);
@@ -158,7 +160,7 @@ async function BlocksPlaced(d: Discussion, args: types.Args) {
   const query: StatsQuery = {
     field: types.Actions.placeBlock,
     sort: (args.sort ?? 'object') as 'object'|'qty',
-    action: 'DBSH_Placed',
+    action: 'BlocksPlaced',
     title: 'Blocks Placed',
   };
   await showBlockStats(d, query);

@@ -12,12 +12,13 @@ type Script = {
   actors: SuperActor[],
   items: SuperItemUse[]
   chats: Chat[],
-}
+};
 
+/** @overwrite */
 export const script: Script = {
   transitions: {},
   actions: {},
   actors: [],
   items: [],
   chats: [],
-}
+};

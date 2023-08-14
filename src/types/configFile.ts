@@ -19,4 +19,5 @@ export interface ConfigFile {
   script_files?: string[]
 };
 
-export const assertConfigFile = typia.createAssert<ConfigFile>();
+// export const assertConfigFile = typia.createAssert<ConfigFile>();
+export const validateConfigFile = typia.createValidateEquals<ConfigFile>();

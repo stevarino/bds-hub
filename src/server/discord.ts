@@ -1,5 +1,5 @@
 import {Client, Events, GatewayIntentBits, Partials, TextChannel} from 'discord.js';
-import { ConfigFile, O } from '../types';
+import { ConfigFile, Obj } from '../types';
 
 // https://discordapi.com/permissions.html#67111936
 const PERMISSIONS = 67111936;
@@ -9,7 +9,7 @@ const channelUrl = new RegExp('^https://discord\\.com/channels/([0-9]+)/([0-9]+)
 export class DiscordClient {
   config: ConfigFile;
   client: Client<true>|undefined;
-  channels: O<TextChannel> = {};
+  channels: Obj<TextChannel> = {};
 
   inbound: string[] = [];
 

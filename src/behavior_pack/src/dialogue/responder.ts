@@ -113,7 +113,7 @@ world.afterEvents.itemUse.subscribe(e => {
 });
 
 // world.afterEvents.dataDrivenEntityTriggerEvent.subscribe(e => {
-//   console.log(e.entity.typeId, e.id);
+//   console.info(e.entity.typeId, e.id);
 // })
 
 world.afterEvents.chatSend.subscribe(e => {

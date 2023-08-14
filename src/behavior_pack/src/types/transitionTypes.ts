@@ -2,6 +2,8 @@
  * Interface types (menus, dialogues, forms, etc)
 *******************************************************************************/
 
+export type Obj<T> = {[key: string]: T};
+
 /** Pack-side function */
 export interface Action { action: string, args?: Args };
 export interface Args {[key: string]: unknown};
@@ -121,7 +123,7 @@ export type SuperActor = Actor & Partial< TagSelector & SelectorSelector & NameS
 
 type RequireTag = { require_tag?: string };
 export type Button = { text: string } & RequireTag &  BaseTransition;
-export type SuperButton = Button & Transition;
+export type SuperButton = Button & Transition & RequireTag;
 
 export interface Trader {
   trades: {
