@@ -187,29 +187,28 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
   const isAdmin = args.admin === true;
 
   const form = new ui.ActionFormData().title('Bot Selection');
-  if (args.admin === true) form.button(' [ Create New Bot ]');
+  if (isAdmin) form.button(' [ Create New Bot ]');
 
   for (const bot of STATE.getBots()) {
-    if (args.admin === true || (bot.owner === d.player.name)) {
+    if (isAdmin || (bot.owner === d.player.name)) {
       bots.push(bot);
       form.button(bot.name);
     }
   }
   if (bots.length === 0) {
     form.body('No bots found! :-(').button('Okay');
-    await getFormResponse(d.player, form);
-    return;
   }
   const res = await getFormResponse(d.player, form);
   if (res.selection === undefined) return;
   let selection = res.selection;
-  if (args.admin === true) {
+  if (isAdmin === true) {
     selection = selection - 1;
   }
   if (selection === -1) {
     await CreateBot(d);
     return;
   }
+  if (bots.length === 0) return;
   editBot(d, isAdmin, bots[selection] as BotState);
 }
 
