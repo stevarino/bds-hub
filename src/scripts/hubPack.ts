@@ -32,7 +32,7 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   const { actors, scenes, items, chats, actions } = await parseDialogueFiles(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
   writeSceneFile(packScenes);
-  writeTransitionsFile({
+  writeScriptFile(config, {
     transitions,
     actors,
     items,
@@ -82,9 +82,13 @@ function bumpManifest(path: string) {
   fs.writeFileSync(path, JSON.stringify(manifest, undefined, 2));
 }
 
-function writeTransitionsFile(script: unknown) {
+function writeScriptFile(config: ConfigFile, script: unknown) {
+  const manifest = JSON.parse(fs.readFileSync(
+    join(Constants.ADDON_OUTPUT, 'manifest.json'), 'utf-8'));
   lib.updateConstantsFile(Constants.ADDON_SCRIPT, {
-    script: script
+    script: script,
+    host: config.host,
+    version: manifest.header.version.join('.'),
   });
 }
 
@@ -259,8 +263,9 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Script
   const transitions: Dialogue.TransitionMap = {};
 
   for (const scene of scenes) {
+    let tag = Constants.ID('SCENE', scene.id);
     const scn: AssembledScene = {
-      scene_tag: Constants.ID('SCENE', scene.id),
+      scene_tag: tag,
       text: scene.text,
       buttons: [],
     }
@@ -269,9 +274,7 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Script
     }
     if (scene._actor !== undefined) {
       scn.on_open_commands = [
-        `/tag @initiator add ${Constants.ID('ACTOR', scene._actor)}`,
-        `/tag @initiator add ${scn.scene_tag}`,
-        `/tag @initiator add ${Constants.TAG_INIT}`,
+        `/scriptevent hub:dialogue_start ${tag}`,
       ];
     }
     packScenes.push(scn);
@@ -289,8 +292,7 @@ export function assembleScenes(actors: Dialogue.Actor[], scenes: Dialogue.Script
       scn.buttons.push({
         name: button.text,
         commands: [
-          `/tag @initiator add ${btnId}`,
-          `/tag @initiator add ${Constants.TAG_PENDING}`,
+          `/scriptevent hub:dialogue_transition ${btnId}`,
         ]
       });
     }

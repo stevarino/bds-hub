@@ -14,4 +14,4 @@ export const ADDON_SCENES = join(ADDON_OUTPUT, '/dialogue/scene.json');
 
 export const ADDON_TEMP = join(cwd(), '/build/temp');
 export const ADDON_ENTRY = join(ADDON_TEMP, '/index.js');
-export const ADDON_SCRIPT = join(ADDON_TEMP, '/dialogue/script.js');
+export const ADDON_SCRIPT = join(ADDON_TEMP, '/script.js');

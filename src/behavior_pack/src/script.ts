@@ -4,7 +4,7 @@
  * Overwritten during the build process by scripts/hubPack.ts
  */
 
-import { Chat, SuperActor, SuperItemUse, TransitionMap } from '../types/packTypes.js';
+import { Chat, SuperActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
 
 type Script = {
   transitions: TransitionMap,
@@ -22,3 +22,9 @@ export const script: Script = {
   items: [],
   chats: [],
 };
+
+/** @overwrite */
+export const host: string|undefined = undefined;
+
+/** @overwrite */
+export const version: string = '0.0.0';

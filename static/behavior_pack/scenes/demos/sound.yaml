@@ -1,17 +1,22 @@
 scenes:
 - id: sound_test
-  text: Want to hear some impressions?
+  text: |-
+    Want to hear some impressions?
+
+    I've been working on some great ones! For instance, what does the cow say? And a special one, what does the fox say?
+  
+    So how about it?
   buttons:
-  - text: What does the cow say?
+  - text: Cow!
     sequence:
       - sound: mob.cow.say
       - scene: sound_test
-  - text: What does the fox say?
+  - text: Fox?!?
     sequence:
-      - sound: mob.cow.say
-        pitch: 2
+      - sound: mob.ghast.charge
+        pitch: 0.35
       - scene: sound_test
-  - text: What else you got?
+  - text: Something else...
     sequence:
       - random:
         - sound: mob.ghast.affectionate_scream

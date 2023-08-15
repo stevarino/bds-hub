@@ -39,7 +39,8 @@ export function readConfig(filePath?: string): ConfigFile  {
       e => `${e.path}: expected (${JSON.stringify(e.expected)}), received (${JSON.stringify(e.value)})`
     ).join('\n - '));
     process.exit(1);
-  } 
+  }
+  config.host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}`;
   return config;
 }
 
@@ -104,16 +105,16 @@ export function strip(s: string) {
   return s.replace(/^\s+/, '').replace(/\s+$/, '').replace(/^[ \t]+/m, '');
 }
 
+const OverwriteRegex = /(@overwrite.*?)(\w+)(\s*=\s*)[^;]+/sg;
 export function updateConstantsFile(filename: string, values: {[key: string]: unknown}) {
   let content = fs.readFileSync(filename, 'utf-8');
-  const regex = /(@overwrite.*?)(\w+)(\s*=\s*)([^;]+)/sg
-  content = content.replace(regex, (m, marker, name, eq, _) => {
-    if (values[name] === undefined) throw new Error('Unrecognized constant: ' + name);
+  content = content.replaceAll(OverwriteRegex, (_, marker, name, eq) => {
+    if (!Object.keys(values).includes(name)) throw new Error('Unrecognized constant: ' + name);
     const vals = [marker, name, eq, JSON.stringify(values[name], undefined, 2)];
     delete values[name];
     return vals.join('');
   });
-  const keys = Array.from(Object.keys(values));
+  const keys = Object.keys(values);
   if (keys.length !== 0) {
     throw new Error(`Unused keys: ${JSON.stringify(keys)}`)
   }

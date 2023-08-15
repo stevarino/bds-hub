@@ -16,6 +16,5 @@ export enum DIMENSION {
   NETHER = "minecraft:nether",
 }
 
-export const TELEBOT_TAG = 'DBSH_TeleBot';
-export const ID_TAG = 'DBSH_ID';
-export const OWNER_TAG = 'DBSH_OWNER';
+export const BOT_ID_PREFIX = ID('BOT', 'ID', '');
+export const BOT_TYPE_PREFIX = ID('BOT', 'TYPE', '');

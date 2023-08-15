@@ -5,7 +5,7 @@
 import * as mc from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 
-import { script } from './script.js';
+import { script } from '../script.js';
 import * as types from '../types/packTypes.js';
 import { DELAY, ID } from "../lib/constants.js";
 import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
@@ -26,13 +26,10 @@ const ACTIONS: {[action: string]: ActionSig} = {};
 export function defineActions(actions: {[name: string]: ActionSig}) {
   for (const [name, func] of Object.entries(actions)) {
     ACTIONS[name] = func;
-    return func;
   }
 }
 
 export class Discussion {
-  static actions: {[action: string]: (d: Discussion, args: types.Args) => Promise<void>} = {};
-
   player: mc.Player;
   actor?: string;
   bot?: string;
@@ -62,7 +59,7 @@ export class Discussion {
     return value as T;
   }
 
-  /** Lookup a transition from transitions.ts */
+  /** Lookup a transition from script.js */
   findTransition(tag: string): types.Transition|undefined {
     const transition = script.transitions[tag];
     if (transition === undefined) {
@@ -127,7 +124,7 @@ async function check<T>(d: Discussion, transition: types.Transition, type: keyof
 }
 
 async function respondAction(d: Discussion, args: types.Action) {
-  const builtinAction = Discussion.actions[args.action];
+  const builtinAction = ACTIONS[args.action];
   if (builtinAction !== undefined) {
     return await builtinAction(d, args.args ?? {});
   }
@@ -148,7 +145,7 @@ async function respondScene(d: Discussion, action: types.Scene) {
   await timeout(DELAY);
   // default open - find the nearest npc to the player...
   let command = `execute at "${d.player.name}" run dialogue open @e[type=NPC,c=1] @p ${ID('SCENE', action.scene)}`
-  if (d.actor !== undefined && ActorBotMap[d.actor] !== undefined) {
+  if (d.bot === undefined && d.actor !== undefined && ActorBotMap[d.actor] !== undefined) {
     const bots = ActorBotMap[d.actor];
     let bot: types.BotState|undefined;
     if (bots !== undefined) {
@@ -163,12 +160,12 @@ async function respondScene(d: Discussion, action: types.Scene) {
         }
       }
       if (bot !== undefined) {
-        d.actor = bot.id;
+        d.bot = bot.id;
       }
     }
   }
-  if (d.actor !== undefined) {
-    command = `dialogue open @e[tag="${d.actor}"] @p ${ID('SCENE', action.scene)}`;
+  if (d.bot !== undefined) {
+    command = `dialogue open @e[tag="${d.bot}"] @p ${ID('SCENE', action.scene)}`;
   }
   await respondCommand(d, {command});
 }
@@ -249,10 +246,17 @@ async function respondSequence(d: Discussion, args: types.Sequence) {
 }
 
 async function respondSound(d: Discussion, args: types.Sound) {
-  await respondCommand(
-    d, { command: `playsound ${args.sound} @p ~ ~ ~ ${ 
-      args.volume ?? 1} ${args.pitch ?? 1} ${args.minVolume ?? 1}` }
-    ); 
+  if (d.bot !== undefined) {
+    await respondCommand(
+      d, { command: `execute at @e[tag="${d.bot}"] run playsound ${args.sound} @a ~ ~ ~ ${ 
+        args.volume ?? 1} ${args.pitch ?? 1} ${args.minVolume ?? 0}` }
+      );
+  } else {
+    await respondCommand(
+      d, { command: `playsound ${args.sound} @p ~ ~ ~ ${ 
+        args.volume ?? 1} ${args.pitch ?? 1} ${args.minVolume ?? 0}` }
+      );
+  }
 }
 
 async function handleRandom(d: Discussion, args: types.Random) {

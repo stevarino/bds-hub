@@ -5,13 +5,17 @@ import * as ui from "@minecraft/server-ui";
 import { Args, BotState, BotType } from "./types/packTypes.js";
 import { defineActions, Discussion } from "./dialogue/discussion.js";
 import { getFormResponse, StartupEvent, STATE, timeout, strip } from './lib.js';
-import { ID, TAG_PREFIX } from "./lib/constants.js";
+import { BOT_ID_PREFIX, BOT_TYPE_PREFIX, ID, TAG_PREFIX } from "./lib/constants.js";
 import { ActorBotMap, BotInitiated, BotIsOnline } from "./lib/runtimeState.js";
-import { script } from "./dialogue/script.js";
+import { script } from "./script.js";
+
+import * as formLib from './lib/form.js';
 
 StartupEvent.addListener(syncBots);
 
 defineActions({ TeleBotTravel, CreateBot, ManageBots, ResyncBots });
+
+const unsyncedBots = new Set<string>();
 
 /** Ensures that the script has been applied to a bot */
 async function syncBots() {
@@ -49,6 +53,9 @@ async function syncBots() {
           ActorBotMap[actorHash] = [];
         }
         ActorBotMap[actorHash]?.push(bot.id);
+      } else if (!unsyncedBots.has(bot.id)) {
+        unsyncedBots.add(bot.id);
+        console.warn('Missing script for bot: ', bot.id)
       }
 
     } catch(e: unknown) {
@@ -135,39 +142,49 @@ async function CreateBot(d: Discussion) {
   const players = ['', ...STATE.getPlayers()];
   const types = Array.from(Object.keys(BotType));
   players.sort();
-  const form = new ui.ModalFormData()
-    .title('Create a TeleBot')
-    .textField('Name', 'Display Name')
-    .textField('Tags', 'Space Seperated')
-    .dropdown('Owner', players)
-    .dropdown('Type', types);
 
-  const res = await getFormResponse(d.player, form);
-  if (res.formValues === undefined) return;
-  let [name, tags, ownerId, typeId] = res.formValues as [string, string, number, number];
-  const owner = players[ownerId] as string;
-  const type = types[typeId] as string;
-  const id_tag = ID('BOT', 'ID', String(new Date().getTime()));
+  const { results: res } = await formLib.show(d.player, 'Build-a-Bot', {
+    name: formLib.textbox('Display Name'),
+    tags: formLib.textbox('Space Seperated'),
+    owner: formLib.dropdown(players),
+    type: formLib.dropdown(types),
+  });
+  if (res === undefined) return;
+  
+  const id_tag = BOT_ID_PREFIX + String(new Date().getTime());
 
   const bot = d.player.dimension.spawnEntity('minecraft:npc', d.player.location);
   await timeout(20);
   bot.addTag(id_tag);
-  bot.addTag(ID('BOT', 'TYPE', type))
-  for (const tag of tags.split(' ')) {
-    bot.addTag(tag);
+  bot.addTag(BOT_TYPE_PREFIX + res.type.get());
+  for (const tag of res.tags.get().split(' ')) {
+    if (tag !== '') {
+      bot.addTag(tag);
+    }
   }
+  let name = res.name.get();
+  if (name === '') {
+    let i = 0;
+    const names = STATE.getBots().map(s => s.name);
+    while (name === '' || names.includes(name)) {
+      i += 1;
+      name = `Untitled Bot(${i})`;
+    }
+  }
+  await timeout(20);
   STATE.addBots([{
     id: id_tag,
     name: name,
-    owner: owner,
+    owner: res.owner.get(),
     location: [bot.dimension.id, bot.location.x, bot.location.y, bot.location.z],
-    type: type as BotType,
+    type: res.type.get() as BotType,
   }]);
 }
 
 /** A menu for selecting bots for editing */
 export async function ManageBots(d: Discussion, args: Args): Promise<void> {
   const bots: BotState[] = [];
+  const isAdmin = args.admin === true;
 
   const form = new ui.ActionFormData().title('Bot Selection');
   if (args.admin === true) form.button(' [ Create New Bot ]');
@@ -193,39 +210,34 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
     await CreateBot(d);
     return;
   }
-  const bot = bots[selection] as BotState;
+  editBot(d, isAdmin, bots[selection] as BotState);
+}
+
+async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
   let [x, y, z] = bot.offset ?? [0, 0, 0]
-  
-  const editForm = new ui.ModalFormData().title('Edit Bot')
-    .textField('Name', 'Display Name', bot.name)
-    .toggle('Summon', false)
-    .slider('X Offset', -5, 5, 1, x)
-    .slider('Y Offset', -5, 5, 1, y)
-    .slider('Z Offset', -5, 5, 1, z);
 
-  if (args.admin === true) {
-    editForm.textField('Tags', 'Space Separated', (bot.tags ?? []).join(' '));
-    editForm.toggle('Delete', false);
-    editForm.toggle('Resync', false);
-  }
-  const players = ['No Change', '', ...STATE.getPlayers()];
-  if (args.admin === true) editForm.dropdown('Owner', players);
+  const {results: form} = await formLib.show(d.player, 'Edit Bot', {
+    name: formLib.textbox('Display Name', {defaultValue: bot.name}),
+    summon: formLib.toggle({defaultValue: false}),
+    x: formLib.slider(-5, 5, {displayName: 'X Offset', defaultValue: x}),
+    y: formLib.slider(-5, 5, {displayName: 'Y Offset', defaultValue: y}),
+    z: formLib.slider(-5, 5, {displayName: 'Z Offset', defaultValue: z}),
+    tags: formLib.textbox('Space Separated', {
+      defaultValue: (bot.tags ?? []).join(' '),
+      show: isAdmin,
+    }),
+    delete: formLib.toggle({defaultValue: false, show: isAdmin}),
+    resync: formLib.toggle({defaultValue: false, show: isAdmin}),
+    owner: formLib.dropdown(['', ...STATE.getPlayers()], {defaultValue: bot.owner, show: isAdmin})
+  });
 
-  const editRes = await getFormResponse(d.player, editForm);
-  if (editRes.formValues === undefined) return;
-  let newName = editRes.formValues.shift() as string;
-  let summon = editRes.formValues.shift() as boolean;
-  let xOff = editRes.formValues.shift() as number;
-  let yOff = editRes.formValues.shift() as number;
-  let zOff = editRes.formValues.shift() as number;
+  if (form === undefined) return;
+
   const entity = await loadBot(bot);
   let unloaded = false;
   try {
-    if (args.admin) {
-      let tags = editRes.formValues.shift() as string;
-      let del = editRes.formValues.shift() as boolean;
-      let resync = editRes.formValues.shift() as boolean;
-      if (del) {
+    if (isAdmin) {
+      if (form.delete.get()) {
         STATE.rmBot(bot.id);
         const entity = await loadBot(bot);
         try {
@@ -235,24 +247,20 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
           unloadBot(bot);
         }
       }
-      if (tags !== '') {
-        bot.tags = tags.split(' ');
+      if (form.tags.get() !== '') {
+        bot.tags = form.tags.get().split(' ');
         if (entity !== undefined) {
           syncBotTags(bot, entity);
         }
       }
-      if (resync) {
+      if (form.resync.get()) {
         BotInitiated.delete(bot.id);
       }
+      
+      bot.owner = form.owner.get()
     }
-    if (args.admin === true) {
-      const owner = editRes.formValues[editRes.formValues.length - 1] as number;
-      if (owner > 0) {
-        bot.owner = players[owner];
-      }
-    }
-    if (newName !== bot.name) {
-      newName = strip(newName);
+    if (form.name.get() !== bot.name) {
+      let newName = strip(form.name.get());
       for (const b of STATE.getBots()) {
         if (b.id !== bot.id && b.name === newName) {
           getFormResponse(d.player, new ui.MessageFormData()
@@ -261,11 +269,10 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
         }
       }
     }
-    bot.offset = [xOff, yOff, zOff];
+    bot.offset = [form.x.get(), form.y.get(), form.z.get()];
     if (entity !== undefined) {
-      entity.nameTag = newName;
-      bot.name = newName;
-      if (summon) {
+      bot.name = strip(form.name.get());
+      if (form.summon.get()) {
         await loadBot(bot);
         const result = await entity.dimension.runCommandAsync(
           `tp @e[tag="${bot.id}"] "${d.player.name}"`);

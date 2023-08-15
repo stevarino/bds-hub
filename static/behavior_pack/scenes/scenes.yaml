@@ -15,7 +15,7 @@ scenes:
      action: TeleBotTravel
 actors:
   - scene: DBSH_TeleBotGreeting
-    tag: BDSH__BotType___TeleBot
+    tag: BDSH___BOT___TYPE___TeleBot
 actions:
   admin_menu:
     menu:
