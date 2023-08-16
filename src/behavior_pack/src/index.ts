@@ -153,20 +153,20 @@ world.afterEvents.entityDie.subscribe(e => {
   addEntityEvent(getEntityName(e.deadEntity), event);
 });
 
-world.afterEvents.entityHurt.subscribe(e => {
-  const hurtee = playerIdToName.has(e.hurtEntity?.id ?? '');
-  const hurter = playerIdToName.has(e.damageSource?.damagingEntity?.id ?? '');
-  if (hurtee === false && hurter === false) return;
-  const event: types.PlayerEvent = {
-    action: types.Actions.hurt,
-    extra: e.damageSource.cause,
-    qty: e.damage,
-  };
-  if (e.damageSource.damagingEntity !== undefined) {
-    event.object = getEntityName(e.damageSource.damagingEntity);
-  }
-  addEntityEvent(getEntityName(e.hurtEntity), event);
-});
+// world.afterEvents.entityHurt.subscribe(e => {
+//   const hurtee = playerIdToName.has(e.hurtEntity?.id ?? '');
+//   const hurter = playerIdToName.has(e.damageSource?.damagingEntity?.id ?? '');
+//   if (hurtee === false && hurter === false) return;
+//   const event: types.PlayerEvent = {
+//     action: types.Actions.hurt,
+//     extra: e.damageSource.cause,
+//     qty: e.damage,
+//   };
+//   if (e.damageSource.damagingEntity !== undefined) {
+//     event.object = getEntityName(e.damageSource.damagingEntity);
+//   }
+//   addEntityEvent(getEntityName(e.hurtEntity), event);
+// });
 
 world.afterEvents.itemUse.subscribe(e => {
   if (!e.itemStack.hasTag('minecraft:is_tool')) return;
