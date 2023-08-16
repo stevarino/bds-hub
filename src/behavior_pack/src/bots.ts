@@ -198,12 +198,9 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
   if (bots.length === 0) {
     form.body('No bots found! :-(').button('Okay');
   }
-  const res = await getFormResponse(d.player, form);
-  if (res.selection === undefined) return;
-  let selection = res.selection;
-  if (isAdmin === true) {
-    selection = selection - 1;
-  }
+  let {selection} = await getFormResponse(d.player, form);
+  if (selection === undefined) return;
+  if (isAdmin) selection = selection - 1;
   if (selection === -1) {
     await CreateBot(d);
     return;
