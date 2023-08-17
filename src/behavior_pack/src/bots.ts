@@ -81,10 +81,10 @@ function syncBotTags(bot: BotState, entity: Entity) {
   }
 }
 
-async function loadBot(bot: BotState) {
+async function loadBot(bot: BotState, radius=1) {
   const dimension = world.getDimension(bot.location[0]);
   await dimension.runCommandAsync(
-    `tickingarea add circle ${bot.location.slice(1).join(' ')} 1 ${TAG_PREFIX}_LOAD_${bot.id}`);
+    `tickingarea add circle ${bot.location.slice(1).join(' ')} ${radius} ${TAG_PREFIX}_LOAD_${bot.id}`);
   await timeout(10);
   const bots = dimension.getEntities({type: 'minecraft:npc', tags: [bot.id]});
   return bots[0];
@@ -92,7 +92,7 @@ async function loadBot(bot: BotState) {
 
 async function unloadBot(bot: BotState) {
   const dimension = world.getDimension(bot.location[0]);
-  await dimension.runCommandAsync(`tickingarea remove "bot_loader"`);
+  await dimension.runCommandAsync(`tickingarea remove  ${TAG_PREFIX}_LOAD_${bot.id}`);
   await timeout(10);
 }
 
@@ -125,7 +125,8 @@ async function TeleBotTravel(d: Discussion) {
 
 async function TeleportUserToBot(d: Discussion, bot: BotState) {
   if (bot === undefined) return;
-  await loadBot(bot);
+  await loadBot(bot, 2);
+  await timeout(20);
   const [x,y,z] = bot.offset ?? [0,0,0];
   await d.handleTransition({
     sequence: [
@@ -198,12 +199,9 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
   if (bots.length === 0) {
     form.body('No bots found! :-(').button('Okay');
   }
-  const res = await getFormResponse(d.player, form);
-  if (res.selection === undefined) return;
-  let selection = res.selection;
-  if (isAdmin === true) {
-    selection = selection - 1;
-  }
+  let {selection} = await getFormResponse(d.player, form);
+  if (selection === undefined) return;
+  if (isAdmin) selection = selection - 1;
   if (selection === -1) {
     await CreateBot(d);
     return;
