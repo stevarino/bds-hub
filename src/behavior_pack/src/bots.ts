@@ -126,16 +126,19 @@ async function TeleBotTravel(d: Discussion) {
 async function TeleportUserToBot(d: Discussion, bot: BotState) {
   if (bot === undefined) return;
   await loadBot(bot, 2);
-  await timeout(20);
-  const [x,y,z] = bot.offset ?? [0,0,0];
-  await d.handleTransition({
-    sequence: [
-      { command: `execute at @e[tag="${bot.id}"] run teleport "${d.player.name}" ~${x} ~${y} ~${z}` },
-      { wait: 5 },
-      { sound: 'beacon.power', pitch: 2 },
-    ]
-  })
-  await unloadBot(bot);
+  try {
+    await timeout(20);
+    const [x,y,z] = bot.offset ?? [0,0,0];
+    await d.handleTransition({
+      sequence: [
+        { command: `execute at @e[tag="${bot.id}"] run teleport "${d.player.name}" ~${x} ~${y} ~${z}` },
+        { wait: 5 },
+        { sound: 'beacon.power', pitch: 2 },
+      ]
+    })
+  } finally {
+    await unloadBot(bot);
+  }
 }
 
 /** New Bot  */
