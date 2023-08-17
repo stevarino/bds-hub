@@ -92,7 +92,7 @@ async function loadBot(bot: BotState) {
 
 async function unloadBot(bot: BotState) {
   const dimension = world.getDimension(bot.location[0]);
-  await dimension.runCommandAsync(`tickingarea remove "bot_loader"`);
+  await dimension.runCommandAsync(`tickingarea remove " ${TAG_PREFIX}_LOAD_${bot.id}"`);
   await timeout(10);
 }
 
@@ -126,6 +126,7 @@ async function TeleBotTravel(d: Discussion) {
 async function TeleportUserToBot(d: Discussion, bot: BotState) {
   if (bot === undefined) return;
   await loadBot(bot);
+  await timeout(20);
   const [x,y,z] = bot.offset ?? [0,0,0];
   await d.handleTransition({
     sequence: [
