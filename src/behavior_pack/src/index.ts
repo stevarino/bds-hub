@@ -154,8 +154,8 @@ world.afterEvents.entityDie.subscribe(e => {
 });
 
 world.afterEvents.entityHurt.subscribe(e => {
-  const hurtee = playerIdToName.has(e.hurtEntity.id);
-  const hurter = playerIdToName.has(e.damageSource.damagingEntity?.id ?? '');
+  const hurtee = playerIdToName.has(e.hurtEntity?.id ?? '');
+  const hurter = playerIdToName.has(e.damageSource?.damagingEntity?.id ?? '');
   if (hurtee === false && hurter === false) return;
   const event: types.PlayerEvent = {
     action: types.Actions.hurt,
