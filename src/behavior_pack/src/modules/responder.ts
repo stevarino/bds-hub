@@ -8,7 +8,7 @@ import { BOT_ID_PREFIX, ID, TAG_INIT, TAG_PENDING, TAG_PREFIX } from '../lib/con
 import * as lib from '../lib.js'
 import { Discussion } from './discussion.js';
 import './actions.js';
-import '../bots.js';
+import './bots.js';
 import { script } from "../script.js";
 import { SuperItemUse } from "../types/packTypes.js";
 

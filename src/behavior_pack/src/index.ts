@@ -5,7 +5,7 @@
 import { system, world, Entity } from "@minecraft/server";
 
 import { StartupEvent, request, setup, timeout, HOST, STATE } from "./lib.js";
-import  './dialogue/responder.js';
+import  './modules/responder.js';
 import * as types from './types/packTypes.js';
 
 (async function start() {

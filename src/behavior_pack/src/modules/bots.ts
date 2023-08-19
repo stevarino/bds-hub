@@ -2,14 +2,14 @@
 import { world, system, Entity } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
-import { Args, BotState, BotType } from "./types/packTypes.js";
-import { defineActions, Discussion } from "./dialogue/discussion.js";
-import { getFormResponse, StartupEvent, STATE, timeout, strip } from './lib.js';
-import { BOT_ID_PREFIX, BOT_TYPE_PREFIX, ID, TAG_PREFIX } from "./lib/constants.js";
-import { ActorBotMap, BotInitiated, BotIsOnline } from "./lib/runtimeState.js";
-import { script } from "./script.js";
+import { Args, BotState, BotType } from "../types/packTypes.js";
+import { defineActions, Discussion } from "./discussion.js";
+import { getFormResponse, StartupEvent, STATE, timeout, strip } from '../lib.js';
+import { BOT_ID_PREFIX, BOT_TYPE_PREFIX, ID, TAG_PREFIX } from "../lib/constants.js";
+import { ActorBotMap, BotInitiated, BotIsOnline } from "../lib/runtimeState.js";
+import { script } from "../script.js";
 
-import * as formLib from './lib/form.js';
+import * as formLib from '../lib/form.js';
 
 StartupEvent.addListener(syncBots);
 
