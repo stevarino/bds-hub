@@ -43,9 +43,15 @@ export async function getFormResponse<U=unknown>(player: mc.Player, form: {show:
   return await form.show(player);
 }
 
+export async function showDialogMessage(player: mc.Player, title: string, message: string, buttons?: string[]) {
+  if (buttons === undefined) buttons = ['Okay'];
+  const form = new ui.ActionFormData().title(title).body(message);
+  for (const btn of buttons) form.button(btn); 
+  return (await getFormResponse(player, form)).selection;
+}
+
 export async function showErrorMessage(player: mc.Player, message: string, title?: string) {
-  getFormResponse(player, new ui.MessageFormData().title(title ?? 'Error').body(
-    'ERROR:\n\n' + message).button1('Okay'));
+  await showDialogMessage(player, title ?? 'Error', 'ERROR:\n\n' + message);
 }
 
 export function strip(s: string) {

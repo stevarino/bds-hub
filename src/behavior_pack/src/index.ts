@@ -27,7 +27,7 @@ let ticksPerPoll = 20;
 const PAYLOAD: types.Update = {
   time: 0,
   weather: types.Constants.weatherClear,
-  entities: {},
+  players: {},
   messages: [],
 };
 
@@ -46,7 +46,7 @@ async function poll() {
     console.error(`Invalid payload? ${body}}`);
     return;
   }
-  PAYLOAD.entities = {};
+  PAYLOAD.players = {};
   PAYLOAD.messages = [];
   let res;
   try {
@@ -75,10 +75,10 @@ function getEntityName(entity: Entity) {
 
 /** Retrieves the update record for a given player */
 function getPlayerUpdate(name: string) {
-  let update = PAYLOAD.entities[name];
+  let update = PAYLOAD.players[name];
   if (update === undefined) {
     update = {events: []};
-    PAYLOAD.entities[name] = update;
+    PAYLOAD.players[name] = update;
   }
   return update;
 }

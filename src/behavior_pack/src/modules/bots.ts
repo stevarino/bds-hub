@@ -144,7 +144,7 @@ async function CreateBot(d: Discussion) {
   const types = Array.from(Object.keys(BotType));
   players.sort();
 
-  const { results: res } = await formLib.show(d.player, 'Build-a-Bot', {
+  const { results: res } = await formLib.ModalForm(d.player, 'Build-a-Bot', {
     name: formLib.textbox('Display Name'),
     tags: formLib.textbox('Space Seperated'),
     owner: formLib.dropdown(players),
@@ -213,7 +213,7 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
 async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
   let [x, y, z] = bot.offset ?? [0, 0, 0]
 
-  const {results: form} = await formLib.show(d.player, 'Edit Bot', {
+  const {results: form} = await formLib.ModalForm(d.player, 'Edit Bot', {
     name: formLib.textbox('Display Name', {defaultValue: bot.name}),
     summon: formLib.toggle({defaultValue: false}),
     x: formLib.slider(-5, 5, {displayName: 'X Offset', defaultValue: x}),

@@ -9,11 +9,12 @@ import { script } from '../script.js';
 import * as types from '../types/packTypes.js';
 import { DELAY, ID } from "../lib/constants.js";
 import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
+export { Args, Action } from '../types/packTypes.js';
 
-type ActionSig = (
+export type Callable = (
   ((d: Discussion, args: types.Args) => Promise<void>) |
   ((d: Discussion) => Promise<void>));
-const ACTIONS: {[action: string]: ActionSig} = {};
+const ACTIONS: {[action: string]: Callable} = {};
 
 /** 
  * Registers an action with the global ACTIONS collection.
@@ -23,10 +24,19 @@ const ACTIONS: {[action: string]: ActionSig} = {};
  * Works similarly to a decorator, but typescript only supports decorators on
  * classes/methods/etc.
  */
-export function defineActions(actions: {[name: string]: ActionSig}) {
+export function defineActions(actions: {[name: string]: Callable}) {
   for (const [name, func] of Object.entries(actions)) {
     ACTIONS[name] = func;
   }
+}
+
+/** Returns a callback that navigates to an action */
+export function actionCallback(discussion: Discussion, action: string,
+      args: types.Args, extra?: {[key: string]: unknown}) {
+  return () => discussion.navigate({
+    action: action,
+    args: Object.assign({}, args, extra ?? {})
+  });
 }
 
 export class Discussion {
