@@ -13,5 +13,7 @@ export interface ScriptFile {
 
 export const ActionArgs: {[key: string]: (input: unknown) => typia.IValidation} = {
   Give: typia.createValidateEquals<types.GiveArgs>(),
+  Trade: typia.createValidateEquals<types.TraderArgs>(),
 }
+
 export const validateScript = typia.createValidateEquals<ScriptFile>();

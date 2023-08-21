@@ -51,6 +51,7 @@ export async function showDialogMessage(player: mc.Player, title: string, messag
 }
 
 export async function showErrorMessage(player: mc.Player, message: string, title?: string) {
+  console.error(`${player.name}: ${message}`);
   await showDialogMessage(player, title ?? 'Error', 'ERROR:\n\n' + message);
 }
 

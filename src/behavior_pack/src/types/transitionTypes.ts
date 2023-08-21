@@ -25,7 +25,7 @@ export interface ScriptScene {
   _actor?: string,
 }
 
-export interface GiveArgs {
+export interface GiveArgs extends Args {
   item: string,
   qty?: number,
   name?: string,
@@ -34,6 +34,34 @@ export interface GiveArgs {
    **/
   lore?: string[],
   enchantments?: {[enchantmentId: string]: number},
+}
+
+export interface TradeItem {
+  item: string,
+  // default 1
+  qty?: number,
+}
+
+export interface TradeOffer extends Args {
+  // shown instead of the item/qty
+  title?: string,
+  gives: [TradeItem, ...TradeItem[]],
+  accepts: TradeItem[][],
+  /** internal */
+  _browsing?: boolean
+  _traderArgs?: unknown,
+}
+
+export interface TraderArgs extends Args {
+  trades: TradeOffer[],
+  /** displayed before the list of trades available */
+  greeting?: string,
+  /** message shown if no trades are acceptable */
+  noTrade?: string,
+  /** Shown if the user wants to see unavailable trades */
+  browseGreeting?: string,
+  /** internal */
+  _browsing?: boolean,
 }
 
 /** Describes a menu to open up */
@@ -124,14 +152,6 @@ export type SuperActor = Actor & Partial< TagSelector & SelectorSelector & NameS
 type RequireTag = { require_tag?: string };
 export type Button = { text: string } & RequireTag &  BaseTransition;
 export type SuperButton = Button & Transition & RequireTag;
-
-export interface Trader {
-  trades: {
-    gives: string,
-    accepts: string[],
-    ratio?: number,
-  }[],
-}
 
 export type ItemUse = RequireTag & (TagSelector | NameSelector | LoreSelector | ItemTypeSelector) & BaseTransition;
 export type SuperItemUse = Partial<RequireTag & TagSelector & NameSelector & LoreSelector & ItemTypeSelector & Transition>;

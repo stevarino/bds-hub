@@ -9,6 +9,8 @@ import * as lib from '../lib.js'
 import { Discussion } from './discussion.js';
 import './actions.js';
 import './bots.js';
+import './locations';
+import './trader.js';
 import { script } from "../script.js";
 import { SuperItemUse } from "../types/packTypes.js";
 

@@ -28,7 +28,7 @@ const nameOptions = [
 
 async function SelectLocation(d: Discussion, args: Args) {
   function editLoc(locationId?: number) {
-    return actionCallback(d, 'EditLocation', args, {locId: locationId})
+    return actionCallback(d, EditLocation.name, args, {locId: locationId});
   }
   const isAdmin = args.admin === true;
   const buttons = [
@@ -36,10 +36,10 @@ async function SelectLocation(d: Discussion, args: Args) {
   ];
   if (isAdmin && args.owner === undefined) {
     buttons.push(...[
-      {text: '[ Edit Community locations ]', action: actionCallback(
-        d, 'SelectLocation', args, {owner: ''})},
-      {text: '[ Edit All locations ]', action: actionCallback(
-        d, 'SelectLocation', args, {owner: '*'})},
+      { text: '[ Edit Community locations ]',
+        action: actionCallback(d, SelectLocation.name, args, {owner: ''})},
+      { text: '[ Edit All locations ]',
+        action: actionCallback(d, SelectLocation.name, args, {owner: '*'})},
     ]);
   } else {
     args.owner = d.player.name;
