@@ -37,21 +37,29 @@ class Server {
         console.info(`${res.statusCode} ${req.method} ${req.url} ${
           req.headers['content-length'] ?? ''}`);
       });
-      switch(url.pathname) {
-        case '/update': return this.processUpdate(req, res);
-        case '/status': return this.showStatus(req, res);
-        case '/events': return this.findEvents(req, res);
-        case '/read_state': return this.getWorldState(req, res);
-        case '/write_state': return this.setWorldState(req, res);
-        case '/location/list': return this.listLocations(req, res, url);
-        case '/location/new': return this.createLocation(req, res, url);
-        case '/location/get': return this.getLocation(req, res, url);
-        case '/location/update': return this.updateLocation(req, res, url);
-        case '/location/delete': return this.deleteLocation(req, res, url);
+      try {
+        switch(url.pathname) {
+          case '/update': return this.processUpdate(req, res);
+          case '/status': return this.showStatus(req, res);
+          case '/events': return this.findEvents(req, res);
+          case '/read_state': return this.getWorldState(req, res);
+          case '/write_state': return this.setWorldState(req, res);
+          case '/location/list': return this.listLocations(req, res, url);
+          case '/location/new': return this.createLocation(req, res, url);
+          case '/location/get': return this.getLocation(req, res, url);
+          case '/location/update': return this.updateLocation(req, res, url);
+          case '/location/delete': return this.deleteLocation(req, res, url);
+        }
+        res.statusCode = 404;
+        res.write('Not found.');
+        res.end();
+      } catch(e) {
+        res.statusCode = 500;
+        res.end('error - see logs');
+        const error = e as Error;
+        console.error(error);
+        if (error.stack !== undefined) console.error(error.stack);
       }
-      res.statusCode = 404;
-      res.write('Not found.');
-      res.end();
     });
 
   }

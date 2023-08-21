@@ -16,7 +16,7 @@ CREATE TABLE Locations (
   -- enum
   color INTEGER NOT NULL,
   sort INTEGER DEFAULT 100,
-  isPublic BOOLEAN,
+  isPublic BOOLEAN
 );
 
 CREATE INDEX LocationX ON Locations (x1, x2);
