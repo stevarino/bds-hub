@@ -39,7 +39,7 @@
     "hubPack": "dist/scripts/hubPack.js"
   },
   "scripts": {
-    "build": "npm run types && tsc && npm run finish",
+    "build": "npm run types && tsc && npm run finish && npm run hubValidateExamples",
     "prepare": "ts-patch install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "finish": "node dist/scripts/finishBuild.js",
@@ -49,6 +49,7 @@
     "hubStart": "node dist/scripts/hubStart.js",
     "hubConfig": "node dist/scripts/hubConfig.js",
     "hubPack": "node dist/scripts/hubPack.js",
+    "hubValidateExamples": "node dist/scripts/hubValidateExamples.js",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish"

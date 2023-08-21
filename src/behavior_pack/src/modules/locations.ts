@@ -2,7 +2,7 @@ import { showErrorMessage, request, forms, STATE, showDialogMessage } from '../l
 import { enumStrings, Location, LocationColor, LocationResult, LocationType, ServerSuccess } from '../types/packTypes.js';
 import { defineActions, Discussion, Args, actionCallback } from './discussion';
 
-defineActions({ CreateLocation: SelectLocation, EditLocation });
+defineActions({ SelectLocation, EditLocation });
 
 const nameOptions = [
   'Location',

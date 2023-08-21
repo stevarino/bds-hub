@@ -78,6 +78,10 @@ function getChildren(node: ts.Node|ts.Node[]) {
   return nodes;
 }
 
+function validateConfigs() {
+  
+}
+
 copyStatic();
 writeActionList();
-
+validateConfigs();

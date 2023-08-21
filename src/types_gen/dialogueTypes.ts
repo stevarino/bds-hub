@@ -15,14 +15,16 @@ export const ActionArgs: {
         const errors = [] as any[];
         const __is = (input: any, _exceptionable: boolean = true): input is types.GiveArgs => {
             const $join = (typia.createValidateEquals as any).join;
-            const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.item && (undefined === input.qty || "number" === typeof input.qty) && (undefined === input.name || "string" === typeof input.name) && (undefined === input.lore || Array.isArray(input.lore) && 3 >= input.lore.length && input.lore.every((elem: any, _index1: number) => "string" === typeof elem)) && (undefined === input.enchantments || "object" === typeof input.enchantments && null !== input.enchantments && false === Array.isArray(input.enchantments) && $io1(input.enchantments, true && _exceptionable)) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            const $io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.item && (undefined === input.qty || "number" === typeof input.qty) && (undefined === input.name || "string" === typeof input.name) && (undefined === input.lore || Array.isArray(input.lore) && 3 >= input.lore.length && input.lore.every((elem: any, _index1: number) => "string" === typeof elem)) && (undefined === input.enchantments || "object" === typeof input.enchantments && null !== input.enchantments && false === Array.isArray(input.enchantments) && $io1(input.enchantments, true && _exceptionable)) && Object.keys(input).every((key: any) => {
                 if (["item", "qty", "name", "lore", "enchantments"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
                     return true;
+                if (RegExp(/(.*)/).test(key))
+                    return true;
                 return false;
-            }));
+            });
             const $io1 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
                 const value = input[key];
                 if (undefined === value)
@@ -73,18 +75,20 @@ export const ActionArgs: {
                         path: _path + ".enchantments",
                         expected: "(__type | undefined)",
                         value: input.enchantments
-                    }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    }), false === _exceptionable || Object.keys(input).map((key: any) => {
                         if (["item", "qty", "name", "lore", "enchantments"].some((prop: any) => key === prop))
                             return true;
                         const value = input[key];
                         if (undefined === value)
+                            return true;
+                        if (RegExp(/(.*)/).test(key))
                             return true;
                         return $report(_exceptionable, {
                             path: _path + $join(key),
                             expected: "undefined",
                             value: value
                         });
-                    }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+                    }).every((flag: boolean) => flag)].every((flag: boolean) => flag);
                 const $vo1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [false === _exceptionable || Object.keys(input).map((key: any) => {
                         const value = input[key];
                         if (undefined === value)
@@ -108,6 +112,208 @@ export const ActionArgs: {
                 })) && $vo0(input, _path + "", true) || $report(true, {
                     path: _path + "",
                     expected: "GiveArgs",
+                    value: input
+                });
+            })(input, "$input", true);
+        }
+        const success = 0 === errors.length;
+        return {
+            success,
+            errors,
+            data: success ? input : undefined
+        } as any;
+    },
+    Trade: (input: any): typia.IValidation<types.TraderArgs> => {
+        const errors = [] as any[];
+        const __is = (input: any, _exceptionable: boolean = true): input is types.TraderArgs => {
+            const $join = (typia.createValidateEquals as any).join;
+            const $io0 = (input: any, _exceptionable: boolean = true): boolean => Array.isArray(input.trades) && input.trades.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable)) && (undefined === input.greeting || "string" === typeof input.greeting) && (undefined === input.noTrade || "string" === typeof input.noTrade) && (undefined === input.browseGreeting || "string" === typeof input.browseGreeting) && (undefined === input._browsing || "boolean" === typeof input._browsing) && Object.keys(input).every((key: any) => {
+                if (["trades", "greeting", "noTrade", "browseGreeting", "_browsing"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                if (RegExp(/(.*)/).test(key))
+                    return true;
+                return false;
+            });
+            const $io1 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.title || "string" === typeof input.title) && (Array.isArray(input.gives) && ("object" === typeof input.gives[0] && null !== input.gives[0] && $io2(input.gives[0], true && _exceptionable) && (Array.isArray(input.gives.slice(1)) && input.gives.slice(1).every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))))) && (Array.isArray(input.accepts) && input.accepts.every((elem: any, _index3: number) => Array.isArray(elem) && elem.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable)))) && (undefined === input._browsing || "boolean" === typeof input._browsing) && true && Object.keys(input).every((key: any) => {
+                if (["title", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                if (RegExp(/(.*)/).test(key))
+                    return true;
+                return false;
+            });
+            const $io2 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.item && (undefined === input.qty || "number" === typeof input.qty) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+                if (["item", "qty"].some((prop: any) => key === prop))
+                    return true;
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                return false;
+            }));
+            return "object" === typeof input && null !== input && $io0(input, true);
+        };
+        if (false === __is(input)) {
+            const $report = (typia.createValidateEquals as any).report(errors);
+            ((input: any, _path: string, _exceptionable: boolean = true): input is types.TraderArgs => {
+                const $join = (typia.createValidateEquals as any).join;
+                const $vo0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(Array.isArray(input.trades) || $report(_exceptionable, {
+                        path: _path + ".trades",
+                        expected: "Array<TradeOffer>",
+                        value: input.trades
+                    })) && input.trades.map((elem: any, _index1: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                        path: _path + ".trades[" + _index1 + "]",
+                        expected: "TradeOffer",
+                        value: elem
+                    })) && $vo1(elem, _path + ".trades[" + _index1 + "]", true && _exceptionable) || $report(_exceptionable, {
+                        path: _path + ".trades[" + _index1 + "]",
+                        expected: "TradeOffer",
+                        value: elem
+                    })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                        path: _path + ".trades",
+                        expected: "Array<TradeOffer>",
+                        value: input.trades
+                    }), undefined === input.greeting || "string" === typeof input.greeting || $report(_exceptionable, {
+                        path: _path + ".greeting",
+                        expected: "(string | undefined)",
+                        value: input.greeting
+                    }), undefined === input.noTrade || "string" === typeof input.noTrade || $report(_exceptionable, {
+                        path: _path + ".noTrade",
+                        expected: "(string | undefined)",
+                        value: input.noTrade
+                    }), undefined === input.browseGreeting || "string" === typeof input.browseGreeting || $report(_exceptionable, {
+                        path: _path + ".browseGreeting",
+                        expected: "(string | undefined)",
+                        value: input.browseGreeting
+                    }), undefined === input._browsing || "boolean" === typeof input._browsing || $report(_exceptionable, {
+                        path: _path + "._browsing",
+                        expected: "(boolean | undefined)",
+                        value: input._browsing
+                    }), false === _exceptionable || Object.keys(input).map((key: any) => {
+                        if (["trades", "greeting", "noTrade", "browseGreeting", "_browsing"].some((prop: any) => key === prop))
+                            return true;
+                        const value = input[key];
+                        if (undefined === value)
+                            return true;
+                        if (RegExp(/(.*)/).test(key))
+                            return true;
+                        return $report(_exceptionable, {
+                            path: _path + $join(key),
+                            expected: "undefined",
+                            value: value
+                        });
+                    }).every((flag: boolean) => flag)].every((flag: boolean) => flag);
+                const $vo1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.title || "string" === typeof input.title || $report(_exceptionable, {
+                        path: _path + ".title",
+                        expected: "(string | undefined)",
+                        value: input.title
+                    }), (Array.isArray(input.gives) || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "[TradeItem, ...TradeItem[]]",
+                        value: input.gives
+                    })) && ([
+                        ("object" === typeof input.gives[0] && null !== input.gives[0] || $report(_exceptionable, {
+                            path: _path + ".gives[0]",
+                            expected: "TradeItem",
+                            value: input.gives[0]
+                        })) && $vo2(input.gives[0], _path + ".gives[0]", true && _exceptionable) || $report(_exceptionable, {
+                            path: _path + ".gives[0]",
+                            expected: "TradeItem",
+                            value: input.gives[0]
+                        })
+                    ].every((flag: boolean) => flag) && ((Array.isArray(input.gives.slice(1)) || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "...TradeItem",
+                        value: input.gives.slice(1)
+                    })) && input.gives.slice(1).map((elem: any, _index2: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                        path: _path + ".gives[" + (1 + _index2) + "]",
+                        expected: "TradeItem",
+                        value: elem
+                    })) && $vo2(elem, _path + ".gives[" + (1 + _index2) + "]", true && _exceptionable) || $report(_exceptionable, {
+                        path: _path + ".gives[" + (1 + _index2) + "]",
+                        expected: "TradeItem",
+                        value: elem
+                    })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "...TradeItem",
+                        value: input.gives.slice(1)
+                    }))) || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "[TradeItem, ...TradeItem[]]",
+                        value: input.gives
+                    }), (Array.isArray(input.accepts) || $report(_exceptionable, {
+                        path: _path + ".accepts",
+                        expected: "Array<Array<TradeItem>>",
+                        value: input.accepts
+                    })) && input.accepts.map((elem: any, _index3: number) => (Array.isArray(elem) || $report(_exceptionable, {
+                        path: _path + ".accepts[" + _index3 + "]",
+                        expected: "Array<TradeItem>",
+                        value: elem
+                    })) && elem.map((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                        path: _path + ".accepts[" + _index3 + "][" + _index4 + "]",
+                        expected: "TradeItem",
+                        value: elem
+                    })) && $vo2(elem, _path + ".accepts[" + _index3 + "][" + _index4 + "]", true && _exceptionable) || $report(_exceptionable, {
+                        path: _path + ".accepts[" + _index3 + "][" + _index4 + "]",
+                        expected: "TradeItem",
+                        value: elem
+                    })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                        path: _path + ".accepts[" + _index3 + "]",
+                        expected: "Array<TradeItem>",
+                        value: elem
+                    })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                        path: _path + ".accepts",
+                        expected: "Array<Array<TradeItem>>",
+                        value: input.accepts
+                    }), undefined === input._browsing || "boolean" === typeof input._browsing || $report(_exceptionable, {
+                        path: _path + "._browsing",
+                        expected: "(boolean | undefined)",
+                        value: input._browsing
+                    }), true, false === _exceptionable || Object.keys(input).map((key: any) => {
+                        if (["title", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
+                            return true;
+                        const value = input[key];
+                        if (undefined === value)
+                            return true;
+                        if (RegExp(/(.*)/).test(key))
+                            return true;
+                        return $report(_exceptionable, {
+                            path: _path + $join(key),
+                            expected: "undefined",
+                            value: value
+                        });
+                    }).every((flag: boolean) => flag)].every((flag: boolean) => flag);
+                const $vo2 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.item || $report(_exceptionable, {
+                        path: _path + ".item",
+                        expected: "string",
+                        value: input.item
+                    }), undefined === input.qty || "number" === typeof input.qty || $report(_exceptionable, {
+                        path: _path + ".qty",
+                        expected: "(number | undefined)",
+                        value: input.qty
+                    }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                        if (["item", "qty"].some((prop: any) => key === prop))
+                            return true;
+                        const value = input[key];
+                        if (undefined === value)
+                            return true;
+                        return $report(_exceptionable, {
+                            path: _path + $join(key),
+                            expected: "undefined",
+                            value: value
+                        });
+                    }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+                return ("object" === typeof input && null !== input || $report(true, {
+                    path: _path + "",
+                    expected: "TraderArgs",
+                    value: input
+                })) && $vo0(input, _path + "", true) || $report(true, {
+                    path: _path + "",
+                    expected: "TraderArgs",
                     value: input
                 });
             })(input, "$input", true);

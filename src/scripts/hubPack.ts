@@ -29,7 +29,7 @@ const DIRS: [string, string][] = [
 export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   if (argn === undefined) argn = {};
   await copyStatic();
-  const { actors, scenes, items, chats, actions } = await parseDialogueFiles(config);
+  const { actors, scenes, items, chats, actions } = await parseScriptFiles(config);
   const { transitions, packScenes } = assembleScenes(actors, scenes);
   writeSceneFile(packScenes);
   writeScriptFile(config, {
@@ -113,51 +113,8 @@ async function rollupPack() {
   await bundle.write({ file: Constants.ADDON_ROLLUP });
 }
 
-function loadScriptFile(filename: string) {
-  console.info(`Parsing ${filename}`);
-  let script : Dialogue.ScriptFile;
-  if (filename.endsWith('.json')) {
-    script = JSON.parse(
-      fs.readFileSync(filename, 'utf-8')) as Dialogue.ScriptFile;
-  } else if (filename.endsWith('.yaml') || filename.endsWith('.yml')) {
-    script = yaml.parse(fs.readFileSync(filename, 'utf-8'));
-  } else {
-    throw new Error('Unrecognized file type: ' + filename);
-  }
-
-  return script;
-}
-
-function validateScript(filename: string, script: Dialogue.ScriptFile) {
-  const errors: string[] = []
-  const result = Dialogue.validateScript(script);
-  errors.push(...typiaErrorsFormat(result));
-
-  lib.validateDeep(script, {
-    action: obj => {
-      const errors: string[] = [];
-      const actionName = (obj as Dialogue.Action).action;
-      if (!actionList.includes(actionName)) {
-        errors.push(`Unrecognized action: ${actionName}`);
-      }
-      const argValidator = Dialogue.ActionArgs[actionName];
-      if (argValidator !== undefined) {
-        errors.push(...typiaErrorsFormat(
-          argValidator((obj as Dialogue.Action).args)));
-      }
-      return errors;
-    },
-  }).forEach(([path, msg]) => {
-    errors.push(`${path} : ${msg}`)
-  });
-  const errorObj: Obj<string[]> = {};
-  if (errors.length !== 0) errorObj[filename] = errors;
-  return errorObj;
-}
-
-
 /** Parse and validate dialogue files */
-export async function parseDialogueFiles(config: ConfigFile) {
+export async function parseScriptFiles(config: ConfigFile) {
   const referencedIds = new Set<string>();
   const definedIds = new Set<string>();
   const scenes: Dialogue.ScriptScene[] = [];
@@ -172,7 +129,7 @@ export async function parseDialogueFiles(config: ConfigFile) {
 
   const scriptFiles: Obj<Dialogue.ScriptFile> = {};
   for (const df of [...globalScenes, ...(config.script_files ?? [])]) {
-    let script = loadScriptFile(df);
+    let script = lib.loadScriptFile(df);
     scriptFiles[df] = script;
     items.push(...(script.items ?? []));
     chats.push(...(script.chats ?? []));
@@ -234,7 +191,7 @@ export async function parseDialogueFiles(config: ConfigFile) {
 
   const errors: Obj<string[]> = {};
   for (const [filename, script] of Object.entries(scriptFiles)) {
-    Object.assign(errors, validateScript(filename, script));
+    Object.assign(errors, lib.validateScript(filename, script, actionList));
   }
 
   if (Object.keys(errors).length !== 0) {
