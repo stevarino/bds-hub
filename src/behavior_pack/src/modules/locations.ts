@@ -44,9 +44,9 @@ async function SelectLocation(d: Discussion, args: Args) {
   } else {
     args.owner = d.player.name;
   }
-  const locs = await request<{location: LocationResult[]}> ('/location/list', {owner: args.owner});
+  const locs = await request<{locations: LocationResult[]}> ('/location/list', {owner: args.owner});
   if (locs !== undefined) {
-    for (const loc of locs.location) {
+    for (const loc of locs.locations) {
       const name = args.owner === '*' ? `[${loc.owner}] ${loc.name}` : loc.name;
       buttons.push({ text: name, action: editLoc(loc.id) })
     }
