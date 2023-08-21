@@ -31,7 +31,7 @@ class Server {
 
     this.discord = new DiscordClient(this.config);
 
-    this.server = http.createServer((req, res) => {
+    this.server = http.createServer(async (req, res) => {
       const url = new URL(req.url ?? '', 'http://example.com');
       req.on('close', () => {
         console.info(`${res.statusCode} ${req.method} ${req.url} ${
@@ -39,20 +39,19 @@ class Server {
       });
       try {
         switch(url.pathname) {
-          case '/update': return this.processUpdate(req, res);
-          case '/status': return this.showStatus(req, res);
-          case '/events': return this.findEvents(req, res);
-          case '/read_state': return this.getWorldState(req, res);
-          case '/write_state': return this.setWorldState(req, res);
-          case '/location/list': return this.listLocations(req, res, url);
-          case '/location/new': return this.createLocation(req, res, url);
-          case '/location/get': return this.getLocation(req, res, url);
-          case '/location/update': return this.updateLocation(req, res, url);
-          case '/location/delete': return this.deleteLocation(req, res, url);
+          case '/update': return await this.processUpdate(req, res);
+          case '/status': return await this.showStatus(req, res);
+          case '/events': return await this.findEvents(req, res);
+          case '/read_state': return await this.getWorldState(req, res);
+          case '/write_state': return await this.setWorldState(req, res);
+          case '/location/list': return await this.listLocations(req, res, url);
+          case '/location/new': return await this.createLocation(req, res, url);
+          case '/location/get': return await this.getLocation(req, res, url);
+          case '/location/update': return await this.updateLocation(req, res, url);
+          case '/location/delete': return await this.deleteLocation(req, res, url);
         }
         res.statusCode = 404;
-        res.write('Not found.');
-        res.end();
+        res.end('Not found.');
       } catch(e) {
         res.statusCode = 500;
         res.end('error - see logs');
@@ -172,20 +171,14 @@ class Server {
 
   async createLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
     const query = await this.readBody<Location>(req);
-    if (query === undefined) {
-      res.end('{}');
-      return;
-    }
+    if (query === undefined) return res.end('{}');
     const result = await this.db.createLocation(query)
     res.end(JSON.stringify({success: result === 1}));
   }
 
   async updateLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
     const query = await this.readBody<Location>(req);
-    if (query === undefined) {
-      res.end('{}');
-      return;
-    }
+    if (query === undefined) return res.end('{}');
     const result = await this.db.updateLocation(query)
     res.end(JSON.stringify({success: result === 1}));
   }

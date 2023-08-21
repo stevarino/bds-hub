@@ -185,7 +185,7 @@ export class DBHandle {
         (z1 + z2)/2 as z,
         CASE WHEN y1 IS NULL THEN NULL ELSE (y1 + y2)/2 END as y,
       FROM Locations WHERE 1=1 ${where.join(' ')}
-      ORDER BY sort, owner, name, id`
+      ORDER BY sort, owner, name, id`, params
     );
     const result: LocationResult[] = [];
     for (const row of rows) {
