@@ -50,8 +50,8 @@
     "hubConfig": "node dist/scripts/hubConfig.js",
     "hubPack": "node dist/scripts/hubPack.js",
     "hubValidateExamples": "node dist/scripts/hubValidateExamples.js",
-    "patch": "npm version patch && npm publish",
-    "minor": "npm version minor && npm publish",
-    "major": "npm version major && npm publish"
+    "patch": "npm run build && npm version patch && npm publish",
+    "minor": "npm run build && npm version minor && npm publish",
+    "major": "npm run build && npm version major && npm publish"
   }
 }
