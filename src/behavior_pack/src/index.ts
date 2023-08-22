@@ -4,7 +4,7 @@
 
 import { system, world, Entity } from "@minecraft/server";
 
-import { StartupEvent, request, setup, timeout, HOST, STATE } from "./lib.js";
+import { StartupEvent, setup, timeout, HOST, STATE, CheckIn } from "./lib.js";
 import  './modules/responder.js';
 import * as types from './types/packTypes.js';
 
@@ -39,18 +39,12 @@ async function poll() {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }
-  let body;
-  try {
-    body = JSON.stringify(PAYLOAD);
-  } catch {
-    console.error(`Invalid payload? ${body}}`);
-    return;
-  }
+  const copy = Object.assign({}, PAYLOAD)
   PAYLOAD.players = {};
   PAYLOAD.messages = [];
-  let res;
+  let res: types.UpdateResponse|undefined = undefined;
   try {
-    res = await request<types.UpdateResponse>('/update', body);
+    res = await CheckIn.request(copy);
   } catch(e) {
     console.error('Failed to poll: ', e);
     return;

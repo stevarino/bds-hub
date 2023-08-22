@@ -5,7 +5,7 @@ import { DELAY } from "./constants";
 import { Obj } from "../types/transitionTypes";
 
 
-interface options<T> {
+interface Options<T> {
   defaultValue?: T,
   requireTag?: string, 
   displayName?: string,
@@ -40,7 +40,7 @@ export async function ModalForm<T={[label: string]: ModalFormWidget}>(
 class ModalFormWidget<T=any, U=any> {
   value: T|undefined;
   constructor(
-    public options: options<T>,
+    public options: Options<T>,
     public addToForm: (form: ui.ModalFormData, label: string) => void,
     public setValue?: (value: U) => T) {}
   
@@ -69,13 +69,13 @@ class ModalFormWidget<T=any, U=any> {
   }
 }
 
-export function textbox(placeHolder: string, options: options<string>={}) {
+export function textbox(placeHolder: string, options: Options<string>={}) {
   return new ModalFormWidget<string, string>(options,
     (form, label) => form.textField(label, placeHolder, options.defaultValue)
   );
 }
 
-export function dropdown(dropdownOptions: string[], options: options<string>={}) {
+export function dropdown(dropdownOptions: string[], options: Options<string>={}) {
   return new ModalFormWidget<string, number>(
     options,
     (form, label) => {
@@ -90,13 +90,13 @@ export function dropdown(dropdownOptions: string[], options: options<string>={})
   );
 }
 
-export function toggle(options: options<boolean>={}) {
+export function toggle(options: Options<boolean>={}) {
   return new ModalFormWidget<boolean, boolean>(options, (form, label) => {
     form.toggle(label, options.defaultValue);
   })
 }
 
-export function slider(min: number, max: number, options: options<number> & {step?: number}={}) {
+export function slider(min: number, max: number, options: Options<number> & {step?: number}={}) {
   return new ModalFormWidget<number, number>(options, (form, label) => {
     form.slider(label, min, max, options.step ?? 1, options.defaultValue);
   })

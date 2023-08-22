@@ -1,7 +1,7 @@
 
 import * as mc from "@minecraft/server";
 import * as types from '../types/packTypes.js'
-import { request } from "./network.js";
+import { ReadState, WriteState } from "./network.js";
 
 export let STATE: State;
 export async function setup() {
@@ -18,7 +18,7 @@ class State {
   needsPush = false;
 
   async sync() {
-    const state = await request<types.WorldState>('/read_state');
+    const state = await ReadState.request();
     if (state === undefined) {
       // failed to get state
       console.warn('Unable to query server for state.');
@@ -47,7 +47,7 @@ class State {
       bots: Array.from(Object.values(this.bots)),
       accounts: Array.from(Object.values(this.accounts)),
     }
-    await request('/write_state', state);
+    await WriteState.request(state);
     this.needsPush = false;
     return true;
   }

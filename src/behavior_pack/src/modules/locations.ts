@@ -1,4 +1,4 @@
-import { showErrorMessage, request, forms, STATE, showDialogMessage } from '../lib.js';
+import { showErrorMessage, forms, STATE, showDialogMessage, LocList, LocGet, LocDel, LocUpdate, LocNew } from '../lib.js';
 import { enumStrings, Location, LocationColor, LocationResult, LocationType, ServerSuccess } from '../types/packTypes.js';
 import { defineActions, Discussion, Args, actionCallback } from './discussion';
 
@@ -31,7 +31,7 @@ async function SelectLocation(d: Discussion, args: Args) {
     return actionCallback(d, EditLocation.name, args, {locId: locationId});
   }
   const isAdmin = args.admin === true;
-  const buttons = [
+  const buttons: forms.ActionButton[] = [
     {text: '[ Create New Location ]', action: editLoc()},
   ];
   if (isAdmin && args.owner === undefined) {
@@ -44,7 +44,7 @@ async function SelectLocation(d: Discussion, args: Args) {
   } else {
     args.owner = d.player.name;
   }
-  const locs = await request<{locations: LocationResult[]}> ('/location/list', {owner: args.owner});
+  const locs = await LocList.request({owner: args.owner as string|undefined});
   if (locs !== undefined) {
     for (const loc of locs.locations) {
       const name = args.owner === '*' ? `[${loc.owner}] ${loc.name}` : loc.name;
@@ -60,13 +60,14 @@ async function EditLocation(d: Discussion, args: Args) {
   let location: Partial<Location> = {};
   if (args.locId !== undefined) {
     title = 'Edit Location';
-    const res = await request<Location>(`/location/get?id=${args.locId}`);
-    if (res === undefined) {
+    const res = await LocGet.request({id: args.locId as number});
+    if (res?.location === undefined) {
       showErrorMessage(d.player, 'Unable to find location');
       return;
     }
-    location = res;
+    location = res.location;
   }
+
   const newName = `${d.player.name} ${nameOptions[Math.floor(Math.random() * nameOptions.length)]}`
   const dimension = location.dimension ?? d.player.dimension.id;
   const x1 = location.x1 ?? Math.floor(d.player.location.x);
@@ -108,7 +109,7 @@ async function EditLocation(d: Discussion, args: Args) {
     const res = await showDialogMessage(d.player, 'Confirm Deletion', 
       `Are you sure you want to delete "${location.name}"`, ['Confirm', 'Cancel']);
     if (res === 0) {
-      const res = await request<ServerSuccess>(`/location/delete?id=${args.locId}`);
+      const res = await LocDel.request({id: args.locId as number});
       await showDialogMessage(d.player, title, res?.success === true ? 'Success'
         : 'An error was encountered saving the request.');
     }
@@ -139,9 +140,9 @@ async function EditLocation(d: Discussion, args: Args) {
   let res: ServerSuccess|undefined;
   if (args.locId !== undefined) {
     req.id = args.locId as number;
-    res = await request<ServerSuccess>('/location/update', req);
+    res = await LocUpdate.request(req);
   } else {
-    res = await request<ServerSuccess>('/location/new', req);
+    res = await LocNew.request(req);
   }
   await showDialogMessage(d.player, title, res?.success === true ? 'Success'
     : 'An error was encountered saving the request.');

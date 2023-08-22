@@ -8,6 +8,7 @@ import * as lib from "../lib.js";
 import * as types from '../types/packTypes.js';
 import { defineActions, Discussion } from "./discussion.js";
 import { BotIsOnline } from "../lib/runtimeState.js";
+import { Events } from "../lib.js";
 
 defineActions({
   Time, InventoryInspect, BlocksBroken, BlocksPlaced, Teleport,
@@ -168,18 +169,18 @@ async function BlocksPlaced(d: Discussion, args: types.Args) {
 
 async function showBlockStats(d: Discussion, args: StatsQuery) {
   const label: Record<string, string> = { object: 'block', qty: 'count' };
-  const body: types.EventRequest = {
+  const res = await Events.request({
     select: ['object', 'qty'],
     where: {
       entity: d.player.name,
       action: String(args.field),
     },
     order: [args.sort],
-  };
-  const res = await lib.request<types.Event[]>('/events', body);
+  });
+  
   const form = new ui.ActionFormData()
     .title(args.title)
-    .body(getLines(res).join('\n') + '\n')
+    .body(getLines(res.events).join('\n') + '\n')
     .button(`Sorted by ${label[args.sort]}`);
   const resp = await lib.getFormResponse(d.player, form);
   if (resp.selection === 0) {

@@ -102,6 +102,10 @@ export interface EventRequest {
   order?: EventField[],
 }
 
+export interface EventResponse {
+  events: Partial<Event>[],
+}
+
 /** Response from the server */
 export interface UpdateResponse {
   /** Incoming Discord messsages to display */
@@ -119,6 +123,10 @@ export interface ServerSuccess {
   success: boolean,
 }
 
+export interface IDQuery {
+  id: number,
+}
+
 export interface Location {
   id?: number,
   owner?: string,
@@ -134,6 +142,19 @@ export interface Location {
   color: LocationColor,
   sort: number,
   isPublic: boolean,
+}
+
+export type LocListReq = {
+  owner?: string,
+  publicOnly?: boolean,
+}
+
+export type LocListRes = {
+  locations: LocationResult[],
+}
+
+export type LocationGet = {
+  location?: Location;
 }
 
 export type LocationResult = Omit<Location, 
