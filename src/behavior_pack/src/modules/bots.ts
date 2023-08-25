@@ -126,20 +126,21 @@ async function TeleBotTravel(d: Discussion) {
 async function TeleportUserToBot(d: Discussion, bot: BotState) {
   const offset = bot.offset ?? [0,0,0];
   let x = bot.location[1] + offset[0];
+  let y = bot.location[2] + offset[1];
   let z = bot.location[3] + offset[2];
   if (bot.radius !== undefined) {
     x += 2 * bot.radius * Math.random() - bot.radius;
     z += 2 * bot.radius * Math.random() - bot.radius;
   }
   d.player.teleport(
-    {x, y: bot.location[2] + offset[1], z},
-    {dimension: world.getDimension(bot.location[0])}
+    {x, y, z}, {dimension: world.getDimension(bot.location[0])}
   );
-  await timeout(20);
+  await timeout(5);
   await d.handleTransition({
-    sound: 'beacon.power', pitch: 2,
+    sound: 'beacon.power',
+    pitch: 2,
+    x, y, z, dimension: bot.location[0]
   });
-  await unloadBot(bot);
 }
 
 /** New Bot  */

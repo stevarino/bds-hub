@@ -111,12 +111,18 @@ export interface Sequence {
 /**
  * Play a sound for the player in the discussion.
  */
-export interface Sound {
+export type Sound = {
   sound: string,
   volume?: number,
   pitch?: number,
-  minVolume?: number,
-}
+  // specifying location broadcasts to all players
+  // excluding locatgion broadcasts to one player
+  x?: number,
+  y?: number,
+  z?: number,
+  dimension?: string,
+  selector?: string,
+};
 
 /**
  * Random transition, with optional weights

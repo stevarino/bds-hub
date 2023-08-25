@@ -260,16 +260,15 @@ async function respondSequence(d: Discussion, args: types.Sequence) {
 }
 
 async function respondSound(d: Discussion, args: types.Sound) {
-  if (d.bot !== undefined) {
-    await respondCommand(
-      d, { command: `execute at @e[tag="${d.bot}"] run playsound ${args.sound} @a ~ ~ ~ ${ 
-        args.volume ?? 1} ${args.pitch ?? 1} ${args.minVolume ?? 0}` }
-      );
+  if (args.x !== undefined && args.y !== undefined && args.z !== undefined && args.dimension !== undefined) {
+    const dim = mc.world.getDimension(args.dimension);
+    const location = {x: args.x, y: args.y, z: args.z};
+    const players = dim.getPlayers({ location, maxDistance: 32 });
+    for (const p of players) {
+      p.playSound(args.sound, { location, pitch: args.pitch, volume: args.volume })
+    }
   } else {
-    await respondCommand(
-      d, { command: `playsound ${args.sound} @p ~ ~ ~ ${ 
-        args.volume ?? 1} ${args.pitch ?? 1} ${args.minVolume ?? 0}` }
-      );
+    d.player.playSound(args.sound, { pitch: args.pitch, volume: args.volume });
   }
 }
 

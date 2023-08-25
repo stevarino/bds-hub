@@ -426,8 +426,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io12 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io7(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io10(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io12(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io12(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io13(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io12(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (undefined === input.random || Array.isArray(input.random) && 2 <= input.random.length && input.random.every((elem: any, _index8: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io12(elem, true && _exceptionable))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index9: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "minVolume", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+        const $io12 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io7(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io10(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io12(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io12(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io13(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io12(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.random || Array.isArray(input.random) && 2 <= input.random.length && input.random.every((elem: any, _index8: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io12(elem, true && _exceptionable))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index9: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -466,8 +466,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io17 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["text", "require_tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io17 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["text", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -562,8 +562,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io29 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io29 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -658,8 +658,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io41 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io41 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -754,8 +754,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io53 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index29: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io53 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index29: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -850,8 +850,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io65 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io65 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -946,8 +946,8 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io77 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.minVolume || "number" === typeof input.minVolume) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["equals", "require_tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+        const $io77 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["equals", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -1678,10 +1678,26 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), undefined === input.random || (Array.isArray(input.random) && (2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
                     expected: "Array.length (@minItems 2)",
@@ -1723,7 +1739,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     expected: "(string | undefined)",
                     value: input.remove_tag
                 }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "minVolume", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+                    if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -1890,12 +1906,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["text", "require_tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["text", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -2278,12 +2310,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["require_tag", "tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -2666,12 +2714,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -3126,12 +3190,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -3538,12 +3618,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -3926,12 +4022,28 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".pitch",
                     expected: "(number | undefined)",
                     value: input.pitch
-                }), undefined === input.minVolume || "number" === typeof input.minVolume || $report(_exceptionable, {
-                    path: _path + ".minVolume",
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
                     expected: "(number | undefined)",
-                    value: input.minVolume
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["equals", "require_tag", "sound", "volume", "pitch", "minVolume"].some((prop: any) => key === prop))
+                    if (["equals", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
