@@ -1,8 +1,8 @@
 import * as http from 'node:http';
-import { ConfigFile, Obj, Dialogue } from '../types.js';
+import { ConfigFile, Obj, Dialogue, Requests } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
-import { EventRequest, Location, WorldState } from '../behavior_pack/src/types/packTypes.js';
+import { WorldState } from '../behavior_pack/src/types/packTypes.js';
 
 export async function getServer(config: ConfigFile) {
   const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');
@@ -30,30 +30,42 @@ class Server {
     this.config = config;
 
     this.discord = new DiscordClient(this.config);
+  
+    this.registerHandlers();
 
-    this.server = http.createServer((req, res) => {
+    this.server = http.createServer(async (req, res) => {
       const url = new URL(req.url ?? '', 'http://example.com');
       req.on('close', () => {
         console.info(`${res.statusCode} ${req.method} ${req.url} ${
           req.headers['content-length'] ?? ''}`);
       });
-      switch(url.pathname) {
-        case '/update': return this.processUpdate(req, res);
-        case '/status': return this.showStatus(req, res);
-        case '/events': return this.findEvents(req, res);
-        case '/read_state': return this.getWorldState(req, res);
-        case '/write_state': return this.setWorldState(req, res);
-        case '/location/list': return this.listLocations(req, res, url);
-        case '/location/new': return this.createLocation(req, res, url);
-        case '/location/get': return this.getLocation(req, res, url);
-        case '/location/update': return this.updateLocation(req, res, url);
-        case '/location/delete': return this.deleteLocation(req, res, url);
+      try {
+        const handler = Requests.Get(url.pathname);
+        if (handler !== undefined) {
+          let body = undefined;
+          if (req.method === 'POST') {
+            body = this.readBody(req);
+          }
+          const response = await handler.request(body);
+          if (response === undefined && !res.closed) {
+            res.statusCode = 500;
+            res.end('Server Error');
+            return;
+          }
+          res.setHeader('Content-Type', 'text/plain');
+          res.end(JSON.stringify(response));
+        } else {
+          res.statusCode = 404;
+          res.end('Not found.');
+        }
+      } catch(e) {
+        res.statusCode = 500;
+        res.end('error - see logs');
+        const error = e as Error;
+        console.error(error);
+        if (error.stack !== undefined) console.error(error.stack);
       }
-      res.statusCode = 404;
-      res.write('Not found.');
-      res.end();
     });
-
   }
 
   start() {
@@ -80,20 +92,63 @@ class Server {
     });
   }
 
-  async processUpdate(req: http.IncomingMessage, res: http.ServerResponse) {
-    let response: Dialogue.UpdateResponse = {
-      messages: [...this.discord.inbound],
-    }
-    this.discord.inbound.length = 0;
-    
-    const jsonResponse = JSON.stringify(response);
-    const body = await this.readBody<Dialogue.Update>(req);
-    res.setHeader('Content-Type', 'text/plain');
-    res.write(jsonResponse);
-    res.end();
-    if (body !== undefined) {
-      this.processPayload(body);
-    }
+  registerHandlers() {
+    Requests.Status.addListener(() => this.status);
+
+    Requests.CheckIn.addListener(async req => {
+      let response: Dialogue.UpdateResponse = {
+        messages: [...this.discord.inbound],
+      }
+      this.discord.inbound.length = 0;
+      if (req !== undefined) await this.processPayload(req);
+      return response;  
+    })
+
+    Requests.Events.addListener(async req => {
+      return { events: (await this.db.queryEvents(req)) ?? [] };
+    })
+
+    Requests.ReadState.addListener(async () => {
+      if (this.worldState === undefined) {
+        this.worldState = JSON.parse((await this.db.getKey('WorldState')) ?? '{}');
+      }
+      return this.worldState as WorldState;
+    })
+
+    Requests.WriteState.addListener(async req => {
+      if (req === undefined) return { success: false };
+      await this.db.setKey('WorldState', JSON.stringify(this.worldState));
+      return { success: true };
+    })
+
+    Requests.LocList.addListener(async req => {
+      let owner = req?.owner;
+      if (owner === '*') owner = undefined; 
+      return {locations: await this.db.listLocations(
+        owner, req.publicOnly
+      )};
+    })
+
+    Requests.LocNew.addListener(async req => {
+      if (req === undefined) return  { success: false };
+      const success = (await this.db.createLocation(req)) === 1;
+      return  { success };  
+    })
+
+    Requests.LocGet.addListener(async req => {
+      return {location: await this.db.getLocation(req.id)};
+    })
+
+    Requests.LocUpdate.addListener(async req => {
+      if (req === undefined) return  { success: false };
+      const success = (await this.db.updateLocation(req)) === 1;
+      return  { success };  
+    })
+
+    Requests.LocDel.addListener(async req => {
+      const success = (await this.db.deleteLocation(req.id)) === 1;
+      return  { success: success };
+    })
   }
 
   processPayload(payload: Dialogue.Update) {
@@ -122,74 +177,5 @@ class Server {
       this.discord.sendMessage(msg);
     }
     this.status.online = online;
-  }
-
-  showStatus(req: http.IncomingMessage, res: http.ServerResponse) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(this.status));
-  }
-
-  async findEvents(req: http.IncomingMessage, res: http.ServerResponse) {
-    const query = await this.readBody<EventRequest>(req);
-    const response = JSON.stringify((await this.db.queryEvents(query)) ?? []);
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(response);
-  }
-
-  async getWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
-    if (this.worldState === undefined) {
-      this.worldState = JSON.parse((await this.db.getKey('WorldState')) ?? '{}');
-    }
-    res.setHeader('Content-Type', 'text/plain');
-    res.end(JSON.stringify(this.worldState));
-  }
-
-  async setWorldState(req: http.IncomingMessage, res: http.ServerResponse) {
-    this.worldState = await this.readBody<WorldState>(req);
-    res.setHeader('Content-Type', 'text/plain');
-    if (this.worldState === undefined) {
-      return res.end(JSON.stringify({'response': 'fail'}));
-    }
-    await this.db.setKey('WorldState', JSON.stringify(this.worldState));
-    res.end(JSON.stringify({'response': 'okay'}));
-  }
-
-  async listLocations(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    const query = await this.readBody<{owner?: string}>(req);
-    let owner = query?.owner;
-    if (owner === '*') owner = undefined; 
-    const locations = await this.db.listLocations(owner, url.searchParams.has('publicOnly'))
-    res.end(JSON.stringify({locations}));
-  }
-
-  async createLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    const query = await this.readBody<Location>(req);
-    if (query === undefined) {
-      res.end('{}');
-      return;
-    }
-    const result = await this.db.createLocation(query)
-    res.end(JSON.stringify({success: result === 1}));
-  }
-
-  async updateLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    const query = await this.readBody<Location>(req);
-    if (query === undefined) {
-      res.end('{}');
-      return;
-    }
-    const result = await this.db.updateLocation(query)
-    res.end(JSON.stringify({success: result === 1}));
-  }
-
-  async getLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    res.end(JSON.stringify(
-      await this.db.getLocation(Number(url.searchParams.get('id')))
-    ));
-  }
-
-  async deleteLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
-    const result = await this.db.deleteLocation(Number(url.searchParams.get('id')))
-    res.end(JSON.stringify({success: result === 1}));
   }
 }

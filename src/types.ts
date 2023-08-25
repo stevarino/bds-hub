@@ -4,6 +4,7 @@ export * from './types_gen/configFile.js'
 export * as Dialogue from './types_gen/dialogueTypes.js';
 export { Obj } from './types_gen/dialogueTypes.js';
 import { Obj } from './types_gen/dialogueTypes.js';
+export * as Requests from './behavior_pack/src/types/requests.js';
 
 export function failValidation(errors: Obj<string[]>) {
   console.error(`\nValidation failed: \n\n`);

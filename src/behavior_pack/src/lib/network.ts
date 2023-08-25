@@ -1,15 +1,15 @@
 import { variables } from "@minecraft/server-admin";
 import * as mcnet from "@minecraft/server-net";
+import { Ctx } from "../types/requests";
+export * from '../types/requests';
+
+Ctx.listener = async (endpoint: string, req: object|undefined) => {
+  return await _request(endpoint, req)
+}
 
 export const HOST = variables.get('host');
 
-export async function request<T = unknown>(endpoint: string, body?: string|object, headers?: Record<string, string>) {
-  /**
-   * The RequestMethod enum seems unstable as of Aug 4 2023 due to a rename of
-   * GET to Get.
-   * 
-   * TLDR: All GET, all the time.
-   */
+export async function _request<T = unknown>(endpoint: string, body?: string|object, headers?: Record<string, string>) {
   if (typeof body !== 'string') {
     body = JSON.stringify(body);
   }
