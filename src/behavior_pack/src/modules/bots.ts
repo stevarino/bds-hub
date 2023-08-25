@@ -124,17 +124,21 @@ async function TeleBotTravel(d: Discussion) {
 }
 
 async function TeleportUserToBot(d: Discussion, bot: BotState) {
-  if (bot === undefined) return;
-  await loadBot(bot, 2);
+  const offset = bot.offset ?? [0,0,0];
+  let x = bot.location[1] + offset[0];
+  let z = bot.location[3] + offset[2];
+  if (bot.radius !== undefined) {
+    x += 2 * bot.radius * Math.random() - bot.radius;
+    z += 2 * bot.radius * Math.random() - bot.radius;
+  }
+  d.player.teleport(
+    {x, y: bot.location[2] + offset[1], z},
+    {dimension: world.getDimension(bot.location[0])}
+  );
   await timeout(20);
-  const [x,y,z] = bot.offset ?? [0,0,0];
   await d.handleTransition({
-    sequence: [
-      { command: `execute at @e[tag="${bot.id}"] run teleport "${d.player.name}" ~${x} ~${y} ~${z}` },
-      { wait: 5 },
-      { sound: 'beacon.power', pitch: 2 },
-    ]
-  })
+    sound: 'beacon.power', pitch: 2,
+  });
   await unloadBot(bot);
 }
 
@@ -212,6 +216,7 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
 
 async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
   let [x, y, z] = bot.offset ?? [0, 0, 0]
+  let r = bot.radius ?? 0;
 
   const {results: form} = await formLib.ModalForm(d.player, 'Edit Bot', {
     name: formLib.textbox('Display Name', {defaultValue: bot.name}),
@@ -219,6 +224,7 @@ async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
     x: formLib.slider(-5, 5, {displayName: 'X Offset', defaultValue: x}),
     y: formLib.slider(-5, 5, {displayName: 'Y Offset', defaultValue: y}),
     z: formLib.slider(-5, 5, {displayName: 'Z Offset', defaultValue: z}),
+    r: formLib.slider(0, 5, {displayName: 'Teleport Radius', defaultValue: r}),
     tags: formLib.textbox('Space Separated', {
       defaultValue: (bot.tags ?? []).join(' '),
       show: isAdmin,
@@ -267,6 +273,7 @@ async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
       }
     }
     bot.offset = [form.x.get(), form.y.get(), form.z.get()];
+    bot.radius = form.r.get();
     if (entity !== undefined) {
       bot.name = strip(form.name.get());
       if (form.summon.get()) {

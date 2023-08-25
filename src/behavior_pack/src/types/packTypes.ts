@@ -29,6 +29,7 @@ export interface BotState {
   type: BotType,
   tags?: string[],
   offset?: [number, number, number];
+  radius?: number;
 }
 
 export interface AccountState {
