@@ -5,7 +5,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { parse } from 'yaml'
 
-import { validateConfigFile, ConfigFile, Obj } from '../types.js';
+import { validateConfigFile, ConfigFile, Obj, Dialogue, typiaErrorsFormat } from '../types.js';
 
 export const root = fileURLToPath(import.meta.url).replace(/[/\\]dist[/\\].*$/, '');
 
@@ -149,4 +149,47 @@ export function validateDeep(obj: unknown, validators: validators) {
   }
   return errors;
 }
+
+export function loadScriptFile(filename: string) {
+  console.info(`Parsing ${filename}`);
+  let script : Dialogue.ScriptFile;
+  if (filename.endsWith('.json')) {
+    script = JSON.parse(
+      fs.readFileSync(filename, 'utf-8')) as Dialogue.ScriptFile;
+  } else if (filename.endsWith('.yaml') || filename.endsWith('.yml')) {
+    script = parse(fs.readFileSync(filename, 'utf-8'));
+  } else {
+    throw new Error('Unrecognized file type: ' + filename);
+  }
+
+  return script;
+}
+
+export function validateScript(filename: string, script: Dialogue.ScriptFile, actionList: string[]) {
+  const errors: string[] = []
+  const result = Dialogue.validateScript(script);
+  errors.push(...typiaErrorsFormat(result));
+
+  validateDeep(script, {
+    action: obj => {
+      const errors: string[] = [];
+      const actionName = (obj as Dialogue.Action).action;
+      if (!actionList.includes(actionName)) {
+        errors.push(`Unrecognized action: ${actionName}`);
+      }
+      const argValidator = Dialogue.ActionArgs[actionName];
+      if (argValidator !== undefined) {
+        errors.push(...typiaErrorsFormat(
+          argValidator((obj as Dialogue.Action).args)));
+      }
+      return errors;
+    },
+  }).forEach(([path, msg]) => {
+    errors.push(`${path} : ${msg}`)
+  });
+  const errorObj: Obj<string[]> = {};
+  if (errors.length !== 0) errorObj[filename] = errors;
+  return errorObj;
+}
+
 

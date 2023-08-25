@@ -5,10 +5,12 @@ import { open, Database } from 'sqlite'
 
 import { Dialogue, Obj } from '../types.js';
 import { root } from '../scripts/lib.js';
-import { Event, EventField, EventRequest } from '../behavior_pack/src/types/packTypes.js';
+import { Event, EventField, EventRequest, Location, LocationResult } from '../behavior_pack/src/types/packTypes.js';
 
 
 type StringLookup = {id: number, value: string};
+type DBLocation = Omit<Location, 'dimension'|'owner'> & {dimension: number, owner?: number};
+type DBLocationResult = Omit<LocationResult, 'dimension'|'owner'> & {dimension: number, owner?: number};
 
 export async function openDatabase(filename: string) {
   const db = await open({ filename, driver: sqlite3.Database });
@@ -39,13 +41,13 @@ export class DBHandle {
   formatParams<T = Obj<string>|Obj<number>>(params: T): T {
     return Object.fromEntries(
       Object.entries(params as object).map(
-        ([k, v]) => [k.startsWith(':') ? k : ':' + k, v]
+        ([k, v]) => [k.startsWith(':') ? k : ':' + k, v ?? null]
       )
     ) as T;
   }
 
   /** Given a set of strings, returns the corresponding id number (or 0 on undefined) */
-  async stringsToIds(strings: Obj<string|undefined>) {
+  async stringsToIds<T extends {[key: string]: string|undefined}>(strings: T): Promise<{[U in keyof T]: number}> {
     const lookups: Obj<string> = {};
     const values: string[] = []
     const result: Obj<number> = {};
@@ -64,7 +66,7 @@ export class DBHandle {
       }
     }
 
-    if (values.length == 0) return result;
+    if (values.length == 0) return result as {[U in keyof T]: number};
     let query = `INSERT OR IGNORE INTO Strings(value) VALUES ${
       values.map(() => '(?)').join(', ')
     };`
@@ -76,16 +78,16 @@ export class DBHandle {
       this.revCache.set(value, id);
       result[lookups[value] as string] = id;
     }
-
-    return result;
+    return result as {[U in keyof T]: number};
   }
   
   async addEvent(entity: string, event: Dialogue.PlayerEvent) {
-    const params = await this.stringsToIds({
+    const params = Object.assign(await this.stringsToIds({
       entity, object: event.object, extra: event.extra
+    }), {
+      action: event.action,
+      qty: event.qty ?? 1,
     });
-    params.action = event.action;
-    params.qty = event.qty ?? 1;
     await this.db.run(`
       INSERT INTO Events (entity, action, object, extra, qty)
       VALUES (:entity, :action, :object, :extra, :qty)
@@ -166,5 +168,99 @@ export class DBHandle {
       'SELECT value FROM KeyValue WHERE key = :key;', this.formatParams({key}
     ));
     return result?.value;
+  }
+
+  async listLocations(owner?: string, publicOnly: boolean=false) {
+    let where = [];
+    const params = {};
+    if (publicOnly) where.push('AND isPublic = TRUE');
+    if (owner !== undefined) {
+      where.push('AND owner = :owner');
+      Object.assign(params, await this.stringsToIds({owner}));
+    }
+    const rows = await this.db.all<DBLocationResult[]>(`
+      SELECT 
+        id, owner, dimension, name, type, color, sort, 
+        (x1 + x2)/2 as x,
+        (z1 + z2)/2 as z,
+        CASE WHEN y1 IS NULL THEN NULL ELSE (y1 + y2)/2 END as y,
+      FROM Locations WHERE 1=1 ${where.join(' ')}
+      ORDER BY sort, owner, name, id`
+    );
+    const result: LocationResult[] = [];
+    for (const row of rows) {
+      let update: {owner?: string, dimension: string} = {
+        dimension: this.cache.get(row.dimension) as string,
+      };
+      if (row.owner !== undefined) update.owner = this.cache.get(row.owner)
+      result.push(Object.assign({}, row, update));
+    }
+    return result;
+  }
+
+  async lookupLocations(dimension: string, x: number, y: number, z: number) {
+    const loc = Object.assign({x, y, z}, await this.stringsToIds({dimension}));
+    return await this.db.all<{id: number, name: string, color: number}[]>(`
+      SELECT 
+        id, name, color
+      FROM Locations WHERE 
+        dimension = :dimension
+        AND x1 >= :x AND x2 <= :x
+        AND z1 >= :z AND z2 <= :z
+        AND (y1 IS NULL OR (y1 >= :y AND y2 <= :y))
+        ORDER BY sort, name, owner, id`,
+      this.formatParams(loc)
+    );
+  }
+ 
+  async createLocation(location: Location) {
+    const loc: DBLocation = Object.assign({}, location, await this.stringsToIds({
+      dimension: location.dimension, owner: location.owner}));
+    return (await this.db.run(
+      `INSERT INTO Locations (
+        owner, dimension, x1, x2, z1, z2, y1, y2, name, type, color, sort, isPublic
+      ) VALUES (
+        :owner, :dimension, :x1, :x2, :z1, :z2, :y1, :y2, :name, :type, :color, :sort, :isPublic
+      )`,
+      this.formatParams(loc)
+    )).lastID;
+  }
+
+  async getLocation(locationId: number): Promise<Location|undefined> {
+    const row = await this.db.get<DBLocation>(
+      `SELECT * FROM Locations WHERE id = ${locationId}`);
+    if (row === undefined) return undefined;
+    const updates: {dimension: string, owner?: string} = { dimension: this.cache.get(row.dimension) as string };
+    if (row.owner !== undefined) { updates.owner = this.cache.get(row.owner)}
+    return Object.assign(row, updates);
+  }
+ 
+  async deleteLocation(locationId: number) {
+    return (await this.db.run(
+      `DELETE FROM Locations WHERE id = ${locationId}`
+    )).changes;
+  }
+ 
+  async updateLocation(location: Location) {
+    const loc: DBLocation = Object.assign({}, location, await this.stringsToIds({
+      dimension: location.dimension, owner: location.owner}));
+    return (await this.db.run(
+      `UPDATE Locations SET (
+        owner = :owner,
+        dimension = :dimension,
+        x1 = :x1,
+        x2 = :x2,
+        z1 = :z1,
+        z2 = :z2,
+        y1 = :y1,
+        y2 = :y2,
+        name = :name,
+        type = :type,
+        color = :color,
+        sort = :sort,
+        isPublic = :isPublic
+      ) WHERE id = :id`,
+      this.formatParams(loc)
+    )).changes;
   }
 }

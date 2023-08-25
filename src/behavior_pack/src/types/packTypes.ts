@@ -4,6 +4,10 @@
 
 export * from './transitionTypes.js';
 
+export function enumStrings(myEnum: {[key: string]: string|number}) {
+  return Object.keys(myEnum).filter(e => /[^0-9]/.test(e));
+}
+
 /** A runtime contianer of world state */
 export interface WorldState {
   /** All known players to the world */
@@ -58,7 +62,7 @@ export enum Constants {
 export interface Update {
   time: number,
   weather: number,
-  entities: {[name: string]: PlayerUpdate},
+  players: {[name: string]: PlayerUpdate},
   messages: string[],
 };
 
@@ -111,3 +115,126 @@ export interface ServerStatus {
   online?: string[],
 };
 
+export interface ServerSuccess {
+  success: boolean,
+}
+
+export interface Location {
+  id?: number,
+  owner?: string,
+  dimension: string,
+  x1: number,
+  x2: number,
+  z1: number,
+  z2: number,
+  y1?: number,
+  y2?: number,
+  name: string,
+  type: LocationType,
+  color: LocationColor,
+  sort: number,
+  isPublic: boolean,
+}
+
+export type LocationResult = Omit<Location, 
+  "x1"|"x2"|"y1"|"y2"|"z1"|"z2"|"isPublic"
+  > & {x: number, y: number, z: number|null}
+
+
+export enum LocationType {
+  base=0,
+  store=1,
+  farm=2,
+  region=3,
+  other=4,
+}
+
+export enum LocationColor {
+  black,
+  dark_blue,
+  dark_green,
+  dark_aqua,
+  dark_red,
+  dark_purple,
+  orange,
+  gray,
+  dark_gray,
+  blue,
+  green,
+  aqua,
+  red,
+  light_purple,
+  yellow,
+  white,
+  gold,
+  quartz,
+  iron,
+  netherite,
+  redstone,
+  copper,
+  goldenrod,
+  emerald,
+  diamond,
+  lapis,
+  amethyst,
+}
+
+export const colorNames = {
+  black: '§0',
+  dark_blue: '§1',
+  dark_green: '§2',
+  dark_aqua: '§3',
+  dark_red: '§4',
+  dark_purple: '§5',
+  orange: '§6',
+  gray: '§7',
+  dark_gray: '§8',
+  blue: '§9',
+  green: '§a',
+  aqua: '§b',
+  red: '§c',
+  light_purple: '§d',
+  yellow: '§e',
+  white: '§f',
+  gold: '§g',
+  quartz: '§h',
+  iron: '§i',
+  netherite: '§j',
+  redstone: '§m',
+  copper: '§n',
+  goldenrod: '§p',
+  emerald: '§q',
+  diamond: '§s',
+  lapis: '§t',
+  amethyst: '§u',
+}
+
+export const colorHex = {
+  black: '#000000',
+  dark_blue: '#0000AA',
+  dark_green: '#00AA00',
+  dark_aqua: '#00AAAA',
+  dark_red: '#AA0000',
+  dark_purple: '#AA00AA',
+  orange: '#FFAA00',  
+  gray: '#AAAAAA',
+  dark_gray: '#555555',
+  blue: '#5555FF',
+  green: '#55FF55',
+  aqua: '#55FFFF',
+  red: '#FF5555',
+  light_purple: '#FF55FF',
+  yellow: '#FFFF55',
+  white: '#FFFFFF',
+  gold: '#DDD605',
+  quartz: '#E3D4D1',
+  iron: '#CECACA',
+  netherite: '#443A3B',
+  redstone: '#971607',
+  copper: '#B4684D',
+  goldenrod: '#DEB12D',
+  emerald: '#47A036',
+  diamond: '#2CBAA8',
+  lapis: '#21497B',
+  amethyst: '#9A5CC6',
+} 

@@ -9,11 +9,12 @@ import { script } from '../script.js';
 import * as types from '../types/packTypes.js';
 import { DELAY, ID } from "../lib/constants.js";
 import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
+export { Args, Action } from '../types/packTypes.js';
 
-type ActionSig = (
+export type Callable = (
   ((d: Discussion, args: types.Args) => Promise<void>) |
   ((d: Discussion) => Promise<void>));
-const ACTIONS: {[action: string]: ActionSig} = {};
+const ACTIONS: {[action: string]: Callable} = {};
 
 /** 
  * Registers an action with the global ACTIONS collection.
@@ -23,10 +24,16 @@ const ACTIONS: {[action: string]: ActionSig} = {};
  * Works similarly to a decorator, but typescript only supports decorators on
  * classes/methods/etc.
  */
-export function defineActions(actions: {[name: string]: ActionSig}) {
+export function defineActions(actions: {[name: string]: Callable}) {
   for (const [name, func] of Object.entries(actions)) {
     ACTIONS[name] = func;
   }
+}
+
+/** Returns a callback that navigates to an action */
+export function actionCallback(discussion: Discussion, action: string,
+      args: types.Args, extra?: {[key: string]: unknown}) {
+  return async () => await discussion.action(action, args, extra ?? {});
 }
 
 export class Discussion {
@@ -68,21 +75,28 @@ export class Discussion {
     return transition;
   }
 
-  go(tag?: string) {
+  async go(tag?: string) {
     if (tag === undefined) return;
-    this.navigate(this.findTransition(tag));
+    await this.navigate(this.findTransition(tag));
   }
 
-  navigate(transition?: types.Transition) {
+  async navigate(transition?: types.Transition) {
     if (transition === undefined) return;
     this.history.push(transition);
-    this.respond();
+    await this.respond();
   }
 
-  respond() {
+  async action(actionName: string, ...args: (types.Args|undefined)[]) {
+    await this.navigate({
+      action: actionName,
+      args: Object.assign({}, ...args.filter(a=>a !== undefined)),
+    });
+  }
+
+  async respond() {
     const transition = this.history[this.history.length-1];
     if (transition === undefined) return;
-    this.handleTransition(transition)
+    await this.handleTransition(transition)
   }
 
   async handleTransition(transition: types.Transition) {

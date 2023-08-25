@@ -2,7 +2,7 @@ import * as http from 'node:http';
 import { ConfigFile, Obj, Dialogue } from '../types.js';
 import { DBHandle, openDatabase } from './database.js';
 import { DiscordClient } from './discord.js';
-import { EventRequest, WorldState } from '../behavior_pack/src/types/packTypes.js';
+import { EventRequest, Location, WorldState } from '../behavior_pack/src/types/packTypes.js';
 
 export async function getServer(config: ConfigFile) {
   const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');
@@ -43,6 +43,11 @@ class Server {
         case '/events': return this.findEvents(req, res);
         case '/read_state': return this.getWorldState(req, res);
         case '/write_state': return this.setWorldState(req, res);
+        case '/location/list': return this.listLocations(req, res, url);
+        case '/location/new': return this.createLocation(req, res, url);
+        case '/location/get': return this.getLocation(req, res, url);
+        case '/location/update': return this.updateLocation(req, res, url);
+        case '/location/delete': return this.deleteLocation(req, res, url);
       }
       res.statusCode = 404;
       res.write('Not found.');
@@ -97,7 +102,7 @@ class Server {
     this.status.time = payload.time;
     this.status.weather = weather.replace('weather', '');
     const online: string[] = [];
-    for (const [name, update] of Object.entries(payload.entities)) {
+    for (const [name, update] of Object.entries(payload.players)) {
       if (update.pos !== undefined) {
         online.push(name);
         const pos = JSON.stringify(update.pos);
@@ -147,5 +152,44 @@ class Server {
     }
     await this.db.setKey('WorldState', JSON.stringify(this.worldState));
     res.end(JSON.stringify({'response': 'okay'}));
+  }
+
+  async listLocations(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+    const query = await this.readBody<{owner?: string}>(req);
+    let owner = query?.owner;
+    if (owner === '*') owner = undefined; 
+    const locations = await this.db.listLocations(owner, url.searchParams.has('publicOnly'))
+    res.end(JSON.stringify({locations}));
+  }
+
+  async createLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+    const query = await this.readBody<Location>(req);
+    if (query === undefined) {
+      res.end('{}');
+      return;
+    }
+    const result = await this.db.createLocation(query)
+    res.end(JSON.stringify({success: result === 1}));
+  }
+
+  async updateLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+    const query = await this.readBody<Location>(req);
+    if (query === undefined) {
+      res.end('{}');
+      return;
+    }
+    const result = await this.db.updateLocation(query)
+    res.end(JSON.stringify({success: result === 1}));
+  }
+
+  async getLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+    res.end(JSON.stringify(
+      await this.db.getLocation(Number(url.searchParams.get('id')))
+    ));
+  }
+
+  async deleteLocation(req: http.IncomingMessage, res: http.ServerResponse, url: URL) {
+    const result = await this.db.deleteLocation(Number(url.searchParams.get('id')))
+    res.end(JSON.stringify({success: result === 1}));
   }
 }

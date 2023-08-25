@@ -12,7 +12,32 @@ interface options<T> {
   show?: boolean,
 }
 
-class FormWidget<T=any, U=any> {
+export async function ModalForm<T={[label: string]: ModalFormWidget}>(
+  player: mc.Player, title: string, form: T): Promise<Result<T>> {
+  const modal = new ui.ModalFormData().title(title);
+  const widgets: ModalFormWidget<unknown, unknown>[] = [];
+  for (const [name, widget] of Object.entries(form as Obj<ModalFormWidget>)) {
+    if (widget.shouldSkip(player)) continue;
+    widgets.push(widget);
+    widget.render(modal, name);
+  }
+  await timeout(DELAY);
+  const res = await modal.show(player);
+  if (res.formValues === undefined) return res;
+  const results = [...res.formValues].reverse();
+  for (const [name, widget] of Object.entries(form as Obj<ModalFormWidget>)) {
+    if (widget.shouldSkip(player)) continue;
+    let value = results.pop();
+    if (widget.setValue !== undefined) {
+      widget.value = widget.setValue(value);
+    } else {
+      widget.value = value;
+    }
+  }
+  return Object.assign({}, res, {results: form});
+}
+
+class ModalFormWidget<T=any, U=any> {
   value: T|undefined;
   constructor(
     public options: options<T>,
@@ -45,13 +70,13 @@ class FormWidget<T=any, U=any> {
 }
 
 export function textbox(placeHolder: string, options: options<string>={}) {
-  return new FormWidget<string, string>(options,
+  return new ModalFormWidget<string, string>(options,
     (form, label) => form.textField(label, placeHolder, options.defaultValue)
   );
 }
 
 export function dropdown(dropdownOptions: string[], options: options<string>={}) {
-  return new FormWidget<string, number>(
+  return new ModalFormWidget<string, number>(
     options,
     (form, label) => {
       let dv: number|undefined = undefined;
@@ -66,13 +91,13 @@ export function dropdown(dropdownOptions: string[], options: options<string>={})
 }
 
 export function toggle(options: options<boolean>={}) {
-  return new FormWidget<boolean, boolean>(options, (form, label) => {
+  return new ModalFormWidget<boolean, boolean>(options, (form, label) => {
     form.toggle(label, options.defaultValue);
   })
 }
 
 export function slider(min: number, max: number, options: options<number> & {step?: number}={}) {
-  return new FormWidget<number, number>(options, (form, label) => {
+  return new ModalFormWidget<number, number>(options, (form, label) => {
     form.slider(label, min, max, options.step ?? 1, options.defaultValue);
   })
 }
@@ -81,27 +106,20 @@ interface Result<T> extends ui.ModalFormResponse {
   results?: T
 }
 
-export async function show<T={[label: string]: FormWidget}>(
-      player: mc.Player, title: string, form: T): Promise<Result<T>> {
-  const modal = new ui.ModalFormData().title(title);
-  const widgets: FormWidget<unknown, unknown>[] = [];
-  for (const [name, widget] of Object.entries(form as Obj<FormWidget>)) {
-    if (widget.shouldSkip(player)) continue;
-    widgets.push(widget);
-    widget.render(modal, name);
+export type ActionButton = {text: string, action: () => void|Promise<void>, show?: boolean}
+export async function ActionForm(player: mc.Player, title: string, body: string, buttons: ActionButton[]) {
+  const form = new ui.ActionFormData();
+  form.title(title);
+  if (body !== '') {
+    form.body(body);
   }
-  await timeout(DELAY);
-  const res = await modal.show(player);
-  if (res.formValues === undefined) return res;
-  const results = [...res.formValues].reverse();
-  for (const [name, widget] of Object.entries(form as Obj<FormWidget>)) {
-    if (widget.shouldSkip(player)) continue;
-    let value = results.pop();
-    if (widget.setValue !== undefined) {
-      widget.value = widget.setValue(value);
-    } else {
-      widget.value = value;
-    }
+  const actions: (() => void|Promise<void>)[] = [];
+  for (const button of buttons) {
+    if (button.show === false) continue;
+    form.button(button.text);
+    actions.push(button.action);
   }
-  return Object.assign({}, res, {results: form});
+  const res = await form.show(player);
+  if (res.selection === undefined) return;
+  (actions[res.selection] as () => void|Promise<void>)();
 }

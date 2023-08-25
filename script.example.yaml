@@ -16,6 +16,23 @@ scenes:
       - text: Impressions?
         # this is under the examples folder
         scene: sound_test
+      - text: Trade!
+        action: Trader
+        args:
+          trades:
+            # A stone trade with multiple payment options
+            - title: Just stone.
+              gives: [item: minecraft:stone]
+              accepts:
+               # Attempts to match one item in accepts
+               - [item: minecraft:dirt]
+               - [item: minecraft:cobblestone]
+               # will give stone for 1 emerald + 1 diamond
+               - - item: minecraft:emerald
+                 - item: minecraft:diamond
+            # Simple dirt for stone trade
+            - gives: [item: minecraft:dirt]
+              accepts: [item: minecraft:stone]
   - id: knock_knock
     text: Knock knock
     buttons:
@@ -86,6 +103,14 @@ items:
               admin: true
           else:
             action: ManageBots
+        - text: Locations
+          if_has_tag: admin
+          then:
+            action: SelectLocation
+            args:
+              admin: true
+          else:
+            action: SelectLocation
         - text: Blocks Broken
           action: BlocksBroken
         - text: Blocks Placed

@@ -2,14 +2,14 @@
 import { world, system, Entity } from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
-import { Args, BotState, BotType } from "./types/packTypes.js";
-import { defineActions, Discussion } from "./dialogue/discussion.js";
-import { getFormResponse, StartupEvent, STATE, timeout, strip } from './lib.js';
-import { BOT_ID_PREFIX, BOT_TYPE_PREFIX, ID, TAG_PREFIX } from "./lib/constants.js";
-import { ActorBotMap, BotInitiated, BotIsOnline } from "./lib/runtimeState.js";
-import { script } from "./script.js";
+import { Args, BotState, BotType } from "../types/packTypes.js";
+import { defineActions, Discussion } from "./discussion.js";
+import { getFormResponse, StartupEvent, STATE, timeout, strip } from '../lib.js';
+import { BOT_ID_PREFIX, BOT_TYPE_PREFIX, ID, TAG_PREFIX } from "../lib/constants.js";
+import { ActorBotMap, BotInitiated, BotIsOnline } from "../lib/runtimeState.js";
+import { script } from "../script.js";
 
-import * as formLib from './lib/form.js';
+import * as formLib from '../lib/form.js';
 
 StartupEvent.addListener(syncBots);
 
@@ -147,7 +147,7 @@ async function CreateBot(d: Discussion) {
   const types = Array.from(Object.keys(BotType));
   players.sort();
 
-  const { results: res } = await formLib.show(d.player, 'Build-a-Bot', {
+  const { results: res } = await formLib.ModalForm(d.player, 'Build-a-Bot', {
     name: formLib.textbox('Display Name'),
     tags: formLib.textbox('Space Seperated'),
     owner: formLib.dropdown(players),
@@ -216,7 +216,7 @@ export async function ManageBots(d: Discussion, args: Args): Promise<void> {
 async function editBot(d: Discussion, isAdmin: boolean, bot: BotState) {
   let [x, y, z] = bot.offset ?? [0, 0, 0]
 
-  const {results: form} = await formLib.show(d.player, 'Edit Bot', {
+  const {results: form} = await formLib.ModalForm(d.player, 'Edit Bot', {
     name: formLib.textbox('Display Name', {defaultValue: bot.name}),
     summon: formLib.toggle({defaultValue: false}),
     x: formLib.slider(-5, 5, {displayName: 'X Offset', defaultValue: x}),
