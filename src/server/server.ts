@@ -44,7 +44,7 @@ class Server {
         if (handler !== undefined) {
           let body = undefined;
           if (req.method === 'POST') {
-            body = this.readBody(req);
+            body = await this.readBody(req);
           }
           const response = await handler.request(body);
           if (response === undefined && !res.closed) {
@@ -117,6 +117,7 @@ class Server {
 
     Requests.WriteState.addListener(async req => {
       if (req === undefined) return { success: false };
+      this.worldState = req;
       await this.db.setKey('WorldState', JSON.stringify(this.worldState));
       return { success: true };
     })

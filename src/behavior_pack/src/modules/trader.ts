@@ -29,7 +29,7 @@ async function Trader(d: Discussion, args: Args) {
   const qts = tradeQuantities(inventory, targs.trades);
   const browsing = targs._browsing === true;
   
-  if (!browsing && Math.min(...qts) === 0) {
+  if (!browsing && Math.max(...qts) === 0) {
     const option = await showDialogMessage(d.player, 'No Trades Available',
       targs.noTrade ?? 'Sorry but I do not have anything to trade with you.',
       ['Okay', 'Browse Anyway'],
@@ -44,11 +44,15 @@ async function Trader(d: Discussion, args: Args) {
   for (let i=0; i<targs.trades.length; i++) {
     if (!browsing && qts[i] === 0) continue;
     let trade = targs.trades[i] as TradeOffer;
-    buttons.push({text: tradeText(trade), action: async () => {
-      await d.action(
-        browsing ? TraderBrowse.name : TraderOffer.name,
-        trade, { _traderArgs: targs, _browsing: browsing });
-    }});
+    buttons.push({
+      text: tradeText(trade), 
+      action: async () => {
+        await d.action(
+          browsing ? TraderBrowse.name : TraderOffer.name,
+          trade, { _traderArgs: targs, _browsing: browsing });
+      },
+      icon: trade.icon,
+    });
   }
   if (!browsing) {
     buttons.push({
@@ -62,7 +66,7 @@ async function Trader(d: Discussion, args: Args) {
     msg = targs.browseGreeting ?? 'This is what I can offer:';
   }
   
-  forms.ActionForm(
+  await forms.ActionForm(
     d.player, browsing ? 'View a Trade' : 'Make a Trade', `\n${msg}\n`, buttons
   );
 }
@@ -75,12 +79,12 @@ async function TraderOffer(d: Discussion, args: Args) {
     return d.action(Trader.name, offer._traderArgs as Args);
   }
 
-  const get = offer.gives.map(
-    item => `- ${item.item} (${item.qty})`
+  const get = getTradeGives(offer).map(
+    item => `- ${itemString(item.item)} (${item.qty ?? 1})`
   ).join('\n');
 
   const cost = trade.inventory.map(
-    item => `- ${item.item} (${item.cost} / ${item.qty})`
+    item => `- ${itemString(item.item)} (${item.cost ?? 1} / ${item.qty ?? 1})`
   ).join('\n');
 
   const text = strip(`
@@ -113,17 +117,35 @@ async function TraderOffer(d: Discussion, args: Args) {
   await forms.ActionForm(d.player, 'Trade', text, buttons);
 }
 
+/** Normalize TradeOffer.gives */
+function getTradeGives(offer: TradeOffer): [TradeItem, ...TradeItem[]] {
+  return Array.isArray(offer.gives) ? offer.gives : [offer.gives];
+}
+
+/** Normalize TradeOffer.gives */
+function getTradeAccepts(offer: TradeOffer): TradeItem[][] {
+  return Array.isArray(offer.accepts) ? offer.accepts : [[offer.accepts]];
+}
+
+/** Normalize ItemID strings */
+function itemString(itemId: string) {
+  itemId = itemId.replace('minecraft:', '');
+  return itemId.split('_').map(
+    s => s.slice(0,1).toUpperCase() + s.slice(1)
+  ).join(' ')
+}
+
 async function TraderBrowse(d: Discussion, args: Args) {
   const offer = args as TradeOffer;
   const inventory = getInventory(d.player);
   const trade = getValidTrade(inventory, offer);
 
-  const get = offer.gives.map(
+  const get = getTradeGives(offer).map(
     item => `- ${item.item} (${item.qty})`
   ).join('\n');
 
   const costs: string[] = [];
-  for (const accept of offer.accepts) {
+  for (const accept of getTradeAccepts(offer)) {
     costs.push(accept.map(
       item => `- ${item.item} (${item.qty})`
     ).join('\n'));
@@ -151,6 +173,7 @@ async function TraderBrowse(d: Discussion, args: Args) {
       }),
     })
   }
+  await forms.ActionForm(d.player, 'Browsing', text, buttons);
 }
 
 function performTrade(player: mc.Player, offer: TradeOffer, op: InventoryOperation, all: boolean) {
@@ -184,33 +207,37 @@ function performTrade(player: mc.Player, offer: TradeOffer, op: InventoryOperati
     }
   }
 
-  for (const {item, qty} of offer.gives) {
-    container.addItem(new ItemStack(item, qty));
+  for (const {item, qty} of getTradeGives(offer)) {
+    container.addItem(new ItemStack(item, (qty ?? 1) * (all ? op.maxTrades : 1)));
   }
 }
 
-function tradeQuantities(inventory: InventoryMap, trades: TradeOffer[]) {
+/** Given an array of trade offers, returns an array of number of trades for
+ * the corresponding offers */
+function tradeQuantities(inventory: InventoryMap, trades: TradeOffer[]): number[] {
   const qts: number[] = [];
   for (let offer=0; offer<trades.length; offer++) {
     const trade = trades[offer] as TradeOffer;
-    qts.push(tradeQuantitiesForOffer(inventory, trade)
-      .map(q=>q.maxTrades).reduce((a, b)=>a+b, 0));
+    const quants = tradeQuantitiesForOffer(inventory, trade);
+    qts.push(quants.map(q=>q.maxTrades).reduce((a, b)=>a+b, 0));
   }
   return qts;
 }
 
+/** Get the first valid trade (valid = at least 1 trade possible) */
 function getValidTrade(inventory: InventoryMap, offer: TradeOffer) {
   for (const trade of tradeQuantitiesForOffer(inventory, offer)) {
     if (trade.maxTrades > 0) return trade;
   }
 }
 
-function tradeQuantitiesForOffer(inventory: InventoryMap, trade: TradeOffer) {
+function tradeQuantitiesForOffer(inventory: InventoryMap, offer: TradeOffer) {
   const operations: InventoryOperation[] = [];
-  for (let option=0; option<trade.accepts.length; option++) {
+  const accepts = getTradeAccepts(offer);
+  for (const items of accepts) {
     const qts: number[] = [];
     const ops = [];
-    for (const item of trade.accepts[option] as TradeItem[]) {
+    for (const item of items) {
       const has = inventory.get(item.item)?.total ?? 0;
       const wants = item.qty ?? 1;
       const qty = Math.floor(has/wants);
@@ -252,11 +279,12 @@ function getInventory(player: mc.Player) {
 
 function tradeText(offer: TradeOffer) {
   if (offer.title !== undefined) return offer.title;
-  const first = offer.gives[0];
+  const gives = getTradeGives(offer);
+  const first = gives[0];
   const qty = first.qty ?? 1;
-  return `${first.item}${
+  return `${itemString(first.item)}${
     qty > 1 ? ` (${qty})` : ''
   }${
-    offer.gives.length > 1 ? ' ...' : ''
+    gives.length > 1 ? ' ...' : ''
   }`;
 }

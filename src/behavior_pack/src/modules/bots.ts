@@ -1,5 +1,5 @@
 
-import { world, system, Entity } from "@minecraft/server";
+import * as mc from "@minecraft/server";
 import * as ui from "@minecraft/server-ui";
 
 import { Args, BotState, BotType } from "../types/packTypes.js";
@@ -10,6 +10,7 @@ import { ActorBotMap, BotInitiated, BotIsOnline } from "../lib/runtimeState.js";
 import { script } from "../script.js";
 
 import * as formLib from '../lib/form.js';
+import { time } from "console";
 
 StartupEvent.addListener(syncBots);
 
@@ -19,9 +20,9 @@ const unsyncedBots = new Set<string>();
 
 /** Ensures that the script has been applied to a bot */
 async function syncBots() {
-  system.runTimeout(syncBots, 20 * 10);
+  mc.system.runTimeout(syncBots, 20 * 10);
   for (const bot of STATE.getBots()) {
-    const dimension = world.getDimension(bot.location[0]);
+    const dimension = mc.world.getDimension(bot.location[0]);
     const entity = await loadBot(bot);
     try {
       if (entity === undefined) {
@@ -66,7 +67,7 @@ async function syncBots() {
   }
 }
 
-function syncBotTags(bot: BotState, entity: Entity) {
+function syncBotTags(bot: BotState, entity: mc.Entity) {
   const intent = new Set(bot.tags);
   const live = new Set(entity.getTags());
   for (const tag of live) {
@@ -82,7 +83,7 @@ function syncBotTags(bot: BotState, entity: Entity) {
 }
 
 async function loadBot(bot: BotState, radius=1) {
-  const dimension = world.getDimension(bot.location[0]);
+  const dimension = mc.world.getDimension(bot.location[0]);
   await dimension.runCommandAsync(
     `tickingarea add circle ${bot.location.slice(1).join(' ')} ${radius} ${TAG_PREFIX}_LOAD_${bot.id}`);
   await timeout(10);
@@ -91,7 +92,7 @@ async function loadBot(bot: BotState, radius=1) {
 }
 
 async function unloadBot(bot: BotState) {
-  const dimension = world.getDimension(bot.location[0]);
+  const dimension = mc.world.getDimension(bot.location[0]);
   await dimension.runCommandAsync(`tickingarea remove  ${TAG_PREFIX}_LOAD_${bot.id}`);
   await timeout(10);
 }
@@ -128,19 +129,36 @@ async function TeleportUserToBot(d: Discussion, bot: BotState) {
   let x = bot.location[1] + offset[0];
   let y = bot.location[2] + offset[1];
   let z = bot.location[3] + offset[2];
+  const dimension = mc.world.getDimension(bot.location[0]);
   if (bot.radius !== undefined) {
     x += 2 * bot.radius * Math.random() - bot.radius;
     z += 2 * bot.radius * Math.random() - bot.radius;
   }
   d.player.teleport(
-    {x, y, z}, {dimension: world.getDimension(bot.location[0])}
+    {x, y, z}, { dimension }
   );
   await timeout(5);
   await d.handleTransition({
-    sound: 'beacon.power',
-    pitch: 2,
-    x, y, z, dimension: bot.location[0]
-  });
+    sound: 'beacon.power', pitch: 2, x, y, z, dimension: dimension.id });
+  for (let i=5; i > 0; i--) {
+    for (let j = 0; j < (i); j++) {
+      const [dx, dy, dz] = [Math.random() * 2 - 1, Math.random() * 2, Math.random() * 2 - 1];
+      let newLocation = { x: x + dx, y: y + dy, z: z + dz };
+      const molang = new mc.MolangVariableMap();
+      const total = Math.abs(newLocation.x - x) + Math.abs(newLocation.y - y) + Math.abs(newLocation.z - z);
+      const direction = {x: dx / total, y: dy / total, z: dz / total};
+      if (i==5 && j==0) console.log(JSON.stringify(direction));
+      // molang.setSpeedAndDirection('variable.direction', 0.01, direction);
+      // molang.setColorRGB("variable.color", { red: Math.random(), green: Math.random(), blue: Math.random() });
+
+      // molang.setFloat('variable.x', newLocation.x);
+      // molang.setFloat('variable.y', newLocation.z);
+      // molang.setFloat('variable.z', newLocation.y);
+      // molang.setVector3('variable.location', newLocation);
+      dimension.spawnParticle("minecraft:endrod", newLocation, molang);
+    }
+    await timeout(5);
+  }
 }
 
 /** New Bot  */

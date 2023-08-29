@@ -9,9 +9,9 @@ async function validate() {
   const config = lib.readConfig(configPath);
   config.script_files = [scriptPath];
   await parseScriptFiles(config);
-  console.log('\n\n+------------------------------+');
-  console.log('|  Example Configs Validated!  |');
-  console.log('+------------------------------+\n');
+  console.info('\n\n+------------------------------+');
+  console.info('|  Example Configs Validated!  |');
+  console.info('+------------------------------+\n');
 }
 
 validate();

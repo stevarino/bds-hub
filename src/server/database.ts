@@ -231,7 +231,9 @@ export class DBHandle {
       `SELECT * FROM Locations WHERE id = ${locationId}`);
     if (row === undefined) return undefined;
     const updates: {dimension: string, owner?: string} = { dimension: this.cache.get(row.dimension) as string };
-    if (row.owner !== undefined) { updates.owner = this.cache.get(row.owner)}
+    if (row.owner !== undefined) updates.owner = this.cache.get(row.owner);
+    //@ts-ignore https://www.sqlite.org/datatype3.html#boolean_datatype
+    row.isPublic = row.isPublic === 1;
     return Object.assign(row, updates);
   }
  
@@ -245,7 +247,7 @@ export class DBHandle {
     const loc: DBLocation = Object.assign({}, location, await this.stringsToIds({
       dimension: location.dimension, owner: location.owner}));
     return (await this.db.run(
-      `UPDATE Locations SET (
+      `UPDATE Locations SET
         owner = :owner,
         dimension = :dimension,
         x1 = :x1,
@@ -259,7 +261,7 @@ export class DBHandle {
         color = :color,
         sort = :sort,
         isPublic = :isPublic
-      ) WHERE id = :id`,
+      WHERE id = :id`,
       this.formatParams(loc)
     )).changes;
   }

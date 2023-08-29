@@ -123,8 +123,13 @@ const handlers = {
 /** Iterates through all transition handlers, running the first that matches */
 async function findAndRunTransition(d: Discussion, t: types.Transition) {
   for (const [field, handler] of Object.entries(handlers)) {
+    try {
     //@ts-ignore -- can't get the types to work here but i swear it makes sense
-    if (await check(d, t, field, handler)) break;
+      if (await check(d, t, field, handler)) break;
+    } catch (e) {
+      console.error(e);
+      if ((e as Error).stack !== undefined) console.error((e as Error).stack);
+    }
   }
 }
 

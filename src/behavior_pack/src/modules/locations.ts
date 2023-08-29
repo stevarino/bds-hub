@@ -68,7 +68,7 @@ async function EditLocation(d: Discussion, args: Args) {
     location = res.location;
   }
 
-  const newName = `${d.player.name} ${nameOptions[Math.floor(Math.random() * nameOptions.length)]}`
+  const newName = `${d.player.name}'s ${nameOptions[Math.floor(Math.random() * nameOptions.length)]}`
   const dimension = location.dimension ?? d.player.dimension.id;
   const x1 = location.x1 ?? Math.floor(d.player.location.x);
   const x2 = location.x2 ?? Math.floor(d.player.location.x);
@@ -90,7 +90,7 @@ async function EditLocation(d: Discussion, args: Args) {
     y1: forms.textbox('', {defaultValue: String(y1)}),
     y2: forms.textbox('', {defaultValue: String(y2)}),
     ignoreY: forms.toggle({
-      defaultValue: location.x1 !== undefined && location.y1  === undefined}),
+      defaultValue: location.x1 !== undefined && location.y1  === null}),
     type: forms.dropdown(enumStrings(LocationType), {
       defaultValue: LocationType[location.type ?? 0] as string}),
     color: forms.dropdown(enumStrings(LocationColor), {
@@ -144,6 +144,10 @@ async function EditLocation(d: Discussion, args: Args) {
   } else {
     res = await LocNew.request(req);
   }
-  await showDialogMessage(d.player, title, res?.success === true ? 'Success'
-    : 'An error was encountered saving the request.');
+  if (res?.success !== true) {
+    await showDialogMessage(d.player, title, 
+      'An error was encountered saving the request.');
+  } else {
+    await d.action(SelectLocation.name, {admin: isAdmin});
+  }
 }

@@ -172,6 +172,7 @@ export enum LocationType {
 }
 
 export enum LocationColor {
+  white,
   black,
   dark_blue,
   dark_green,
@@ -187,7 +188,6 @@ export enum LocationColor {
   red,
   light_purple,
   yellow,
-  white,
   gold,
   quartz,
   iron,

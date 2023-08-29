@@ -137,8 +137,8 @@ export const ActionArgs: {
                     return true;
                 return false;
             });
-            const $io1 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.title || "string" === typeof input.title) && (Array.isArray(input.gives) && ("object" === typeof input.gives[0] && null !== input.gives[0] && $io2(input.gives[0], true && _exceptionable) && (Array.isArray(input.gives.slice(1)) && input.gives.slice(1).every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))))) && (Array.isArray(input.accepts) && input.accepts.every((elem: any, _index3: number) => Array.isArray(elem) && elem.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable)))) && (undefined === input._browsing || "boolean" === typeof input._browsing) && true && Object.keys(input).every((key: any) => {
-                if (["title", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
+            const $io1 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.title || "string" === typeof input.title) && (undefined === input.icon || "string" === typeof input.icon) && (null !== input.gives && undefined !== input.gives && (Array.isArray(input.gives) && ("object" === typeof input.gives[0] && null !== input.gives[0] && $io2(input.gives[0], true && _exceptionable) && (Array.isArray(input.gives.slice(1)) && input.gives.slice(1).every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable)))) || "object" === typeof input.gives && null !== input.gives && $io2(input.gives, true && _exceptionable))) && (null !== input.accepts && undefined !== input.accepts && (Array.isArray(input.accepts) && input.accepts.every((elem: any, _index3: number) => Array.isArray(elem) && elem.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $io2(elem, true && _exceptionable))) || "object" === typeof input.accepts && null !== input.accepts && $io2(input.accepts, true && _exceptionable))) && (undefined === input._browsing || "boolean" === typeof input._browsing) && true && Object.keys(input).every((key: any) => {
+                if (["title", "icon", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
                     return true;
                 const value = input[key];
                 if (undefined === value)
@@ -211,11 +211,19 @@ export const ActionArgs: {
                         path: _path + ".title",
                         expected: "(string | undefined)",
                         value: input.title
-                    }), (Array.isArray(input.gives) || $report(_exceptionable, {
+                    }), undefined === input.icon || "string" === typeof input.icon || $report(_exceptionable, {
+                        path: _path + ".icon",
+                        expected: "(string | undefined)",
+                        value: input.icon
+                    }), (null !== input.gives || $report(_exceptionable, {
                         path: _path + ".gives",
-                        expected: "[TradeItem, ...TradeItem[]]",
+                        expected: "(TradeItem | [TradeItem, ...TradeItem[]])",
                         value: input.gives
-                    })) && ([
+                    })) && (undefined !== input.gives || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "(TradeItem | [TradeItem, ...TradeItem[]])",
+                        value: input.gives
+                    })) && (Array.isArray(input.gives) && ([
                         ("object" === typeof input.gives[0] && null !== input.gives[0] || $report(_exceptionable, {
                             path: _path + ".gives[0]",
                             expected: "TradeItem",
@@ -241,15 +249,23 @@ export const ActionArgs: {
                         path: _path + ".gives",
                         expected: "...TradeItem",
                         value: input.gives.slice(1)
-                    }))) || $report(_exceptionable, {
+                    }))) || "object" === typeof input.gives && null !== input.gives && $vo2(input.gives, _path + ".gives", true && _exceptionable) || $report(_exceptionable, {
                         path: _path + ".gives",
-                        expected: "[TradeItem, ...TradeItem[]]",
+                        expected: "(TradeItem | [TradeItem, ...TradeItem[]])",
                         value: input.gives
-                    }), (Array.isArray(input.accepts) || $report(_exceptionable, {
+                    }) || $report(_exceptionable, {
+                        path: _path + ".gives",
+                        expected: "(TradeItem | [TradeItem, ...TradeItem[]])",
+                        value: input.gives
+                    })), (null !== input.accepts || $report(_exceptionable, {
                         path: _path + ".accepts",
-                        expected: "Array<Array<TradeItem>>",
+                        expected: "(Array<Array<TradeItem>> | TradeItem)",
                         value: input.accepts
-                    })) && input.accepts.map((elem: any, _index3: number) => (Array.isArray(elem) || $report(_exceptionable, {
+                    })) && (undefined !== input.accepts || $report(_exceptionable, {
+                        path: _path + ".accepts",
+                        expected: "(Array<Array<TradeItem>> | TradeItem)",
+                        value: input.accepts
+                    })) && (Array.isArray(input.accepts) && input.accepts.map((elem: any, _index3: number) => (Array.isArray(elem) || $report(_exceptionable, {
                         path: _path + ".accepts[" + _index3 + "]",
                         expected: "Array<TradeItem>",
                         value: elem
@@ -265,16 +281,20 @@ export const ActionArgs: {
                         path: _path + ".accepts[" + _index3 + "]",
                         expected: "Array<TradeItem>",
                         value: elem
-                    })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    })).every((flag: boolean) => flag) || "object" === typeof input.accepts && null !== input.accepts && $vo2(input.accepts, _path + ".accepts", true && _exceptionable) || $report(_exceptionable, {
                         path: _path + ".accepts",
-                        expected: "Array<Array<TradeItem>>",
+                        expected: "(Array<Array<TradeItem>> | TradeItem)",
                         value: input.accepts
-                    }), undefined === input._browsing || "boolean" === typeof input._browsing || $report(_exceptionable, {
+                    }) || $report(_exceptionable, {
+                        path: _path + ".accepts",
+                        expected: "(Array<Array<TradeItem>> | TradeItem)",
+                        value: input.accepts
+                    })), undefined === input._browsing || "boolean" === typeof input._browsing || $report(_exceptionable, {
                         path: _path + "._browsing",
                         expected: "(boolean | undefined)",
                         value: input._browsing
                     }), true, false === _exceptionable || Object.keys(input).map((key: any) => {
-                        if (["title", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
+                        if (["title", "icon", "gives", "accepts", "_browsing", "_traderArgs"].some((prop: any) => key === prop))
                             return true;
                         const value = input[key];
                         if (undefined === value)

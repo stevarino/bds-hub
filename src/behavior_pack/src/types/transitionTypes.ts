@@ -45,8 +45,13 @@ export interface TradeItem {
 export interface TradeOffer extends Args {
   // shown instead of the item/qty
   title?: string,
-  gives: [TradeItem, ...TradeItem[]],
-  accepts: TradeItem[][],
+  // iconPath argument for button
+  icon?: string,
+  // can be a single type of item, or set of items
+  gives: ([TradeItem, ...TradeItem[]])|TradeItem,
+  // can be a single type of item, or
+  // multiple options of multiple items
+  accepts: (TradeItem[][])|TradeItem,
   /** internal */
   _browsing?: boolean
   _traderArgs?: unknown,

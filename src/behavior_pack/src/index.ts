@@ -39,7 +39,7 @@ async function poll() {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }
-  const copy = Object.assign({}, PAYLOAD)
+  const copy = Object.assign({}, PAYLOAD);
   PAYLOAD.players = {};
   PAYLOAD.messages = [];
   let res: types.UpdateResponse|undefined = undefined;

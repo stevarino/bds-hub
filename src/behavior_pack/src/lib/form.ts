@@ -45,10 +45,14 @@ class ModalFormWidget<T=any, U=any> {
     public setValue?: (value: U) => T) {}
   
   render(form: ui.ModalFormData, title: string) {
-    let label = this.options.displayName ?? (
-      title.charAt(0).toUpperCase() + title.slice(1).replace(/([a-z])([A-Z])/, '$1 $2')
-    );
-    this.addToForm(form, label);
+    try {
+      let label = this.options.displayName ?? (
+        title.charAt(0).toUpperCase() + title.slice(1).replace(/([a-z])([A-Z])/, '$1 $2')
+      );
+      this.addToForm(form, label);
+    } catch (e) {
+      console.error(`[form field ${title}]: ${e}`);
+    }
   }
 
   shouldSkip(player: mc.Player) {
@@ -106,19 +110,25 @@ interface Result<T> extends ui.ModalFormResponse {
   results?: T
 }
 
-export type ActionButton = {text: string, action: () => void|Promise<void>, show?: boolean}
+export type ActionButton = {
+  text: string,
+  action: () => void|Promise<void>,
+  show?: boolean,
+  icon?: string,
+} 
 export async function ActionForm(player: mc.Player, title: string, body: string, buttons: ActionButton[]) {
   const form = new ui.ActionFormData();
   form.title(title);
   if (body !== '') {
-    form.body(body);
+    form.body(`\n${body}\n`);
   }
   const actions: (() => void|Promise<void>)[] = [];
   for (const button of buttons) {
     if (button.show === false) continue;
-    form.button(button.text);
+    form.button(button.text, button.icon);
     actions.push(button.action);
   }
+  await timeout(DELAY);
   const res = await form.show(player);
   if (res.selection === undefined) return;
   (actions[res.selection] as () => void|Promise<void>)();
