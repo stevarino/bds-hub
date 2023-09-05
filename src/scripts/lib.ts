@@ -10,11 +10,18 @@ import { validateConfigFile, ConfigFile, Obj, Dialogue, typiaErrorsFormat } from
 export const root = fileURLToPath(import.meta.url).replace(/[/\\]dist[/\\].*$/, '');
 
 // https://stackoverflow.com/a/45130990
-export async function getFiles(dir: string) {
+/** Recursive directory search */
+export async function getFiles(dir: string, pattern?: RegExp) {
   const dirents = await fs.promises.readdir(dir, { withFileTypes: true });
   const files: (string[]|string)[] = await Promise.all(dirents.map((dirent) => {
     const res = path.resolve(dir, dirent.name);
-    return dirent.isDirectory() ? getFiles(res) : res;
+    if (dirent.isDirectory()) {
+      return getFiles(res);
+    }
+    if (pattern !== undefined && !res.match(pattern)) {
+      return [];
+    }
+    return res;
   }));
   return Array.prototype.concat(...files) as string[];
 }
@@ -121,35 +128,6 @@ export function updateConstantsFile(filename: string, values: {[key: string]: un
   fs.writeFileSync(filename, content);
 }
 
-export type validators = {[field: string]: (val: unknown) => string[]}
-export function validateDeep(obj: unknown, validators: validators) {
-  const errors: [path: string, msg: string][] = [];
-  const stack: [path: string[], value: unknown][] = [[['$'], obj]];
-  while (stack.length > 0) {
-    const [path, value] = stack.pop() as [string[], unknown];
-
-    if (typeof value === 'object' && value !== null) {
-      for (const [key, validator] of Object.entries(validators)) {
-        if ((value as Obj<unknown>)[key] !== undefined) {
-          errors.push(...validator((value as Obj<unknown>)).map(
-            e => [path.join('.'), e] as [string, string]
-          ));
-        }
-      }
-      for (const [key, val] of Object.entries(value)) {
-        stack.push([[...path, key], val]);
-      }
-    }
-
-    if (Array.isArray(value)) {
-      for (const [index, val] of value.entries()) {
-        stack.push([[...path, String(index)], val]);
-      }
-    }
-  }
-  return errors;
-}
-
 export function loadScriptFile(filename: string) {
   console.info(`Parsing ${filename}`);
   let script : Dialogue.ScriptFile;
@@ -163,33 +141,6 @@ export function loadScriptFile(filename: string) {
   }
 
   return script;
-}
-
-export function validateScript(filename: string, script: Dialogue.ScriptFile, actionList: string[]) {
-  const errors: string[] = []
-  const result = Dialogue.validateScript(script);
-  errors.push(...typiaErrorsFormat(result));
-
-  validateDeep(script, {
-    action: obj => {
-      const errors: string[] = [];
-      const actionName = (obj as Dialogue.Action).action;
-      if (!actionList.includes(actionName)) {
-        errors.push(`Unrecognized action: ${actionName}`);
-      }
-      const argValidator = Dialogue.ActionArgs[actionName];
-      if (argValidator !== undefined) {
-        errors.push(...typiaErrorsFormat(
-          argValidator((obj as Dialogue.Action).args)));
-      }
-      return errors;
-    },
-  }).forEach(([path, msg]) => {
-    errors.push(`${path} : ${msg}`)
-  });
-  const errorObj: Obj<string[]> = {};
-  if (errors.length !== 0) errorObj[filename] = errors;
-  return errorObj;
 }
 
 

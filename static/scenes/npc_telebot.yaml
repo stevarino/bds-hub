@@ -1,0 +1,12 @@
+---
+actors:
+  - id: telebot
+    scene: telebot
+    skin: npc_Kiosk_3
+    name: TeleBot
+scenes:
+  - id: telebot
+    text: Beep boop where would you like to go?
+    buttons:
+    - text: Let's go!
+      action: NpcTravel

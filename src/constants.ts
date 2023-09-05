@@ -4,14 +4,23 @@ import { cwd } from "process";
 
 export * from './behavior_pack/src/lib/constants.js';
 
-export const ADDON_NAME = 'bds_hub_bp';
+export const BP_NAME = 'bds_hub_bp';
 
+export const BUILD = join(cwd(), '/build');
+export const BUILD_INFO = join(BUILD, 'buildinfo.json');
 export const ADDON_SCRIPTS = join(root, '/dist/behavior_pack/src');
 
-export const ADDON_OUTPUT = join(cwd(), '/build/', ADDON_NAME);
-export const ADDON_ROLLUP = join(ADDON_OUTPUT, '/scripts/script.rollup.js')
-export const ADDON_SCENES = join(ADDON_OUTPUT, '/dialogue/scene.json');
+export const BP_OUTPUT = join(BUILD, BP_NAME);
+export const BP_MAN = join(BP_OUTPUT, 'manifest.json');
+export const BP_FILE = join(BUILD, BP_NAME + '.mcaddon');
+export const BP_ROLLUP = join(BP_OUTPUT, '/scripts/script.rollup.js');
+export const BP_SCENES = join(BP_OUTPUT, '/dialogue/scene.json');
 
 export const ADDON_TEMP = join(cwd(), '/build/temp');
 export const ADDON_ENTRY = join(ADDON_TEMP, '/index.js');
 export const ADDON_SCRIPT = join(ADDON_TEMP, '/script.js');
+
+export const RP_NAME = 'bds_hub_rp';
+export const RP_OUTPUT = join(BUILD, RP_NAME);
+export const RP_MAN = join(RP_OUTPUT, 'manifest.json');
+export const RP_FILE = join(BUILD, RP_NAME + '.mcaddon');

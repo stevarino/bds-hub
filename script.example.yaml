@@ -1,10 +1,12 @@
 ---
 actors:
-  - tag: greeter_npc
-    scene: greeter
+  - id: example_greeter
+    scene: example_greeter
+    skin: npc_teacher_5
+    name: Old Man Jimmy
+    scale: 75
 scenes:
-  - id: greeter
-    npc_name: Old Man Jimmy
+  - id: example_greeter
     text: Hello, welcome to the Mushroom Self-Governing Federation. Would you like to know the time?
     buttons:
       - text: What time is it??
@@ -14,7 +16,7 @@ scenes:
       - text: Got any jokes?
         scene: knock_knock
       - text: Impressions?
-        # this is under the examples folder
+        # this is under the static/scenes folder
         scene: sound_test
       - text: Trade!
         action: Trader
@@ -30,9 +32,9 @@ scenes:
                # will give stone for 1 emerald + 1 diamond
                - - item: minecraft:emerald
                  - item: minecraft:diamond
-            # Simple dirt for stone trade
-            - gives: [item: minecraft:dirt]
-              accepts: [item: minecraft:stone]
+            # Simple dirt for stone trade, using simpler syntax
+            - gives: minecraft:dirt
+              accepts: minecraft:stone
   - id: knock_knock
     text: Knock knock
     buttons:
@@ -52,9 +54,9 @@ scenes:
     text: Oh, no... Not really. Just me and my mushrooms and my magic book.
     buttons:
       - text: Okay thanks!
-        scene: greeter
+        scene: example_greeter
       - text: Nevermind...
-        scene: greeter
+        scene: example_greeter
       - text: Wait, what?
         scene: book
   - id: book
@@ -72,21 +74,19 @@ scenes:
     text: Didn't I give you one already?
     buttons:
       - text: My mistake...
-        scene: greeter
+        scene: example_greeter
       - text: Nooooooo
         if_has_item:
           lore: [null, "§ksecret password§r"]
         then:
           scene: book_see_it
         else:
-          sequence:
-            - apply_tag: book_liar
-            - scene: give_book
+          apply_tag: book_liar
   - id: book_see_it
     text: I can see it!!! It's in your pockets!
     buttons:
       - text: My mistake...
-        scene: greeter
+        scene: example_greeter
 items:
   - lore: [null, "§ksecret password§r"]
     menu:
@@ -95,14 +95,14 @@ items:
         - text: Admin Settings
           require_tag: admin
           action: admin_menu
-        - text: Bot Management
+        - text: NPC Management
           if_has_tag: admin
           then:
-            action: ManageBots
+            action: ManageNpcs
             args:
               admin: true
           else:
-            action: ManageBots
+            action: ManageNpcs
         - text: Locations
           if_has_tag: admin
           then:

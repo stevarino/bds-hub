@@ -7,8 +7,9 @@ import { ActionFormData } from "@minecraft/server-ui";
 
 import { script } from '../script.js';
 import * as types from '../types/packTypes.js';
-import { DELAY, ID } from "../lib/constants.js";
-import { ActorBotMap, STATE, distance, getFormResponse, positionToVec3, showErrorMessage, timeout } from "../lib.js";
+import * as formlib from '../lib/form.js';
+import { DELAY } from "../lib/constants.js";
+import { getFormResponse, showErrorMessage, timeout } from "../lib.js";
 export { Args, Action } from '../types/packTypes.js';
 
 export type Callable = (
@@ -38,8 +39,7 @@ export function actionCallback(discussion: Discussion, action: string,
 
 export class Discussion {
   player: mc.Player;
-  actor?: string;
-  bot?: string;
+  npc?: string;
   history: types.Transition[] = [];
   vars: {[key: string]: unknown} = {};
 
@@ -66,18 +66,31 @@ export class Discussion {
     return value as T;
   }
 
+  async error(message: string, title?: string) {
+    await showErrorMessage(this.player, message, title);
+  }
+
+  async actionForm(title: string, body: string, buttons: formlib.ActionButton[]) {
+    await formlib.ActionForm(this.player, title, body, buttons);
+  }
+
+  async modalForm<T={[label: string]: formlib.ModalFormWidget}>(
+      title: string, form: T): Promise<formlib.Result<T>> {
+    return await formlib.ModalForm(this.player, title, form)
+  }
+
   /** Lookup a transition from script.js */
-  findTransition(tag: string): types.Transition|undefined {
-    const transition = script.transitions[tag];
+  findTransition(transitionName: string): types.Transition|undefined {
+    const transition = script.transitions[transitionName];
     if (transition === undefined) {
-      console.warn('Failed to find transition: ', tag);
+      console.warn('Failed to find transition: ', transitionName);
     }
     return transition;
   }
 
-  async go(tag?: string) {
-    if (tag === undefined) return;
-    await this.navigate(this.findTransition(tag));
+  async go(transitionName?: string) {
+    if (transitionName === undefined) return;
+    await this.navigate(this.findTransition(transitionName));
   }
 
   async navigate(transition?: types.Transition) {
@@ -125,7 +138,7 @@ async function findAndRunTransition(d: Discussion, t: types.Transition) {
   for (const [field, handler] of Object.entries(handlers)) {
     try {
     //@ts-ignore -- can't get the types to work here but i swear it makes sense
-      if (await check(d, t, field, handler)) break;
+      if (await check(d, t, field, handler))  break;
     } catch (e) {
       console.error(e);
       if ((e as Error).stack !== undefined) console.error((e as Error).stack);
@@ -155,37 +168,19 @@ async function respondAction(d: Discussion, args: types.Action) {
 }
 
 async function respondCommand(d: Discussion, action: types.Command) {
-  await d.player.dimension.runCommandAsync(
-    action.command.replace(/\b@p\b/, d.player.name)
-  );
+  const cmd = action.command.replace(/\b@p\b/, `"${d.player.name}"`);
+  const result = await d.player.dimension.runCommandAsync(cmd);
+  if (result.successCount === 0) {
+    console.info('Unsuccessful command: ', cmd)
+  }
 }
 
 async function respondScene(d: Discussion, action: types.Scene) {
+  if (d.npc === undefined) {
+    await showErrorMessage(d.player, 'NPC not established for dialogue');
+  }
   await timeout(DELAY);
-  // default open - find the nearest npc to the player...
-  let command = `execute at "${d.player.name}" run dialogue open @e[type=NPC,c=1] @p ${ID('SCENE', action.scene)}`
-  if (d.bot === undefined && d.actor !== undefined && ActorBotMap[d.actor] !== undefined) {
-    const bots = ActorBotMap[d.actor];
-    let bot: types.BotState|undefined;
-    if (bots !== undefined) {
-      bot = STATE.bots[bots[0] as string] as types.BotState;
-      let dist = distance(d.player.location, positionToVec3(bot.location));
-      for (let i=1; i<bots.length; i++) {
-        const bot2 = STATE.bots[bots[i] as string] as types.BotState;
-        const dist2 = distance(d.player.location, positionToVec3(bot2.location));
-        if (dist2 < dist) {
-          dist = dist2;
-          bot = bot2;
-        }
-      }
-      if (bot !== undefined) {
-        d.bot = bot.id;
-      }
-    }
-  }
-  if (d.bot !== undefined) {
-    command = `dialogue open @e[tag="${d.bot}"] @p ${ID('SCENE', action.scene)}`;
-  }
+  const command = `dialogue open @e[tag="${d.npc}"] @p ${action.scene}`;
   await respondCommand(d, {command});
 }
 

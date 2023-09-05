@@ -1,5 +1,5 @@
 import {
-  EventRequest, EventResponse, IDQuery, Location, LocationGet, LocListReq,
+  EventRequest, EventResponse, IDQuery, Location, LocationGet, LocGetAllRes, LocListReq,
   LocListRes, ServerStatus, ServerSuccess, Update, UpdateResponse,
   WorldState } from "./packTypes";
 
@@ -51,6 +51,7 @@ export const Events = new Endpoint<EventRequest, EventResponse>(Ctx, '/events');
 export const ReadState = new NilEndpoint<WorldState>(Ctx, '/read_state');
 export const WriteState = new Endpoint<WorldState, ServerSuccess>(Ctx, '/write_state');
 export const LocList = new Endpoint<LocListReq, LocListRes>(Ctx, '/location/list');
+export const LocGetAll = new NilEndpoint<LocGetAllRes>(Ctx, '/location/list_all');
 export const LocNew = new Endpoint<Location, ServerSuccess>(Ctx, '/location/new');
 export const LocGet = new Endpoint<IDQuery, LocationGet>(Ctx, '/location/get');
 export const LocUpdate = new Endpoint<Location, ServerSuccess>(Ctx, '/location/update');

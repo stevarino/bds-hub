@@ -35,7 +35,7 @@ async function poll() {
   system.runTimeout(poll, ticksPerPoll);
   ticksPerPoll = Math.min(1.2 * ticksPerPoll, 20 * 60 * 5);
   PAYLOAD.time = world.getTimeOfDay();
-	for (const p of world.getAllPlayers()) {
+  for (const p of world.getAllPlayers()) {
     const update = getPlayerUpdate(p.name);
     update.pos = [p.dimension.id, Math.round(p.location.x), Math.round(p.location.y), Math.round(p.location.z)];
   }

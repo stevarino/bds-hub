@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "BDS-Hub",
+    "description": "Aggregate stats about Bedrock (dynamic)",
+    "uuid": "0e0a4cef-925b-4c17-afa3-25b3332f98f9",
+    "version": [1, 0, 0],
+    "min_engine_version": [ 1, 20, 0 ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "01e335b9-0574-4898-a77a-c64f5102b9e2",
+      "version": [1, 0, 0]
+    }
+  ]
+}

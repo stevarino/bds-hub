@@ -118,14 +118,14 @@ items:
         - text: Admin Settings
           require_tag: admin
           action: admin_menu
-        - text: Bot Management
+        - text: NPC Management
           if_has_tag: admin
           then:
-            action: ManageBots
+            action: ManageNpcs
             args:
               admin: true
           else:
-            action: ManageBots
+            action: ManageNpcs
         - text: Blocks Broken
           action: BlocksBroken
         - text: Blocks Placed
@@ -142,7 +142,7 @@ This does three things:
  - the `items` category: defines that when an item is used that has those specific properties (`lore[1]` in this case), open the book menu that includes a special admin section.
  - the `chats` section: when a user tagged as `admin` says "boop" in chat, run the `give_book_action` action defined in the first section.
 
-So start the game with this config installed, tag yourself as admin (`tag "{playername}" add admin`), say boop, and get book! From there you can easily add NPCs, TeleBots, assign them tags, etc.
+So start the game with this config installed, tag yourself as admin (`tag "{playername}" add admin`), say boop, and get book! From there you can easily add NPCs, Transport NPCs, assign them tags, etc.
 
 ## The Script file: Custom Dialogues and Menus
 
@@ -195,9 +195,9 @@ Built-in Actions are similar to transitions, but often have more complicated log
 - `action: Give` - Gives an item to the player, with `args` of `qty:`, `enchantments: [[{enchantment_name}, {level}], ...]`, `lore: ["lore text", ...]`, and `name: {name-tag}`.
 - `action: BlocksBroken` - Displays a list of all blocks broken by the player.
 - `action: BlocksPlaced` - Displays a list of all blocks placed by the player.
-- `action: TeleBotTravel` - Performs a fast travel to a telebot, selectable through a given menu. Automatically linked to the telebot discussion scene when activating a telebot.
-- `action: CreateBot` - Creates a new NPC with various properties. Due to limitations of the API, some manual steps such as name and appearance will need to be manually set up.
-- `action: ManageBots` - Allows for bots to be managed by their owners. Accepts an `args.admin: true` field to allow for admins to manage all bots.
+- `action: NpcTravel` - Performs a fast travel to another teleportation NPC, selectable through a given menu. Automatically linked to the npc discussion scene when activating a teleportation npc.
+- `action: CreateNPC` - Creates a new NPC with various properties. Due to limitations of the API, some manual steps such as name and appearance will need to be manually set up.
+- `action: ManageNpcs` - Allows for NPCs to be managed by their owners. Accepts an `args.admin: true` field to allow for admins to manage all NPCs.
 
-## Bots (NPCs)
+## NPCs
 

@@ -12,3 +12,4 @@ export * as forms from './lib/form.js';
 export const Emitter = new EventEmitter();
 export const StartupEvent = Emitter.getHandler<null>('startup');
 
+export { TagMap, DummyTagMap } from './lib/tag_map.js';

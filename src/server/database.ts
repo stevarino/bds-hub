@@ -226,15 +226,33 @@ export class DBHandle {
     )).lastID;
   }
 
+  normalizeLocation(loc: DBLocation): Location {
+    const updates: {dimension: string, owner?: string} = { dimension: this.cache.get(loc.dimension) as string };
+    if (loc.owner !== undefined) updates.owner = this.cache.get(loc.owner);
+    //@ts-ignore https://www.sqlite.org/datatype3.html#boolean_datatype
+    loc.isPublic = loc.isPublic === 1;
+    return Object.assign(loc, updates);
+  }
+
   async getLocation(locationId: number): Promise<Location|undefined> {
     const row = await this.db.get<DBLocation>(
       `SELECT * FROM Locations WHERE id = ${locationId}`);
     if (row === undefined) return undefined;
-    const updates: {dimension: string, owner?: string} = { dimension: this.cache.get(row.dimension) as string };
-    if (row.owner !== undefined) updates.owner = this.cache.get(row.owner);
-    //@ts-ignore https://www.sqlite.org/datatype3.html#boolean_datatype
-    row.isPublic = row.isPublic === 1;
-    return Object.assign(row, updates);
+    return this.normalizeLocation(row);
+  }
+
+  async getAllLocations() {
+    const rows = await this.db.all<DBLocation[]>(`
+      SELECT 
+        id, owner, dimension, name, type, color, sort
+        x1, x2, z1, z2, y1, y2, isPublic
+      FROM Locations WHERE 1=1
+      ORDER BY sort, owner, name, id`
+    );
+    const result: Location[] = [];
+    for (const row of rows) result.push(this.normalizeLocation(row));
+    return result;
+  
   }
  
   async deleteLocation(locationId: number) {

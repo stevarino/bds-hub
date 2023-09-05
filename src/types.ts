@@ -9,7 +9,8 @@ export * as Requests from './behavior_pack/src/types/requests.js';
 export function failValidation(errors: Obj<string[]>) {
   console.error(`\nValidation failed: \n\n`);
   for (const [file, errs] of Object.entries(errors)) {
-    console.error(`${file}\n - ${errs.join('\n - ')}\n\n`);
+    const deduped = Array.from(new Set(errs)).sort();
+    console.error(`${file}\n - ${deduped.join('\n - ')}\n\n`);
   }
   process.exit(1);
 }

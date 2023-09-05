@@ -1,0 +1,219 @@
+{
+  "format_version": "1.19.30",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "hub:npc",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false,
+      "scripts": {
+        "animate": ["hub:interact"],
+        "skin_change": ["hub:skin_change"]
+      },
+      "animations": {
+        "hub:interact": "controller.animation.hub_npc_interact"
+      },
+      "properties": {
+        "hub:has_interact": { "type": "bool", "default": false }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [ "npc", "mob", "hub_npc" ]
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/empty.json"
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 2.1
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 0,
+        "look_distance": 6.0,
+        "probability": 0.02
+      },
+      "minecraft:persistent": {},
+      "minecraft:physics": {},
+      "minecraft:nameable": {},
+      "minecraft:scale": {
+        "value": 1.0
+      },
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "cause": "all",
+          "deals_damage": false
+        }
+      },
+      "minecraft:npc": {
+        "npc_data": {
+          "portrait_offsets": {
+            "translate": [-7, 50, 0],
+            "scale": [1.75, 1.75, 1.75]
+          }
+        }
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "on_interact": {
+              "filters": {
+                "subject": "other", 
+                "test": "is_family",
+                "value": "player"
+              },
+              "event": "hub:event_interact"
+            }
+          }
+        ]
+      },
+      "minecraft:variant": {
+        "value": 0
+      }
+    },
+    "events": {
+      "hub:event_interact": { "set_property": { "hub:has_interact": true } },
+      "hub:event_reset": { "set_property": { "hub:has_interact": false } },
+      "hub:npc_skin_0": { "add": { "component_groups": [ "hub:npc_skin_0" ] } },
+      "hub:npc_skin_1": { "add": { "component_groups": [ "hub:npc_skin_1" ] } },
+      "hub:npc_skin_2": { "add": { "component_groups": [ "hub:npc_skin_2" ] } },
+      "hub:npc_skin_3": { "add": { "component_groups": [ "hub:npc_skin_3" ] } },
+      "hub:npc_skin_4": { "add": { "component_groups": [ "hub:npc_skin_4" ] } },
+      "hub:npc_skin_5": { "add": { "component_groups": [ "hub:npc_skin_5" ] } },
+      "hub:npc_skin_6": { "add": { "component_groups": [ "hub:npc_skin_6" ] } },
+      "hub:npc_skin_7": { "add": { "component_groups": [ "hub:npc_skin_7" ] } },
+      "hub:npc_skin_8": { "add": { "component_groups": [ "hub:npc_skin_8" ] } },
+      "hub:npc_skin_9": { "add": { "component_groups": [ "hub:npc_skin_9" ] } },
+      "hub:npc_skin_10": { "add": { "component_groups": [ "hub:npc_skin_10" ] } },
+      "hub:npc_skin_11": { "add": { "component_groups": [ "hub:npc_skin_11" ] } },
+      "hub:npc_skin_12": { "add": { "component_groups": [ "hub:npc_skin_12" ] } },
+      "hub:npc_skin_13": { "add": { "component_groups": [ "hub:npc_skin_13" ] } },
+      "hub:npc_skin_14": { "add": { "component_groups": [ "hub:npc_skin_14" ] } },
+      "hub:npc_skin_15": { "add": { "component_groups": [ "hub:npc_skin_15" ] } },
+      "hub:npc_skin_16": { "add": { "component_groups": [ "hub:npc_skin_16" ] } },
+      "hub:npc_skin_17": { "add": { "component_groups": [ "hub:npc_skin_17" ] } },
+      "hub:npc_skin_18": { "add": { "component_groups": [ "hub:npc_skin_18" ] } },
+      "hub:npc_skin_19": { "add": { "component_groups": [ "hub:npc_skin_19" ] } },
+      "hub:npc_skin_20": { "add": { "component_groups": [ "hub:npc_skin_20" ] } },
+      "hub:npc_skin_21": { "add": { "component_groups": [ "hub:npc_skin_21" ] } },
+      "hub:npc_skin_22": { "add": { "component_groups": [ "hub:npc_skin_22" ] } },
+      "hub:npc_skin_23": { "add": { "component_groups": [ "hub:npc_skin_23" ] } },
+      "hub:npc_skin_24": { "add": { "component_groups": [ "hub:npc_skin_24" ] } },
+      "hub:npc_skin_25": { "add": { "component_groups": [ "hub:npc_skin_25" ] } },
+      "hub:npc_skin_26": { "add": { "component_groups": [ "hub:npc_skin_26" ] } },
+      "hub:npc_skin_27": { "add": { "component_groups": [ "hub:npc_skin_27" ] } },
+      "hub:npc_skin_28": { "add": { "component_groups": [ "hub:npc_skin_28" ] } },
+      "hub:npc_skin_29": { "add": { "component_groups": [ "hub:npc_skin_29" ] } },
+      "hub:npc_skin_30": { "add": { "component_groups": [ "hub:npc_skin_30" ] } },
+      "hub:npc_skin_31": { "add": { "component_groups": [ "hub:npc_skin_31" ] } },
+      "hub:npc_skin_32": { "add": { "component_groups": [ "hub:npc_skin_32" ] } },
+      "hub:npc_skin_33": { "add": { "component_groups": [ "hub:npc_skin_33" ] } },
+      "hub:npc_skin_34": { "add": { "component_groups": [ "hub:npc_skin_34" ] } },
+      "hub:npc_skin_35": { "add": { "component_groups": [ "hub:npc_skin_35" ] } },
+      "hub:npc_skin_36": { "add": { "component_groups": [ "hub:npc_skin_36" ] } },
+      "hub:npc_skin_37": { "add": { "component_groups": [ "hub:npc_skin_37" ] } },
+      "hub:npc_skin_38": { "add": { "component_groups": [ "hub:npc_skin_38" ] } },
+      "hub:npc_skin_39": { "add": { "component_groups": [ "hub:npc_skin_39" ] } },
+      "hub:npc_skin_40": { "add": { "component_groups": [ "hub:npc_skin_40" ] } },
+      "hub:npc_skin_41": { "add": { "component_groups": [ "hub:npc_skin_41" ] } },
+      "hub:npc_skin_42": { "add": { "component_groups": [ "hub:npc_skin_42" ] } },
+      "hub:npc_skin_43": { "add": { "component_groups": [ "hub:npc_skin_43" ] } },
+      "hub:npc_skin_44": { "add": { "component_groups": [ "hub:npc_skin_44" ] } },
+      "hub:npc_skin_45": { "add": { "component_groups": [ "hub:npc_skin_45" ] } },
+      "hub:npc_skin_46": { "add": { "component_groups": [ "hub:npc_skin_46" ] } },
+      "hub:npc_skin_47": { "add": { "component_groups": [ "hub:npc_skin_47" ] } },
+      "hub:npc_skin_48": { "add": { "component_groups": [ "hub:npc_skin_48" ] } },
+      "hub:npc_skin_49": { "add": { "component_groups": [ "hub:npc_skin_49" ] } },
+      "hub:npc_skin_50": { "add": { "component_groups": [ "hub:npc_skin_50" ] } },
+      "hub:npc_skin_51": { "add": { "component_groups": [ "hub:npc_skin_51" ] } },
+      "hub:npc_skin_52": { "add": { "component_groups": [ "hub:npc_skin_52" ] } },
+      "hub:npc_skin_53": { "add": { "component_groups": [ "hub:npc_skin_53" ] } },
+      "hub:npc_skin_54": { "add": { "component_groups": [ "hub:npc_skin_54" ] } },
+      "hub:npc_skin_55": { "add": { "component_groups": [ "hub:npc_skin_55" ] } },
+      "hub:npc_skin_56": { "add": { "component_groups": [ "hub:npc_skin_56" ] } },
+      "hub:npc_skin_57": { "add": { "component_groups": [ "hub:npc_skin_57" ] } },
+      "hub:npc_skin_58": { "add": { "component_groups": [ "hub:npc_skin_58" ] } },
+      "hub:npc_skin_59": { "add": { "component_groups": [ "hub:npc_skin_59" ] } },
+
+      "hub:npc_scale_25": { "add": { "component_groups": ["hub:npc_scale_25" ] }},
+      "hub:npc_scale_50": { "add": { "component_groups": ["hub:npc_scale_50" ] }},
+      "hub:npc_scale_75": { "add": { "component_groups": ["hub:npc_scale_75" ] }},
+      "hub:npc_scale_100": { "add": { "component_groups": ["hub:npc_scale_100" ] }},
+      "hub:npc_scale_125": { "add": { "component_groups": ["hub:npc_scale_125" ] }},
+      "hub:npc_scale_150": { "add": { "component_groups": ["hub:npc_scale_150" ] }}
+    },
+    "component_groups": {
+      "hub:reset": { "minecraft:mark_variant": { "value": 0 } },
+      "hub:interacted": { "minecraft:mark_variant": { "value": 1 } },
+      "hub:noop": {},
+
+      "hub:npc_skin_0": { "minecraft:variant": { "value": 0 } },
+      "hub:npc_skin_1": { "minecraft:variant": { "value": 1 } },
+      "hub:npc_skin_2": { "minecraft:variant": { "value": 2 } },
+      "hub:npc_skin_3": { "minecraft:variant": { "value": 3 } },
+      "hub:npc_skin_4": { "minecraft:variant": { "value": 4 } },
+      "hub:npc_skin_5": { "minecraft:variant": { "value": 5 } },
+      "hub:npc_skin_6": { "minecraft:variant": { "value": 6 } },
+      "hub:npc_skin_7": { "minecraft:variant": { "value": 7 } },
+      "hub:npc_skin_8": { "minecraft:variant": { "value": 8 } },
+      "hub:npc_skin_9": { "minecraft:variant": { "value": 9 } },
+      "hub:npc_skin_10": { "minecraft:variant": { "value": 10 } },
+      "hub:npc_skin_11": { "minecraft:variant": { "value": 11 } },
+      "hub:npc_skin_12": { "minecraft:variant": { "value": 12 } },
+      "hub:npc_skin_13": { "minecraft:variant": { "value": 13 } },
+      "hub:npc_skin_14": { "minecraft:variant": { "value": 14 } },
+      "hub:npc_skin_15": { "minecraft:variant": { "value": 15 } },
+      "hub:npc_skin_16": { "minecraft:variant": { "value": 16 } },
+      "hub:npc_skin_17": { "minecraft:variant": { "value": 17 } },
+      "hub:npc_skin_18": { "minecraft:variant": { "value": 18 } },
+      "hub:npc_skin_19": { "minecraft:variant": { "value": 19 } },
+      "hub:npc_skin_20": { "minecraft:variant": { "value": 20 } },
+      "hub:npc_skin_21": { "minecraft:variant": { "value": 21 } },
+      "hub:npc_skin_22": { "minecraft:variant": { "value": 22 } },
+      "hub:npc_skin_23": { "minecraft:variant": { "value": 23 } },
+      "hub:npc_skin_24": { "minecraft:variant": { "value": 24 } },
+      "hub:npc_skin_25": { "minecraft:variant": { "value": 25 } },
+      "hub:npc_skin_26": { "minecraft:variant": { "value": 26 } },
+      "hub:npc_skin_27": { "minecraft:variant": { "value": 27 } },
+      "hub:npc_skin_28": { "minecraft:variant": { "value": 28 } },
+      "hub:npc_skin_29": { "minecraft:variant": { "value": 29 } },
+      "hub:npc_skin_30": { "minecraft:variant": { "value": 30 } },
+      "hub:npc_skin_31": { "minecraft:variant": { "value": 31 } },
+      "hub:npc_skin_32": { "minecraft:variant": { "value": 32 } },
+      "hub:npc_skin_33": { "minecraft:variant": { "value": 33 } },
+      "hub:npc_skin_34": { "minecraft:variant": { "value": 34 } },
+      "hub:npc_skin_35": { "minecraft:variant": { "value": 35 } },
+      "hub:npc_skin_36": { "minecraft:variant": { "value": 36 } },
+      "hub:npc_skin_37": { "minecraft:variant": { "value": 37 } },
+      "hub:npc_skin_38": { "minecraft:variant": { "value": 38 } },
+      "hub:npc_skin_39": { "minecraft:variant": { "value": 39 } },
+      "hub:npc_skin_40": { "minecraft:variant": { "value": 40 } },
+      "hub:npc_skin_41": { "minecraft:variant": { "value": 41 } },
+      "hub:npc_skin_42": { "minecraft:variant": { "value": 42 } },
+      "hub:npc_skin_43": { "minecraft:variant": { "value": 43 } },
+      "hub:npc_skin_44": { "minecraft:variant": { "value": 44 } },
+      "hub:npc_skin_45": { "minecraft:variant": { "value": 45 } },
+      "hub:npc_skin_46": { "minecraft:variant": { "value": 46 } },
+      "hub:npc_skin_47": { "minecraft:variant": { "value": 47 } },
+      "hub:npc_skin_48": { "minecraft:variant": { "value": 48 } },
+      "hub:npc_skin_49": { "minecraft:variant": { "value": 49 } },
+      "hub:npc_skin_50": { "minecraft:variant": { "value": 50 } },
+      "hub:npc_skin_51": { "minecraft:variant": { "value": 51 } },
+      "hub:npc_skin_52": { "minecraft:variant": { "value": 52 } },
+      "hub:npc_skin_53": { "minecraft:variant": { "value": 53 } },
+      "hub:npc_skin_54": { "minecraft:variant": { "value": 54 } },
+      "hub:npc_skin_55": { "minecraft:variant": { "value": 55 } },
+      "hub:npc_skin_56": { "minecraft:variant": { "value": 56 } },
+      "hub:npc_skin_57": { "minecraft:variant": { "value": 57 } },
+      "hub:npc_skin_58": { "minecraft:variant": { "value": 58 } },
+      "hub:npc_skin_59": { "minecraft:variant": { "value": 59 } },
+
+      "hub:npc_scale_25": { "minecraft:scale": { "value": 0.25 } },
+      "hub:npc_scale_50": { "minecraft:scale": { "value": 0.50 } },
+      "hub:npc_scale_75": { "minecraft:scale": { "value": 0.75 } },
+      "hub:npc_scale_100": { "minecraft:scale": { "value": 1 } },
+      "hub:npc_scale_125": { "minecraft:scale": { "value": 1.25 } },
+      "hub:npc_scale_150": { "minecraft:scale": { "value": 1.50 } }
+    }
+  }
+}

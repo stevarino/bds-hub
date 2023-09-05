@@ -11,7 +11,7 @@ export async function setup() {
 
 class State {
   players = new Set<string>();
-  bots: Record<string, types.BotState> = {};
+  npcs: Record<string, types.NpcState> = {};
   accounts: Record<string, types.AccountState> = {};
   initialSync = true;
   isSynced = false;
@@ -25,7 +25,7 @@ class State {
       mc.system.runTimeout(() => this.sync(), 5 * 60 * 20);
     } else {
       this.addPlayers(state.players ?? [], false);
-      this.addBots(state.bots ?? [], false);
+      this.addNpcs(state.npcs ?? [], false);
       this.addAccounts(state.accounts ?? [], false);
       this.isSynced = true;
       console.info('State synced with Hub Server');
@@ -44,7 +44,7 @@ class State {
     }
     const state: types.WorldState = {
       players: [...this.players],
-      bots: Array.from(Object.values(this.bots)),
+      npcs: Array.from(Object.values(this.npcs)),
       accounts: Array.from(Object.values(this.accounts)),
     }
     await WriteState.request(state);
@@ -67,16 +67,16 @@ class State {
     return false;
   }
 
-  getBots() {
-    return Array.from(Object.values(this.bots));
+  getNpcs() {
+    return Array.from(Object.values(this.npcs));
   }
 
-  async addBots(bots: types.BotState[], autosave=true) {
+  async addNpcs(npcs: types.NpcState[], autosave=true) {
     let mutated = false;
-    for (const bot of bots ?? []) {
-      if (this.bots[bot.id] === undefined) {
+    for (const npc of npcs ?? []) {
+      if (this.npcs[npc.id] === undefined) {
         mutated = true;
-        this.bots[bot.id] = bot;
+        this.npcs[npc.id] = npc;
       }
     }
     if (mutated && autosave) return await this.save();
@@ -84,8 +84,8 @@ class State {
     return false;
   }
 
-  async rmBot(botId: string, autosave=true) {
-    delete this.bots[botId];
+  async rmNpc(npcId: string, autosave=true) {
+    delete this.npcs[npcId];
     if (autosave) return await this.save();
     this.needsPush = true;
   }

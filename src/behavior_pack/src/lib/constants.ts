@@ -1,8 +1,8 @@
 export const TAG_PREFIX = 'BDSH_';
-export const SEP = '___';
+export const SEP = '__';
 
 export function ID(namespace: string, ...extra: string[]) {
-  return ['BDSH', namespace, ...extra].join(SEP);
+  return ['hub', namespace, ...extra].join(SEP);
 }
 
 export const TAG_PENDING = ID('PENDING');

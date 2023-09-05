@@ -4,12 +4,12 @@
  * Installs the add on to a specified minecraft server.
  */
 
-import { copyFileSync, mkdirSync, readdirSync, existsSync, readFileSync, writeFileSync, rmSync } from 'fs';
-import { dirname, join } from 'path';
+import * as fs from 'node:fs';
+import { basename, join } from 'node:path';
 
-import { getFiles, isScriptRun, parseArgs, readConfig } from './lib.js';
-import { Obj } from '../types.js';
-import { ADDON_NAME, ADDON_OUTPUT } from '../constants.js';
+import { isScriptRun, parseArgs, readConfig } from './lib.js';
+import { ManifestFile, Obj, readManifest } from '../types.js';
+import * as constants from '../constants.js';
 import { createPackFiles } from './hubPack.js';
 
 const modules = [
@@ -19,84 +19,59 @@ const modules = [
   "@minecraft/server-ui",
 ];
 
-/** Install behavior pack into server */
+/** Install behavior/resource pack into server */
 async function install(mcDir: string, argn: Obj<string|undefined>) {
   const config = readConfig(argn.config);
-  const packName = ADDON_NAME + '.mcaddon';
 
   // build the pack code
   await createPackFiles(config);
-  
-  const manifest = JSON.parse(readFileSync(join(ADDON_OUTPUT, 'manifest.json'), 'utf-8'));
 
-  // clean up old packs
-  for (const dir of [
-    join(mcDir, 'behavior_packs', ADDON_NAME), 
-    join(mcDir, 'development_behavior_packs', ADDON_NAME)
-  ]) {
-    if (existsSync(dir)) {
-      console.info('Removing directory ', dir);
-      rmSync(dir, { recursive: true, force: true });
-    }
-    if (existsSync(packName)) {
-      rmSync(packName);
-    }
+  const mapping = {
+    behavior: {
+      pack: constants.BP_FILE,
+      manifest: readManifest(constants.BP_MAN),
+    },
+    resource: {
+      pack: constants.RP_FILE,
+      manifest: readManifest(constants.RP_MAN),
+    },
   }
 
-  // copy bp to behavior_packs server dir
-  const files = await getFiles(ADDON_OUTPUT);
-  const bpDir = argn.dev === undefined ? 'behavior_packs' : 'development_behavior_packs';
-  const mcBpDir = join(mcDir, bpDir, packName);
-  console.info('Copying to ', mcBpDir);
-  copyFileSync(join(dirname(ADDON_OUTPUT), packName), mcBpDir)
+  for (const [name, props] of Object.entries(mapping)) {
+    const dir = join(mcDir, `${argn.dev === undefined ? '' : 'development_'}${name}_packs`);
+    const packFile = join(dir, basename(props.pack));
+    if (fs.existsSync(packFile)) fs.rmSync(packFile);
+    console.info(`Copying ${basename(props.pack)} to ${dir}`);
+    fs.copyFileSync(props.pack, packFile);
 
+    for (const f of fs.readdirSync(join(mcDir, 'worlds'))) {
+      const packList = join(mcDir, 'worlds', f, `world_${name}_packs.json`);
+      enablePack(packList, props.manifest);
+    }
+  }
+  
   // check allowed_modules
   const permissionsFile = join(mcDir, 'config', 'default', 'permissions.json');
-  const permissions = JSON.parse(readFileSync(permissionsFile, 'utf-8'));
+  const permissions = JSON.parse(fs.readFileSync(permissionsFile, 'utf-8'));
   if (!(permissions.allowed_modules as string[]).includes('@minecraft/server-net')) {
     console.info('Add net module to allowed_modules');
     permissions.allowed_modules.push('@minecraft/server-net');
-    writeFileSync(permissionsFile, JSON.stringify(permissions, undefined, 2));
+    fs.writeFileSync(permissionsFile, JSON.stringify(permissions, undefined, 2));
   }
 
-  // add/update world_behavior_packs.json
-  for (const f of readdirSync(join(mcDir, 'worlds'))) {
-    const packs = join(mcDir, 'worlds', f, 'world_behavior_packs.json');
-    let packContent: {pack_id: string, version: number[]}[] = [];
-    if (existsSync(packs)) {
-      packContent = JSON.parse(readFileSync(packs, 'utf-8'));
-    }
-    let found = false;
-    let needWrite = true;
-    for (const entry of packContent) {
-      if (entry.pack_id === manifest.header.uuid) {
-        found = true;
-        if (JSON.stringify(entry.version) === JSON.stringify(manifest.header.version)) {
-          console.info('world_behavior_pack up to date: ', packs)
-          needWrite = false;
-          break;
-        }
-        console.info('Updated in ', packs);
-        entry.version = manifest.header.version;
-      }
-    }
-    if (!found) {
-      console.info('Added in ', packs);
-      packContent.push({
-        pack_id: manifest.header.uuid,
-        version: manifest.header.version,
-      });
-    }
-    if (needWrite) {
-      writeFileSync(packs, JSON.stringify(packContent, undefined, 2));
+  let script_uuid: string|undefined = undefined;
+  for (const mod of mapping.behavior.manifest.modules) {
+    if (mod.type === 'script') {
+      script_uuid = mod.uuid;
+      break;
     }
   }
+  if (script_uuid === undefined) throw new Error('Failed to find script uuid');
 
-
-  const configDir = join(mcDir, 'config', manifest.modules[0].uuid);
-  mkdirSync(configDir, {recursive: true});
-  if (!existsSync(join(configDir, '/readme.txt'))) {
-    writeFileSync(join(configDir, '/readme.txt'), `Used by ${packName}`)
+  const configDir = join(mcDir, 'config', script_uuid);
+  fs.mkdirSync(configDir, {recursive: true});
+  if (!fs.existsSync(join(configDir, '/readme.txt'))) {
+    fs.writeFileSync(join(configDir, '/readme.txt'), `Used by ${basename(mapping.behavior.pack)}`);
   }
   // install permisisons file
   let contents: {allowed_modules?: string[]} = {
@@ -104,11 +79,11 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
   };
   let needWrite = false;
   const permFile = join(configDir, 'permissions.json');
-  if (!existsSync(permFile)) {
+  if (!fs.existsSync(permFile)) {
     console.info("Creating permissions file: ", permFile);
     needWrite = true;
   } else {
-    contents = JSON.parse(readFileSync(permFile, 'utf-8'));
+    contents = JSON.parse(fs.readFileSync(permFile, 'utf-8'));
     if (contents.allowed_modules === undefined) {
       needWrite = true;
       contents.allowed_modules = modules;
@@ -121,17 +96,18 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
       }
     }
     if (needWrite) {
-      writeFileSync(permFile, JSON.stringify(contents));
+      console.info("Updating permissions file: ", permFile);
+      fs.writeFileSync(permFile, JSON.stringify(contents));
     }
   }
 
   // install variables file
   const varFile = join(configDir, 'variables.json');
   needWrite = false;
-  mkdirSync(configDir, {recursive: true});
+  fs.mkdirSync(configDir, {recursive: true});
   let vars: Obj<unknown> = {};
-  if (existsSync(varFile)) {
-    vars = JSON.parse(readFileSync(varFile, 'utf-8'));
+  if (fs.existsSync(varFile)) {
+    vars = JSON.parse(fs.readFileSync(varFile, 'utf-8'));
   }
   const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}`;
   if (vars.host != host) {
@@ -140,7 +116,39 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
   }
   if (needWrite) {
     console.info('Updating ', varFile);
-    writeFileSync(varFile, JSON.stringify(vars));
+    fs.writeFileSync(varFile, JSON.stringify(vars));
+  }
+}
+
+function enablePack(packList: string, manifest: ManifestFile) {
+  let packContent: {pack_id: string, version: number[]}[] = [];
+  if (fs.existsSync(packList)) {
+    packContent = JSON.parse(fs.readFileSync(packList, 'utf-8'));
+  }
+
+  let found = false;
+  let needWrite = true;
+  for (const entry of packContent) {
+    if (entry.pack_id === manifest.header.uuid) {
+      found = true;
+      if (JSON.stringify(entry.version) === JSON.stringify(manifest.header.version)) {
+        console.info(`${packList} up to date`);
+        needWrite = false;
+        break;
+      }
+      console.info('Updating ', packList);
+      entry.version = manifest.header.version;
+    }
+  }
+  if (!found) {
+    console.info('Added in ', packList);
+    packContent.push({
+      pack_id: manifest.header.uuid,
+      version: manifest.header.version,
+    });
+  }
+  if (needWrite) {
+    fs.writeFileSync(packList, JSON.stringify(packContent, undefined, 2));
   }
 }
 

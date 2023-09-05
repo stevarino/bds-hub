@@ -12,26 +12,25 @@ export function enumStrings(myEnum: {[key: string]: string|number}) {
 export interface WorldState {
   /** All known players to the world */
   players?: string[],
-  bots?: BotState[],
+  npcs?: NpcState[],
   accounts?: AccountState[],
 }
 
-export enum BotType {
-  TeleBot = 'TeleBot',
-  Greeter = 'Greeter',
-}
-
-export interface BotState {
+/** Used for in-memory storage of npc's */
+export interface NpcState {
+  /** Unique identifier, set to nametag */
   id: string,
-  name: string,
+  description: string,
+  /** undefined implies admin controlled */
   owner?: string,
   location: PositionTuple,
-  type: BotType,
-  tags?: string[],
-  offset?: [number, number, number];
-  radius?: number;
+  /** actor identifier */
+  role: string,
+  /** role specific settings, namespaced by role */
+  extra?: Record<string, Record<string, unknown>>,
 }
 
+/** wip */
 export interface AccountState {
   id: number,
   name: string,
@@ -122,6 +121,7 @@ export interface ServerStatus {
 
 export interface ServerSuccess {
   success: boolean,
+  pk?: number,
 }
 
 export interface IDQuery {
@@ -152,6 +152,10 @@ export type LocListReq = {
 
 export type LocListRes = {
   locations: LocationResult[],
+}
+
+export type LocGetAllRes = {
+  locations: Location[],
 }
 
 export type LocationGet = {
@@ -260,3 +264,66 @@ export const colorHex = {
   lapis: '#21497B',
   amethyst: '#9A5CC6',
 } 
+
+export enum npcSkins {
+  npc_1,
+  npc_2,
+  npc_3,
+  npc_4,
+  npc_5,
+  npc_6,
+  npc_7,
+  npc_8,
+  npc_9,
+  npc_10,
+  npc_scientist_1,
+  npc_scientist_2,
+  npc_scientist_3,
+  npc_scientist_4,
+  npc_scientist_5,
+  npc_scientist_6,
+  npc_scientist_7,
+  npc_scientist_8,
+  npc_scientist_9,
+  npc_scientist_10,
+  npc_apiary_1,
+  npc_apiary_2,
+  npc_apiary_3,
+  npc_apiary_4,
+  npc_apiary_5,
+  npc_teacher_1,
+  npc_teacher_2,
+  npc_teacher_3,
+  npc_teacher_4,
+  npc_teacher_5,
+  npc_construction_1,
+  npc_construction_2,
+  npc_construction_3,
+  npc_construction_4,
+  npc_construction_5,
+  npc_Agriculture_1,
+  npc_Agriculture_2,
+  npc_Agriculture_3,
+  npc_Agriculture_4,
+  npc_Agriculture_5,
+  npc_Agriculture_6,
+  npc_Agriculture_7,
+  npc_Agriculture_8,
+  npc_Agriculture_9,
+  npc_Agriculture_10,
+  npc_BusinessMobs_1,
+  npc_BusinessMobs_2,
+  npc_BusinessMobs_3,
+  npc_BusinessMobs_4,
+  npc_BusinessMobs_5,
+  npc_EverydayBusiness_1,
+  npc_EverydayBusiness_2,
+  npc_EverydayBusiness_3,
+  npc_EverydayBusiness_4,
+  npc_EverydayBusiness_5,
+  npc_Kiosk_1,
+  npc_Kiosk_2,
+  npc_Kiosk_3,
+  npc_Kiosk_4,
+  npc_Kiosk_5
+}

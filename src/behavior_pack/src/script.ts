@@ -4,13 +4,13 @@
  * Overwritten during the build process by scripts/hubPack.ts
  */
 
-import { Chat, SuperActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
+import { Chat, FinalActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
 
 type Script = {
   transitions: TransitionMap,
   actions: TransitionMap,
-  actors: SuperActor[],
-  items: SuperItemUse[]
+  actors: Record<string, FinalActor>,
+  items: SuperItemUse[],
   chats: Chat[],
 };
 
@@ -18,7 +18,7 @@ type Script = {
 export const script: Script = {
   transitions: {},
   actions: {},
-  actors: [],
+  actors: {},
   items: [],
   chats: [],
 };

@@ -37,7 +37,12 @@ export async function ModalForm<T={[label: string]: ModalFormWidget}>(
   return Object.assign({}, res, {results: form});
 }
 
-class ModalFormWidget<T=any, U=any> {
+/** Formats a camelCase name for human reading */
+export function formatName(name: string) {
+  return name.charAt(0).toUpperCase() + name.slice(1).replace(/([a-z])([A-Z])/, '$1 $2')
+}
+
+export class ModalFormWidget<T=any, U=any> {
   value: T|undefined;
   constructor(
     public options: Options<T>,
@@ -46,9 +51,7 @@ class ModalFormWidget<T=any, U=any> {
   
   render(form: ui.ModalFormData, title: string) {
     try {
-      let label = this.options.displayName ?? (
-        title.charAt(0).toUpperCase() + title.slice(1).replace(/([a-z])([A-Z])/, '$1 $2')
-      );
+      let label = this.options.displayName ?? formatName(title)
       this.addToForm(form, label);
     } catch (e) {
       console.error(`[form field ${title}]: ${e}`);
@@ -70,6 +73,10 @@ class ModalFormWidget<T=any, U=any> {
       throw new Error('Attempted to read an undefined value');
     }
     return this.value;
+  }
+
+  isSet() {
+    return this.value !== undefined;
   }
 }
 
@@ -106,7 +113,7 @@ export function slider(min: number, max: number, options: Options<number> & {ste
   })
 }
 
-interface Result<T> extends ui.ModalFormResponse {
+export interface Result<T> extends ui.ModalFormResponse {
   results?: T
 }
 
@@ -131,5 +138,5 @@ export async function ActionForm(player: mc.Player, title: string, body: string,
   await timeout(DELAY);
   const res = await form.show(player);
   if (res.selection === undefined) return;
-  (actions[res.selection] as () => void|Promise<void>)();
+  await (actions[res.selection] as () => void|Promise<void>)();
 }

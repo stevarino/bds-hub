@@ -130,10 +130,15 @@ class Server {
       )};
     })
 
+    Requests.LocGetAll.addListener(async () => {
+      return {locations: await this.db.getAllLocations()};
+    })
+
     Requests.LocNew.addListener(async req => {
       if (req === undefined) return  { success: false };
-      const success = (await this.db.createLocation(req)) === 1;
-      return  { success };  
+      const pk = await this.db.createLocation(req);
+      const success = (pk ?? 0) > 0;
+      return  { success, pk };  
     })
 
     Requests.LocGet.addListener(async req => {

@@ -1,0 +1,19 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.hub_npc_interact": {
+      "states": {
+        "default": {
+          "transitions": [ { "on_interact": "q.property('hub:has_interact')" } ]
+        },
+        "on_interact": {
+          "on_entry": [
+            "/scriptevent hub:npc_interact @s | @p",
+            "@s hub:event_reset"
+          ],
+          "transitions":  [ { "default": "!q.property('hub:has_interact')" } ]
+        }
+      }
+    }
+  }
+}

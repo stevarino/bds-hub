@@ -7,7 +7,6 @@ import * as ui from "@minecraft/server-ui";
 import * as lib from "../lib.js";
 import * as types from '../types/packTypes.js';
 import { defineActions, Discussion } from "./discussion.js";
-import { BotIsOnline } from "../lib/runtimeState.js";
 import { Events } from "../lib.js";
 
 defineActions({
@@ -26,7 +25,7 @@ async function Menu(d: Discussion, args: types.Args) {
   }
   const res = await lib.getFormResponse(d.player, form);
   if (res.selection === undefined) return;
-  const action = btnActions[res.selection]
+  const action = btnActions[res.selection];
   if (action === undefined) return;
   d.handleTransition(action);
 }
@@ -100,10 +99,10 @@ async function Teleport(d: Discussion, args: types.Args) {
     form.button(`Player: ${p.name}`);
   }
 
-  for (const bot of lib.STATE.getBots()) {
-    targets.push(`@e[tag="${bot.id}"]`);
-    form.button(`Bot: ${bot.name} ${BotIsOnline[bot.id] === true ? '' : '(offline)'}`)
-  }
+  // for (const npc of lib.STATE.getNpcs()) {
+  //   targets.push(`@e[tag="${npc.id}"]`);
+  //   form.button(`NPC: ${npc.name}}`)
+  // }
 
   const res = await lib.getFormResponse(d.player, form);
   if (res.selection === undefined) return;
