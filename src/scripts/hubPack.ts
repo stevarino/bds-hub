@@ -12,8 +12,6 @@ import { cwd } from 'process';
 
 import archiver from 'archiver';
 import { rollup } from 'rollup';
-import commonjs from '@rollup/plugin-commonjs';
-import nodeResolve from '@rollup/plugin-node-resolve';
 
 import * as Constants from '../constants.js';
 import * as lib from './lib.js';
@@ -71,12 +69,13 @@ function loadBuildFile() {
     BUILD_INFO = readBuildFile(Constants.BUILD_INFO);
   } else {
     BUILD_INFO = {
-      bp_version: [0,0,0],
+      bp_version: [1,0,0],
       bp_hash: '',
-      rp_version: [0,0,0],
+      rp_version: [1,0,0],
       rp_hash: ''
     };
-    fs.writeFileSync(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
+    
+    lib.write(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
   }
 }
 
@@ -113,7 +112,6 @@ async function rollupPack() {
   const bundle = await rollup({
     input: Constants.ADDON_ENTRY,
     external: /@minecraft/,
-    plugins: [nodeResolve(), commonjs()],
   });
   await bundle.write({ file: Constants.BP_ROLLUP });
 }
