@@ -1,4 +1,4 @@
-import { atob, btoa } from "./base64"
+import { atob, btoa } from "./base64/index.js"
 
 interface EntityInterface {
   getTags: () => string[],

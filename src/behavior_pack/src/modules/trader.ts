@@ -1,7 +1,7 @@
 import mc, { ItemStack } from "@minecraft/server";
 
 import { showErrorMessage, forms, showDialogMessage, strip } from '../lib.js';
-import { TradeItem, TradeOffer, TraderArgs } from '../types/packTypes.js';
+import { TradeArray, TradeItem, TradeOffer, TraderArgs } from '../types/packTypes.js';
 import { actionCallback, defineActions, Discussion, Args } from './discussion';
 
 defineActions({ Trader, TraderOffer, TraderBrowse });
@@ -40,7 +40,7 @@ function normalizeTradeOffer(args: unknown): NormalizedTradeOffer {
   } else {
     offer.gives = (offer.gives).map(item => {
       return typeof item === 'string' ? { item } : item
-    });
+    }) as TradeArray;
   }
   
   if (typeof offer.accepts === 'string') {

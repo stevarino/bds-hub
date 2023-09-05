@@ -47,7 +47,7 @@ export interface TradeItem {
   qty?: number,
 }
 
-export type TradeArray = Array<TradeItem|string>;
+export type TradeArray = [TradeItem|string, ...(TradeItem|string)[]];
 
 export interface TradeOffer {
   /* shown instead of the item/qty */

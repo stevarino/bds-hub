@@ -7,15 +7,12 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^25.0.4",
-    "@rollup/plugin-node-resolve": "^15.2.1",
-    "abab": "^2.0.6",
     "archiver": "^5.3.1",
     "discord.js": "^14.11.0",
     "rollup": "^3.27.0",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
-    "typia": "^5.0.1",
+    "typia": "^5.0.2",
     "yaml": "^2.3.1"
   },
   "devDependencies": {
