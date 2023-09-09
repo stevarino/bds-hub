@@ -108,12 +108,16 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
       return;
     }
 
-    const scene = tags.get('actor');
-    if (scene === undefined) {
-      console.error('Scene tag not found on npc: ', npcid);
+    const actor = tags.get('actor');
+    if (actor === undefined) {
+      console.error('Scene actor tag not found on npc: ', npcid);
       return;
     }
-    newDiscussion(player, npcid).navigate({scene: scene});
+    const scene = script.actors[actor]?.scene;
+    if (scene === undefined) {
+      console.error('Unable to find scene tag for actor: ', actor);
+    }
+    newDiscussion(player, npcid).navigate({ scene });
   }
 
   if (e.id === 'hub:log') {
