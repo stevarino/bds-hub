@@ -1,7 +1,13 @@
 ---
 actors:
   - id: telebot
-    scene: telebot
+    random:
+     - scene: telebot
+     - scene: telebot_binary
+     - scene: telebot_whir
+     - scene: telebot_sick
+    weights:
+     - [3, 3, 3, 1]
     skin: npc_Kiosk_3
     name: TeleBot
 scenes:
@@ -10,3 +16,20 @@ scenes:
     buttons:
     - text: Let's go!
       action: NpcTravel
+  - id: telebot_whir
+    text: Beep whir *buzz* whe whe where would yuou like to go? Beep
+    buttons:
+    - text: Let's go!
+      action: NpcTravel
+  - id: telebot_binary
+    text: §a01100010 01100101 01100101 01110000\n01100010 01101111 01101111 01110000 00001010§r\n\nTeleportation ready
+    buttons:
+    - text: Let's go!
+      action: NpcTravel
+  - id: telebot_sick
+    text: Beep boop *cough cough* beep where owuld you *cough* like to go today?
+    buttons:
+    - text: Let's go!
+      sequence:
+        - command: /damage @p 4
+        - sound: random.explode

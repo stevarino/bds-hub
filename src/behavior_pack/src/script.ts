@@ -4,12 +4,12 @@
  * Overwritten during the build process by scripts/hubPack.ts
  */
 
-import { Chat, FinalActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
+import { Chat, NormalizedActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
 
 type Script = {
   transitions: TransitionMap,
   actions: TransitionMap,
-  actors: Record<string, FinalActor>,
+  actors: Record<string, NormalizedActor>,
   items: SuperItemUse[],
   chats: Chat[],
 };

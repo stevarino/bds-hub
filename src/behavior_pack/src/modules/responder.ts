@@ -2,7 +2,7 @@
  * Handles low-level dialogue stuff at the Minecraft level (tags, events).
  */
 
-import { system, world, Player, Entity, ScriptEventSource } from "@minecraft/server";
+import { system, world, Player } from "@minecraft/server";
 
 import * as lib from '../lib.js'
 import { Discussion } from './discussion.js';
@@ -14,7 +14,7 @@ import './trader.js';
 import './telebot.js';
 import './itemDurability.js';
 import { script } from "../script.js";
-import { SuperItemUse } from "../types/packTypes.js";
+import { SuperItemUse, Transition } from "../types/packTypes.js";
 
 const discussions: Record<string, Discussion> = {};
 
@@ -113,11 +113,17 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
       console.error('Scene actor tag not found on npc: ', npcid);
       return;
     }
-    const scene = script.actors[actor]?.scene;
-    if (scene === undefined) {
+    const actorDef = script.actors[actor];
+    if (actorDef === undefined) {
       console.error('Unable to find scene tag for actor: ', actor);
+      return;
     }
-    newDiscussion(player, npcid).navigate({ scene });
+    let transition = { scene: actorDef.scene } as Transition;
+    if (actorDef.scene.endsWith(':_dummy')) {
+      transition = Object.assign({}, actorDef);
+      delete transition['scene'];
+    }
+    newDiscussion(player, npcid).navigate(transition);
   }
 
   if (e.id === 'hub:log') {

@@ -32,7 +32,7 @@ let BUILD_INFO: BuildFile;
 
 class SceneFileData {
   scenes = new UniqueMap<string, Dialogue.SavedScene>();
-  actors = new UniqueMap<string, Dialogue.FinalActor>();
+  actors = new UniqueMap<string, Dialogue.NormalizedActor>();
   items: Dialogue.ItemUse[] = [];
   chats: Dialogue.Chat[] = [];
   actions = new UniqueMap<string, Dialogue.Transition>();
@@ -156,7 +156,6 @@ export async function parseScriptFiles(config: ConfigFile) {
     let scene = data.scenes.get(actor.scene)!;
     if (scene.is_dummy === true) continue;
     const mergedId = `hub:${actor.id}:${sceneId}`;
-    console.log(mergedId, JSON.stringify(Array.from(data.scenes.keys())));
     data.scenes.set(mergedId, Object.assign({}, scene, {
       id: mergedId,
       npc_name: actor.name,

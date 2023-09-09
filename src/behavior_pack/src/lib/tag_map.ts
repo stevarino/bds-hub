@@ -195,12 +195,6 @@ export class ComplexTagMap extends TagMap {
   _setDefaultBit(arr: Uint8Array, index: number, value: boolean) {
     const item = Math.floor(index / 8);
     arr[item] = arr[item]! & (1 << index % 8);
-    console.log('set: ',
-      index % 8,
-      this._uint8ToBit(arr, index + 1), 
-      value, 
-      arr[item], 
-      arr[item]! ^ (1 << (index + 1) % 8));
     if (this._uint8ToBit(arr, index + 1) !== value) {
       arr[item] = arr[item]! ^ (1 << (index + 1) % 8);
     }

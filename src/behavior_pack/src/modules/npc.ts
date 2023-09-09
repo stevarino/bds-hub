@@ -1,7 +1,7 @@
 
 import * as mc from "@minecraft/server";
 
-import { Args, FinalActor, NpcState, PositionTuple } from "../types/packTypes.js";
+import { Args, NormalizedActor, NpcState, PositionTuple } from "../types/packTypes.js";
 import { defineActions, Discussion } from "./discussion.js";
 import { StartupEvent, STATE, timeout, TagMap, showErrorMessage } from '../lib.js';
 import { NpcInitiated } from "../lib/runtimeState.js";
@@ -187,7 +187,7 @@ export async function ManageNpcs(d: Discussion, args: Args): Promise<void> {
 }
 
 async function editBot(d: Discussion, isAdmin: boolean, npc: NpcState) {
-  const actor = script.actors[npc.role] as FinalActor|undefined;
+  const actor = script.actors[npc.role] as NormalizedActor|undefined;
   if (actor === undefined) {
     return showErrorMessage(d.player, `Error finding npc role: "${npc.role}" not found`);
   }
