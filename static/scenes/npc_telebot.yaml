@@ -6,8 +6,7 @@ actors:
      - scene: telebot_binary
      - scene: telebot_whir
      - scene: telebot_sick
-    weights:
-     - [3, 3, 3, 1]
+    weights: [3, 3, 3, 1]
     skin: npc_Kiosk_3
     name: TeleBot
 scenes:
