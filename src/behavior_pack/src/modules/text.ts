@@ -41,7 +41,7 @@ function onTick() {
       }
     }
     const final: string[] = [];
-    for (const text of active.sort((a,b) => b[1]-a[1])) {
+    for (const text of active.sort((a,b) => a[1]-b[1])) {
       final.push(text[0]);
     }
     player.onScreenDisplay.setActionBar(final.join('§r\n'));
