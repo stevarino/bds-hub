@@ -168,7 +168,7 @@ async function respondAction(d: Discussion, args: types.Action) {
 }
 
 async function respondCommand(d: Discussion, action: types.Command) {
-  const cmd = action.command.replace(/\b@p\b/, `"${d.player.name}"`);
+  const cmd = action.command.replace('@p', `"${d.player.name}"`);
   const result = await d.player.dimension.runCommandAsync(cmd);
   if (result.successCount === 0) {
     console.info('Unsuccessful command: ', cmd)
