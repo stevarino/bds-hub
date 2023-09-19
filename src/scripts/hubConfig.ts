@@ -13,9 +13,9 @@ function main() {
   const { argv, argn } = parseArgs(`
     Generates a set of config files.
 
-    npx hubConfig  [--config="bds_hub.config.yaml
+    npx hubConfig  [--config="bds_hub.config.yaml"]
   `);
-  let path = configPath(argn['config']);
+  let path = configPath(argn['config'] ?? 'bds_hub.config.yaml');
   const dPath = join(dirname(path), 'script.config.yaml');
   if ((existsSync(path) || existsSync(dPath)) && argn['force'] === undefined) {
     console.error('File already exists. Use --force to overwrite it.');

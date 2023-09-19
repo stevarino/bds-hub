@@ -1,13 +1,30 @@
-import typia from "typia";
+import typia, { tags } from "typia";
 import * as types from "../behavior_pack/src/types/packTypes.js";
 export * from '../behavior_pack/src/types/packTypes.js';
+export interface IndexedFields {
+    [index: (string & tags.Pattern<'^[0-9]+$'>)]: string;
+}
+;
+export interface Variables {
+    flags?: IndexedFields;
+    bools?: IndexedFields;
+    bytes?: IndexedFields;
+    u32?: IndexedFields;
+}
+;
 export interface ScriptFile {
     actors?: types.Actor[];
     scenes?: types.SavedScene[];
     items?: types.ItemUse[];
     chats?: types.Chat[];
     actions?: types.TransitionMap;
+    variables?: {
+        player?: Variables;
+        npc?: Variables;
+        global?: Variables;
+    };
 }
+;
 export const ActionArgs: {
     [key: string]: (input: unknown) => typia.IValidation;
 } = {
@@ -387,16 +404,16 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
     const errors = [] as any[];
     const __is = (input: any, _exceptionable: boolean = true): input is ScriptFile => {
         const $join = (typia.createValidateEquals as any).join;
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io18(elem, true && _exceptionable))) && (undefined === input.items || Array.isArray(input.items) && input.items.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $iu1(elem, true && _exceptionable))) && (undefined === input.chats || Array.isArray(input.chats) && input.chats.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $iu2(elem, true && _exceptionable))) && (undefined === input.actions || "object" === typeof input.actions && null !== input.actions && false === Array.isArray(input.actions) && $io79(input.actions, true && _exceptionable)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["actors", "scenes", "items", "chats", "actions"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.actors || Array.isArray(input.actors) && input.actors.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && $io1(elem, true && _exceptionable))) && (undefined === input.scenes || Array.isArray(input.scenes) && input.scenes.every((elem: any, _index2: number) => "object" === typeof elem && null !== elem && $io38(elem, true && _exceptionable))) && (undefined === input.items || Array.isArray(input.items) && input.items.every((elem: any, _index3: number) => "object" === typeof elem && null !== elem && $iu2(elem, true && _exceptionable))) && (undefined === input.chats || Array.isArray(input.chats) && input.chats.every((elem: any, _index4: number) => "object" === typeof elem && null !== elem && $iu3(elem, true && _exceptionable))) && (undefined === input.actions || "object" === typeof input.actions && null !== input.actions && false === Array.isArray(input.actions) && $io111(input.actions, true && _exceptionable)) && (undefined === input.variables || "object" === typeof input.variables && null !== input.variables && false === Array.isArray(input.variables) && $io112(input.variables, true && _exceptionable)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["actors", "scenes", "items", "chats", "actions", "variables"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.name && (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.scale || 25 === input.scale || 50 === input.scale || 75 === input.scale || 100 === input.scale || 125 === input.scale || 150 === input.scale) && (undefined === input.skin || "string" === typeof input.skin) && (undefined === input.roles || Array.isArray(input.roles) && input.roles.every((elem: any, _index5: number) => "string" === typeof elem)) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.random || Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index8: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["id", "name", "scene", "scale", "skin", "roles", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.name && (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.scale || 25 === input.scale || 50 === input.scale || 75 === input.scale || 100 === input.scale || 125 === input.scale || 150 === input.scale) && (undefined === input.skin || "string" === typeof input.skin) && (undefined === input.roles || Array.isArray(input.roles) && input.roles.every((elem: any, _index5: number) => "string" === typeof elem)) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index6: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.random || Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index7: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index8: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (undefined === input.set || "string" === typeof input.set) && (null !== input.value && (undefined === input.value || "string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["id", "name", "scene", "scale", "skin", "roles", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag", "set", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -459,23 +476,183 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io9 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index10: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.random || Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index11: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index12: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+        const $io9 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.scene || "string" === typeof input.scene) && (undefined === input.action || "string" === typeof input.action) && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (undefined === input.command || "string" === typeof input.command) && (undefined === input.menu || "object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (undefined === input.if_has_tag || "string" === typeof input.if_has_tag) && (undefined === input.then || "object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && (undefined === input["else"] || "object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (undefined === input.if_has_item || "object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && (undefined === input.wait || "number" === typeof input.wait) && (undefined === input.sequence || Array.isArray(input.sequence) && input.sequence.every((elem: any, _index10: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (undefined === input.sound || "string" === typeof input.sound) && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.random || Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index11: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index12: number) => "number" === typeof elem)) && (undefined === input.apply_tag || "string" === typeof input.apply_tag) && (undefined === input.remove_tag || "string" === typeof input.remove_tag) && (undefined === input.set || "string" === typeof input.set) && (null !== input.value && (undefined === input.value || "string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable))) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag", "set", "value"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io10 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.name || "string" === typeof input.name) && (undefined === input.lore || Array.isArray(input.lore) && input.lore.every((elem: any, _index13: number) => null === elem || "string" === typeof elem)) && (undefined === input.item_type || "string" === typeof input.item_type) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["name", "lore", "item_type"].some((prop: any) => key === prop))
+        const $io10 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.tag || "string" === typeof input.tag) && (undefined === input.name || "string" === typeof input.name) && (undefined === input.selector || "string" === typeof input.selector) && (undefined === input.lore || Array.isArray(input.lore) && input.lore.every((elem: any, _index13: number) => null === elem || "string" === typeof elem)) && (undefined === input.item_type || "string" === typeof input.item_type) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["tag", "name", "selector", "lore", "item_type"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io11 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io11 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.set && (null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["set", "value"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io12 = (input: any, _exceptionable: boolean = true): boolean => Array.isArray(input.and) && input.and.every((elem: any, _index14: number) => "object" === typeof elem && null !== elem && $iu1(elem, true && _exceptionable)) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["and"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io13 = (input: any, _exceptionable: boolean = true): boolean => Array.isArray(input.or) && input.or.every((elem: any, _index15: number) => "object" === typeof elem && null !== elem && $iu1(elem, true && _exceptionable)) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["or"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io14 = (input: any, _exceptionable: boolean = true): boolean => "object" === typeof input.not && null !== input.not && $iu1(input.not, true && _exceptionable) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["not"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io15 = (input: any, _exceptionable: boolean = true): boolean => "object" === typeof input.player_has_item && null !== input.player_has_item && false === Array.isArray(input.player_has_item) && $io10(input.player_has_item, true && _exceptionable) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["player_has_item"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io16 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.player_has_tag && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["player_has_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io17 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.player_flag && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["player_flag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io18 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.npc_has_tag && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["npc_has_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io19 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.npc_flag && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["npc_flag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io20 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.global_flag && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["global_flag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io21 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.greater_than && undefined !== input.greater_than && ("string" === typeof input.greater_than || "number" === typeof input.greater_than || "object" === typeof input.greater_than && null !== input.greater_than && $iu1(input.greater_than, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "greater_than"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io22 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.less_than && undefined !== input.less_than && ("string" === typeof input.less_than || "number" === typeof input.less_than || "object" === typeof input.less_than && null !== input.less_than && $iu1(input.less_than, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "less_than"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io23 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.equals && undefined !== input.equals && ("string" === typeof input.equals || "number" === typeof input.equals || "object" === typeof input.equals && null !== input.equals && $iu1(input.equals, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "equals"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io24 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.add && undefined !== input.add && ("string" === typeof input.add || "number" === typeof input.add || "object" === typeof input.add && null !== input.add && $iu1(input.add, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "add"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io25 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.subtract && undefined !== input.subtract && ("string" === typeof input.subtract || "number" === typeof input.subtract || "object" === typeof input.subtract && null !== input.subtract && $iu1(input.subtract, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "subtract"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io26 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.multiply && undefined !== input.multiply && ("string" === typeof input.multiply || "number" === typeof input.multiply || "object" === typeof input.multiply && null !== input.multiply && $iu1(input.multiply, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "multiply"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io27 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.divide && undefined !== input.divide && ("string" === typeof input.divide || "number" === typeof input.divide || "object" === typeof input.divide && null !== input.divide && $iu1(input.divide, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "divide"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io28 = (input: any, _exceptionable: boolean = true): boolean => null !== input.value && undefined !== input.value && ("string" === typeof input.value || "number" === typeof input.value || "object" === typeof input.value && null !== input.value && $iu1(input.value, true && _exceptionable)) && (null !== input.modulo && undefined !== input.modulo && ("string" === typeof input.modulo || "number" === typeof input.modulo || "object" === typeof input.modulo && null !== input.modulo && $iu1(input.modulo, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["value", "modulo"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io29 = (input: any, _exceptionable: boolean = true): boolean => "object" === typeof input.random && null !== input.random && $io30(input.random, true && _exceptionable) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["random"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io30 = (input: any, _exceptionable: boolean = true): boolean => null !== input.min && (undefined === input.min || "string" === typeof input.min || "number" === typeof input.min || "object" === typeof input.min && null !== input.min && $iu1(input.min, true && _exceptionable)) && (null !== input.max && undefined !== input.max && ("string" === typeof input.max || "number" === typeof input.max || "object" === typeof input.max && null !== input.max && $iu1(input.max, true && _exceptionable))) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["min", "max"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io31 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -483,7 +660,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io12 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io32 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "wait"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -491,7 +668,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io13 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index14: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io33 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index16: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "sequence"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -499,7 +676,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io14 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io34 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -507,7 +684,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io15 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index15: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index16: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io35 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index17: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index18: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "random", "weights"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -515,7 +692,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io16 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io36 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "apply_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -523,7 +700,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io17 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io37 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.text && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["text", "require_tag", "remove_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -531,7 +708,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io18 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.text && (Array.isArray(input.buttons) && input.buttons.every((elem: any, _index17: number) => "object" === typeof elem && null !== elem && $iu0(elem, true && _exceptionable))) && (undefined === input.npc_name || "string" === typeof input.npc_name) && (undefined === input.is_dummy || "boolean" === typeof input.is_dummy) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io38 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && "string" === typeof input.text && (Array.isArray(input.buttons) && input.buttons.every((elem: any, _index19: number) => "object" === typeof elem && null !== elem && $iu0(elem, true && _exceptionable))) && (undefined === input.npc_name || "string" === typeof input.npc_name) && (undefined === input.is_dummy || "boolean" === typeof input.is_dummy) && (3 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["id", "text", "buttons", "npc_name", "is_dummy"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -539,295 +716,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io19 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "scene"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io20 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "action", "args"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io21 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "command"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io22 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "menu"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io23 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io24 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io25 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "wait"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io26 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index18: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "sequence"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io27 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io28 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index19: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index20: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "random", "weights"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io29 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "apply_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io30 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "name", "remove_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io31 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index21: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "scene"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io32 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index22: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "action", "args"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io33 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index23: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "command"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io34 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index24: number) => null === elem || "string" === typeof elem)) && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "menu"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io35 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index25: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io36 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index26: number) => null === elem || "string" === typeof elem)) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io37 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index27: number) => null === elem || "string" === typeof elem)) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "wait"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io38 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index28: number) => null === elem || "string" === typeof elem)) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index29: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "sequence"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io39 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index30: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io40 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index31: number) => null === elem || "string" === typeof elem)) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index32: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index33: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "random", "weights"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io41 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index34: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "apply_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io42 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index35: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "lore", "remove_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io43 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "scene"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io44 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "action", "args"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io45 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "command"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io46 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "menu"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io47 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io48 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io49 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "wait"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io50 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index36: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "sequence"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io51 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io52 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index37: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index38: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "random", "weights"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io53 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "apply_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io54 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["require_tag", "item_type", "remove_tag"].some((prop: any) => key === prop))
-                return true;
-            const value = input[key];
-            if (undefined === value)
-                return true;
-            return false;
-        }));
-        const $io55 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io39 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "scene"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -835,7 +724,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io56 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io40 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "action", "args"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -843,7 +732,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io57 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io41 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "command"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -851,7 +740,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io58 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io42 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "menu"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -859,7 +748,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io59 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io43 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -867,7 +756,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io60 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io44 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -875,7 +764,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io61 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io45 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "wait"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -883,7 +772,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io62 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index39: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io46 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index20: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "sequence"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -891,7 +780,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io63 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io47 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -899,7 +788,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io64 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index40: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index41: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io48 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index21: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index22: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "random", "weights"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -907,7 +796,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io65 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io49 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "apply_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -915,7 +804,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io66 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io50 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.tag && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["require_tag", "tag", "remove_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -923,7 +812,391 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io67 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io51 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "scene"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io52 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "action", "args"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io53 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "command"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io54 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "menu"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io55 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io56 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io57 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "wait"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io58 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index23: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "sequence"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io59 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io60 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index24: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index25: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "random", "weights"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io61 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "apply_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io62 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.name && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "name", "remove_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io63 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "scene"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io64 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "action", "args"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io65 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "command"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io66 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "menu"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io67 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io68 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io69 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "wait"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io70 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index26: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "sequence"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io71 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "sound", "volume", "pitch", "x", "y", "z", "dimension"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io72 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index27: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index28: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "random", "weights"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io73 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "apply_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io74 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.selector && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "selector", "remove_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io75 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index29: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "scene"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io76 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index30: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "action", "args"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io77 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index31: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "command"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io78 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index32: number) => null === elem || "string" === typeof elem)) && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "menu"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io79 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index33: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io80 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index34: number) => null === elem || "string" === typeof elem)) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io81 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index35: number) => null === elem || "string" === typeof elem)) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "wait"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io82 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index36: number) => null === elem || "string" === typeof elem)) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index37: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "sequence"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io83 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index38: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io84 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index39: number) => null === elem || "string" === typeof elem)) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index40: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index41: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "random", "weights"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io85 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index42: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "apply_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io86 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.lore) && input.lore.every((elem: any, _index43: number) => null === elem || "string" === typeof elem)) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "lore", "remove_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io87 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "scene"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io88 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "action", "args"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io89 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "command"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io90 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "menu"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io91 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io92 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io93 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "wait"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io94 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index44: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "sequence"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io95 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io96 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index45: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index46: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "random", "weights"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io97 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "apply_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io98 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.item_type && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["require_tag", "item_type", "remove_tag"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io99 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.scene && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "scene"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -931,7 +1204,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io68 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io100 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.action && (undefined === input.args || "object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) && $io2(input.args, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "action", "args"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -939,7 +1212,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io69 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io101 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.command && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "command"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -947,7 +1220,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io70 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io102 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.menu && null !== input.menu && $io3(input.menu, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "menu"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -955,7 +1228,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io71 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io103 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.if_has_tag && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -963,7 +1236,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io72 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io104 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) && $io10(input.if_has_item, true && _exceptionable)) && ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) && $io9(input.then, true && _exceptionable)) && ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) && $io9(input["else"], true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -971,7 +1244,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io73 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io105 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "number" === typeof input.wait && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "wait"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -979,7 +1252,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io74 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index42: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io106 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.sequence) && input.sequence.every((elem: any, _index47: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable))) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "sequence"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -987,7 +1260,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io75 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io107 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.sound && (undefined === input.volume || "number" === typeof input.volume) && (undefined === input.pitch || "number" === typeof input.pitch) && (undefined === input.x || "number" === typeof input.x) && (undefined === input.y || "number" === typeof input.y) && (undefined === input.z || "number" === typeof input.z) && (undefined === input.dimension || "string" === typeof input.dimension) && (undefined === input.selector || "string" === typeof input.selector) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -995,7 +1268,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io76 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index43: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index44: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io108 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && (Array.isArray(input.random) && (2 <= input.random.length && input.random.every((elem: any, _index48: number) => "object" === typeof elem && null !== elem && false === Array.isArray(elem) && $io9(elem, true && _exceptionable)))) && (undefined === input.weights || Array.isArray(input.weights) && input.weights.every((elem: any, _index49: number) => "number" === typeof elem)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "random", "weights"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -1003,7 +1276,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io77 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io109 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.apply_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "apply_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -1011,7 +1284,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io78 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io110 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.equals && (undefined === input.require_tag || "string" === typeof input.require_tag) && "string" === typeof input.remove_tag && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["equals", "require_tag", "remove_tag"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -1019,12 +1292,36 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return true;
             return false;
         }));
-        const $io79 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
+        const $io111 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
             const value = input[key];
             if (undefined === value)
                 return true;
             if (RegExp(/(.*)/).test(key))
                 return "object" === typeof value && null !== value && false === Array.isArray(value) && $io9(value, true && _exceptionable);
+            return false;
+        });
+        const $io112 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.player || "object" === typeof input.player && null !== input.player && false === Array.isArray(input.player) && $io113(input.player, true && _exceptionable)) && (undefined === input.npc || "object" === typeof input.npc && null !== input.npc && false === Array.isArray(input.npc) && $io113(input.npc, true && _exceptionable)) && (undefined === input.global || "object" === typeof input.global && null !== input.global && false === Array.isArray(input.global) && $io113(input.global, true && _exceptionable)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["player", "npc", "global"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io113 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.flags || "object" === typeof input.flags && null !== input.flags && false === Array.isArray(input.flags) && $io114(input.flags, true && _exceptionable)) && (undefined === input.bools || "object" === typeof input.bools && null !== input.bools && false === Array.isArray(input.bools) && $io114(input.bools, true && _exceptionable)) && (undefined === input.bytes || "object" === typeof input.bytes && null !== input.bytes && false === Array.isArray(input.bytes) && $io114(input.bytes, true && _exceptionable)) && (undefined === input.u32 || "object" === typeof input.u32 && null !== input.u32 && false === Array.isArray(input.u32) && $io114(input.u32, true && _exceptionable)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["flags", "bools", "bytes", "u32"].some((prop: any) => key === prop))
+                return true;
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            return false;
+        }));
+        const $io114 = (input: any, _exceptionable: boolean = true): boolean => Object.keys(input).every((key: any) => {
+            const value = input[key];
+            if (undefined === value)
+                return true;
+            if (RegExp(/(.*)/).test(key))
+                return "string" === typeof value;
             return false;
         });
         const $iu0 = (input: any, _exceptionable: boolean = true): any => (() => {
@@ -1039,64 +1336,66 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
             else if (undefined !== input.if_has_tag)
                 return $io8(input, true && _exceptionable);
             else if (undefined !== input.if_has_item)
-                return $io11(input, true && _exceptionable);
+                return $io31(input, true && _exceptionable);
             else if (undefined !== input.wait)
-                return $io12(input, true && _exceptionable);
+                return $io32(input, true && _exceptionable);
             else if (undefined !== input.sequence)
-                return $io13(input, true && _exceptionable);
+                return $io33(input, true && _exceptionable);
             else if (undefined !== input.sound)
-                return $io14(input, true && _exceptionable);
+                return $io34(input, true && _exceptionable);
             else if (undefined !== input.random)
-                return $io15(input, true && _exceptionable);
+                return $io35(input, true && _exceptionable);
             else if (undefined !== input.apply_tag)
-                return $io16(input, true && _exceptionable);
+                return $io36(input, true && _exceptionable);
             else if (undefined !== input.remove_tag)
-                return $io17(input, true && _exceptionable);
+                return $io37(input, true && _exceptionable);
             else
                 return false;
         })();
         const $iu1 = (input: any, _exceptionable: boolean = true): any => (() => {
-            if ($io19(input, false && _exceptionable))
+            if (undefined !== input.set)
+                return $io11(input, true && _exceptionable);
+            else if (undefined !== input.and)
+                return $io12(input, true && _exceptionable);
+            else if (undefined !== input.or)
+                return $io13(input, true && _exceptionable);
+            else if (undefined !== input.not)
+                return $io14(input, true && _exceptionable);
+            else if (undefined !== input.player_has_item)
+                return $io15(input, true && _exceptionable);
+            else if (undefined !== input.player_has_tag)
+                return $io16(input, true && _exceptionable);
+            else if (undefined !== input.player_flag)
+                return $io17(input, true && _exceptionable);
+            else if (undefined !== input.npc_has_tag)
+                return $io18(input, true && _exceptionable);
+            else if (undefined !== input.npc_flag)
                 return $io19(input, true && _exceptionable);
-            else if ($io20(input, false && _exceptionable))
+            else if (undefined !== input.global_flag)
                 return $io20(input, true && _exceptionable);
-            else if ($io21(input, false && _exceptionable))
+            else if (undefined !== input.greater_than)
                 return $io21(input, true && _exceptionable);
-            else if ($io22(input, false && _exceptionable))
+            else if (undefined !== input.less_than)
                 return $io22(input, true && _exceptionable);
-            else if ($io23(input, false && _exceptionable))
+            else if (undefined !== input.equals)
                 return $io23(input, true && _exceptionable);
-            else if ($io24(input, false && _exceptionable))
+            else if (undefined !== input.add)
                 return $io24(input, true && _exceptionable);
-            else if ($io25(input, false && _exceptionable))
+            else if (undefined !== input.subtract)
                 return $io25(input, true && _exceptionable);
-            else if ($io26(input, false && _exceptionable))
+            else if (undefined !== input.multiply)
                 return $io26(input, true && _exceptionable);
-            else if ($io27(input, false && _exceptionable))
+            else if (undefined !== input.divide)
                 return $io27(input, true && _exceptionable);
-            else if ($io28(input, false && _exceptionable))
+            else if (undefined !== input.modulo)
                 return $io28(input, true && _exceptionable);
-            else if ($io29(input, false && _exceptionable))
+            else if (undefined !== input.random)
                 return $io29(input, true && _exceptionable);
-            else if ($io30(input, false && _exceptionable))
-                return $io30(input, true && _exceptionable);
-            else if ($io31(input, false && _exceptionable))
-                return $io31(input, true && _exceptionable);
-            else if ($io32(input, false && _exceptionable))
-                return $io32(input, true && _exceptionable);
-            else if ($io33(input, false && _exceptionable))
-                return $io33(input, true && _exceptionable);
-            else if ($io34(input, false && _exceptionable))
-                return $io34(input, true && _exceptionable);
-            else if ($io35(input, false && _exceptionable))
-                return $io35(input, true && _exceptionable);
-            else if ($io36(input, false && _exceptionable))
-                return $io36(input, true && _exceptionable);
-            else if ($io37(input, false && _exceptionable))
-                return $io37(input, true && _exceptionable);
-            else if ($io38(input, false && _exceptionable))
-                return $io38(input, true && _exceptionable);
-            else if ($io39(input, false && _exceptionable))
+            else
+                return false;
+        })();
+        const $iu2 = (input: any, _exceptionable: boolean = true): any => (() => {
+            if ($io39(input, false && _exceptionable))
                 return $io39(input, true && _exceptionable);
             else if ($io40(input, false && _exceptionable))
                 return $io40(input, true && _exceptionable);
@@ -1152,34 +1451,98 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 return $io65(input, true && _exceptionable);
             else if ($io66(input, false && _exceptionable))
                 return $io66(input, true && _exceptionable);
+            else if ($io67(input, false && _exceptionable))
+                return $io67(input, true && _exceptionable);
+            else if ($io68(input, false && _exceptionable))
+                return $io68(input, true && _exceptionable);
+            else if ($io69(input, false && _exceptionable))
+                return $io69(input, true && _exceptionable);
+            else if ($io70(input, false && _exceptionable))
+                return $io70(input, true && _exceptionable);
+            else if ($io71(input, false && _exceptionable))
+                return $io71(input, true && _exceptionable);
+            else if ($io72(input, false && _exceptionable))
+                return $io72(input, true && _exceptionable);
+            else if ($io73(input, false && _exceptionable))
+                return $io73(input, true && _exceptionable);
+            else if ($io74(input, false && _exceptionable))
+                return $io74(input, true && _exceptionable);
+            else if ($io75(input, false && _exceptionable))
+                return $io75(input, true && _exceptionable);
+            else if ($io76(input, false && _exceptionable))
+                return $io76(input, true && _exceptionable);
+            else if ($io77(input, false && _exceptionable))
+                return $io77(input, true && _exceptionable);
+            else if ($io78(input, false && _exceptionable))
+                return $io78(input, true && _exceptionable);
+            else if ($io79(input, false && _exceptionable))
+                return $io79(input, true && _exceptionable);
+            else if ($io80(input, false && _exceptionable))
+                return $io80(input, true && _exceptionable);
+            else if ($io81(input, false && _exceptionable))
+                return $io81(input, true && _exceptionable);
+            else if ($io82(input, false && _exceptionable))
+                return $io82(input, true && _exceptionable);
+            else if ($io83(input, false && _exceptionable))
+                return $io83(input, true && _exceptionable);
+            else if ($io84(input, false && _exceptionable))
+                return $io84(input, true && _exceptionable);
+            else if ($io85(input, false && _exceptionable))
+                return $io85(input, true && _exceptionable);
+            else if ($io86(input, false && _exceptionable))
+                return $io86(input, true && _exceptionable);
+            else if ($io87(input, false && _exceptionable))
+                return $io87(input, true && _exceptionable);
+            else if ($io88(input, false && _exceptionable))
+                return $io88(input, true && _exceptionable);
+            else if ($io89(input, false && _exceptionable))
+                return $io89(input, true && _exceptionable);
+            else if ($io90(input, false && _exceptionable))
+                return $io90(input, true && _exceptionable);
+            else if ($io91(input, false && _exceptionable))
+                return $io91(input, true && _exceptionable);
+            else if ($io92(input, false && _exceptionable))
+                return $io92(input, true && _exceptionable);
+            else if ($io93(input, false && _exceptionable))
+                return $io93(input, true && _exceptionable);
+            else if ($io94(input, false && _exceptionable))
+                return $io94(input, true && _exceptionable);
+            else if ($io95(input, false && _exceptionable))
+                return $io95(input, true && _exceptionable);
+            else if ($io96(input, false && _exceptionable))
+                return $io96(input, true && _exceptionable);
+            else if ($io97(input, false && _exceptionable))
+                return $io97(input, true && _exceptionable);
+            else if ($io98(input, false && _exceptionable))
+                return $io98(input, true && _exceptionable);
             else
                 return false;
         })();
-        const $iu2 = (input: any, _exceptionable: boolean = true): any => (() => {
+        const $iu3 = (input: any, _exceptionable: boolean = true): any => (() => {
             if (undefined !== input.scene)
-                return $io67(input, true && _exceptionable);
+                return $io99(input, true && _exceptionable);
             else if (undefined !== input.action)
-                return $io68(input, true && _exceptionable);
+                return $io100(input, true && _exceptionable);
             else if (undefined !== input.command)
-                return $io69(input, true && _exceptionable);
+                return $io101(input, true && _exceptionable);
             else if (undefined !== input.menu)
-                return $io70(input, true && _exceptionable);
+                return $io102(input, true && _exceptionable);
             else if (undefined !== input.if_has_tag)
-                return $io71(input, true && _exceptionable);
+                return $io103(input, true && _exceptionable);
             else if (undefined !== input.if_has_item)
-                return $io72(input, true && _exceptionable);
+                return $io104(input, true && _exceptionable);
             else if (undefined !== input.wait)
-                return $io73(input, true && _exceptionable);
+                return $io105(input, true && _exceptionable);
             else if (undefined !== input.sequence)
-                return $io74(input, true && _exceptionable);
+                return $io106(input, true && _exceptionable);
             else if (undefined !== input.sound)
-                return $io75(input, true && _exceptionable);
+                return $io107(input, true && _exceptionable);
             else if (undefined !== input.random)
-                return $io76(input, true && _exceptionable);
+                return $io108(input, true && _exceptionable);
             else if (undefined !== input.apply_tag)
-                return $io77(input, true && _exceptionable);
+                return $io109(input, true && _exceptionable);
             else if (undefined !== input.remove_tag)
-                return $io78(input, true && _exceptionable);
+                return $io110(input, true && _exceptionable);
             else
                 return false;
         })();
@@ -1213,7 +1576,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".scenes[" + _index2 + "]",
                     expected: "SavedScene",
                     value: elem
-                })) && $vo18(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $report(_exceptionable, {
+                })) && $vo38(elem, _path + ".scenes[" + _index2 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".scenes[" + _index2 + "]",
                     expected: "SavedScene",
                     value: elem
@@ -1227,11 +1590,11 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.items
                 })) && input.items.map((elem: any, _index3: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
                     path: _path + ".items[" + _index3 + "]",
-                    expected: "(RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & Action | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & Random | RequireTag & NameSelector & RemoveTag | RequireTag & NameSelector & Scene | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Wait | RequireTag & NameSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & Action | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & Random | RequireTag & TagSelector & RemoveTag | RequireTag & TagSelector & Scene | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Wait | RequireTag & TagSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse)",
+                    expected: "(RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & Action | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & Random | RequireTag & NameSelector & RemoveTag | RequireTag & NameSelector & Scene | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Wait | RequireTag & NameSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & SelectorSelector & Action | RequireTag & SelectorSelector & ApplyTag | RequireTag & SelectorSelector & Command | RequireTag & SelectorSelector & Menu | RequireTag & SelectorSelector & Random | RequireTag & SelectorSelector & RemoveTag | RequireTag & SelectorSelector & Scene | RequireTag & SelectorSelector & Sequence | RequireTag & SelectorSelector & Sound | RequireTag & SelectorSelector & Wait | RequireTag & SelectorSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & SelectorSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & Action | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & Random | RequireTag & TagSelector & RemoveTag | RequireTag & TagSelector & Scene | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Wait | RequireTag & TagSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse)",
                     value: elem
-                })) && $vu1(elem, _path + ".items[" + _index3 + "]", true && _exceptionable) || $report(_exceptionable, {
+                })) && $vu2(elem, _path + ".items[" + _index3 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".items[" + _index3 + "]",
-                    expected: "(RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & Action | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & Random | RequireTag & NameSelector & RemoveTag | RequireTag & NameSelector & Scene | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Wait | RequireTag & NameSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & Action | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & Random | RequireTag & TagSelector & RemoveTag | RequireTag & TagSelector & Scene | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Wait | RequireTag & TagSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse)",
+                    expected: "(RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & Action | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & Random | RequireTag & NameSelector & RemoveTag | RequireTag & NameSelector & Scene | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Wait | RequireTag & NameSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & SelectorSelector & Action | RequireTag & SelectorSelector & ApplyTag | RequireTag & SelectorSelector & Command | RequireTag & SelectorSelector & Menu | RequireTag & SelectorSelector & Random | RequireTag & SelectorSelector & RemoveTag | RequireTag & SelectorSelector & Scene | RequireTag & SelectorSelector & Sequence | RequireTag & SelectorSelector & Sound | RequireTag & SelectorSelector & Wait | RequireTag & SelectorSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & SelectorSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & Action | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & Random | RequireTag & TagSelector & RemoveTag | RequireTag & TagSelector & Scene | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Wait | RequireTag & TagSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse)",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".items",
@@ -1243,11 +1606,11 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.chats
                 })) && input.chats.map((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
                     path: _path + ".chats[" + _index4 + "]",
-                    expected: "({ equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & RemoveTag | { equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                    expected: "({ equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & RemoveTag | { equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
-                })) && $vu2(elem, _path + ".chats[" + _index4 + "]", true && _exceptionable) || $report(_exceptionable, {
+                })) && $vu3(elem, _path + ".chats[" + _index4 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".chats[" + _index4 + "]",
-                    expected: "({ equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & RemoveTag | { equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                    expected: "({ equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & RemoveTag | { equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".chats",
@@ -1257,12 +1620,20 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".actions",
                     expected: "(TransitionMap | undefined)",
                     value: input.actions
-                })) && $vo79(input.actions, _path + ".actions", true && _exceptionable) || $report(_exceptionable, {
+                })) && $vo111(input.actions, _path + ".actions", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".actions",
                     expected: "(TransitionMap | undefined)",
                     value: input.actions
+                }), undefined === input.variables || ("object" === typeof input.variables && null !== input.variables && false === Array.isArray(input.variables) || $report(_exceptionable, {
+                    path: _path + ".variables",
+                    expected: "(__type.o1 | undefined)",
+                    value: input.variables
+                })) && $vo112(input.variables, _path + ".variables", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".variables",
+                    expected: "(__type.o1 | undefined)",
+                    value: input.variables
                 }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["actors", "scenes", "items", "chats", "actions"].some((prop: any) => key === prop))
+                    if (["actors", "scenes", "items", "chats", "actions", "variables"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -1335,27 +1706,27 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.if_has_tag
                 }), undefined === input.then || ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input.then
                 }), undefined === input["else"] || ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input["else"]
                 }), undefined === input.if_has_item || ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "(Partial<NameSelector & LoreSelector & ItemTypeSelector> | undefined)",
+                    expected: "(Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector> | undefined)",
                     value: input.if_has_item
                 })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "(Partial<NameSelector & LoreSelector & ItemTypeSelector> | undefined)",
+                    expected: "(Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector> | undefined)",
                     value: input.if_has_item
                 }), undefined === input.wait || "number" === typeof input.wait || $report(_exceptionable, {
                     path: _path + ".wait",
@@ -1363,19 +1734,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.wait
                 }), undefined === input.sequence || (Array.isArray(input.sequence) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> | undefined)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> | undefined)",
                     value: input.sequence
                 })) && input.sequence.map((elem: any, _index6: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
                     path: _path + ".sequence[" + _index6 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })) && $vo9(elem, _path + ".sequence[" + _index6 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".sequence[" + _index6 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> | undefined)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> | undefined)",
                     value: input.sequence
                 }), undefined === input.sound || "string" === typeof input.sound || $report(_exceptionable, {
                     path: _path + ".sound",
@@ -1411,7 +1782,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.selector
                 }), undefined === input.random || (Array.isArray(input.random) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>) | undefined)",
+                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>) | undefined)",
                     value: input.random
                 })) && ((2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
@@ -1419,15 +1790,15 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.random
                 })) && input.random.map((elem: any, _index7: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
                     path: _path + ".random[" + _index7 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })) && $vo9(elem, _path + ".random[" + _index7 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".random[" + _index7 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>) | undefined)",
+                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>) | undefined)",
                     value: input.random
                 }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
                     path: _path + ".weights",
@@ -1449,8 +1820,24 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".remove_tag",
                     expected: "(string | undefined)",
                     value: input.remove_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["id", "name", "scene", "scale", "skin", "roles", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+                }), undefined === input.set || "string" === typeof input.set || $report(_exceptionable, {
+                    path: _path + ".set",
+                    expected: "(string | undefined)",
+                    value: input.set
+                }), (null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined === input.value || "string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["id", "name", "scene", "scale", "skin", "roles", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag", "set", "value"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -1495,11 +1882,11 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.buttons
                 })) && input.buttons.map((elem: any, _index9: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
                     path: _path + ".buttons[" + _index9 + "]",
-                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
                 })) && $vu0(elem, _path + ".buttons[" + _index9 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".buttons[" + _index9 + "]",
-                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".buttons",
@@ -1639,19 +2026,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.if_has_tag
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["text", "require_tag", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
@@ -1699,27 +2086,27 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.if_has_tag
                 }), undefined === input.then || ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input.then
                 }), undefined === input["else"] || ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag> | undefined)",
+                    expected: "(Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign> | undefined)",
                     value: input["else"]
                 }), undefined === input.if_has_item || ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "(Partial<NameSelector & LoreSelector & ItemTypeSelector> | undefined)",
+                    expected: "(Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector> | undefined)",
                     value: input.if_has_item
                 })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "(Partial<NameSelector & LoreSelector & ItemTypeSelector> | undefined)",
+                    expected: "(Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector> | undefined)",
                     value: input.if_has_item
                 }), undefined === input.wait || "number" === typeof input.wait || $report(_exceptionable, {
                     path: _path + ".wait",
@@ -1727,19 +2114,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.wait
                 }), undefined === input.sequence || (Array.isArray(input.sequence) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> | undefined)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> | undefined)",
                     value: input.sequence
                 })) && input.sequence.map((elem: any, _index10: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
                     path: _path + ".sequence[" + _index10 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })) && $vo9(elem, _path + ".sequence[" + _index10 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".sequence[" + _index10 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> | undefined)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> | undefined)",
                     value: input.sequence
                 }), undefined === input.sound || "string" === typeof input.sound || $report(_exceptionable, {
                     path: _path + ".sound",
@@ -1775,7 +2162,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.selector
                 }), undefined === input.random || (Array.isArray(input.random) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>) | undefined)",
+                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>) | undefined)",
                     value: input.random
                 })) && ((2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
@@ -1783,15 +2170,15 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.random
                 })) && input.random.map((elem: any, _index11: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
                     path: _path + ".random[" + _index11 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })) && $vo9(elem, _path + ".random[" + _index11 + "]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".random[" + _index11 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>) | undefined)",
+                    expected: "((Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>) | undefined)",
                     value: input.random
                 }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
                     path: _path + ".weights",
@@ -1813,8 +2200,24 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".remove_tag",
                     expected: "(string | undefined)",
                     value: input.remove_tag
-                }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag"].some((prop: any) => key === prop))
+                }), undefined === input.set || "string" === typeof input.set || $report(_exceptionable, {
+                    path: _path + ".set",
+                    expected: "(string | undefined)",
+                    value: input.set
+                }), (null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined === input.value || "string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["scene", "action", "args", "command", "menu", "if_has_tag", "then", "else", "if_has_item", "wait", "sequence", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector", "random", "weights", "apply_tag", "remove_tag", "set", "value"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -1825,10 +2228,18 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo10 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.name || "string" === typeof input.name || $report(_exceptionable, {
+            const $vo10 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.tag || "string" === typeof input.tag || $report(_exceptionable, {
+                    path: _path + ".tag",
+                    expected: "(string | undefined)",
+                    value: input.tag
+                }), undefined === input.name || "string" === typeof input.name || $report(_exceptionable, {
                     path: _path + ".name",
                     expected: "(string | undefined)",
                     value: input.name
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
                 }), undefined === input.lore || (Array.isArray(input.lore) || $report(_exceptionable, {
                     path: _path + ".lore",
                     expected: "(Array<string | null> | undefined)",
@@ -1846,7 +2257,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     expected: "(string | undefined)",
                     value: input.item_type
                 }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["name", "lore", "item_type"].some((prop: any) => key === prop))
+                    if (["tag", "name", "selector", "lore", "item_type"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -1857,7 +2268,627 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo11 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo11 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.set || $report(_exceptionable, {
+                    path: _path + ".set",
+                    expected: "string",
+                    value: input.set
+                }), (null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["set", "value"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo12 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(Array.isArray(input.and) || $report(_exceptionable, {
+                    path: _path + ".and",
+                    expected: "Array<Operation>",
+                    value: input.and
+                })) && input.and.map((elem: any, _index14: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                    path: _path + ".and[" + _index14 + "]",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: elem
+                })) && $vu1(elem, _path + ".and[" + _index14 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".and[" + _index14 + "]",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".and",
+                    expected: "Array<Operation>",
+                    value: input.and
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["and"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo13 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(Array.isArray(input.or) || $report(_exceptionable, {
+                    path: _path + ".or",
+                    expected: "Array<Operation>",
+                    value: input.or
+                })) && input.or.map((elem: any, _index15: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                    path: _path + ".or[" + _index15 + "]",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: elem
+                })) && $vu1(elem, _path + ".or[" + _index15 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".or[" + _index15 + "]",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".or",
+                    expected: "Array<Operation>",
+                    value: input.or
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["or"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo14 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [("object" === typeof input.not && null !== input.not || $report(_exceptionable, {
+                    path: _path + ".not",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.not
+                })) && $vu1(input.not, _path + ".not", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".not",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.not
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["not"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo15 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [("object" === typeof input.player_has_item && null !== input.player_has_item && false === Array.isArray(input.player_has_item) || $report(_exceptionable, {
+                    path: _path + ".player_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.player_has_item
+                })) && $vo10(input.player_has_item, _path + ".player_has_item", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".player_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.player_has_item
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["player_has_item"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo16 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.player_has_tag || $report(_exceptionable, {
+                    path: _path + ".player_has_tag",
+                    expected: "string",
+                    value: input.player_has_tag
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["player_has_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo17 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.player_flag || $report(_exceptionable, {
+                    path: _path + ".player_flag",
+                    expected: "string",
+                    value: input.player_flag
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["player_flag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo18 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.npc_has_tag || $report(_exceptionable, {
+                    path: _path + ".npc_has_tag",
+                    expected: "string",
+                    value: input.npc_has_tag
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["npc_has_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo19 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.npc_flag || $report(_exceptionable, {
+                    path: _path + ".npc_flag",
+                    expected: "string",
+                    value: input.npc_flag
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["npc_flag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo20 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.global_flag || $report(_exceptionable, {
+                    path: _path + ".global_flag",
+                    expected: "string",
+                    value: input.global_flag
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["global_flag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo21 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.greater_than || $report(_exceptionable, {
+                    path: _path + ".greater_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.greater_than
+                })) && (undefined !== input.greater_than || $report(_exceptionable, {
+                    path: _path + ".greater_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.greater_than
+                })) && ("string" === typeof input.greater_than || "number" === typeof input.greater_than || ("object" === typeof input.greater_than && null !== input.greater_than || $report(_exceptionable, {
+                    path: _path + ".greater_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.greater_than
+                })) && $vu1(input.greater_than, _path + ".greater_than", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".greater_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.greater_than
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "greater_than"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo22 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.less_than || $report(_exceptionable, {
+                    path: _path + ".less_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.less_than
+                })) && (undefined !== input.less_than || $report(_exceptionable, {
+                    path: _path + ".less_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.less_than
+                })) && ("string" === typeof input.less_than || "number" === typeof input.less_than || ("object" === typeof input.less_than && null !== input.less_than || $report(_exceptionable, {
+                    path: _path + ".less_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.less_than
+                })) && $vu1(input.less_than, _path + ".less_than", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".less_than",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.less_than
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "less_than"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo23 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.equals || $report(_exceptionable, {
+                    path: _path + ".equals",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.equals
+                })) && (undefined !== input.equals || $report(_exceptionable, {
+                    path: _path + ".equals",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.equals
+                })) && ("string" === typeof input.equals || "number" === typeof input.equals || ("object" === typeof input.equals && null !== input.equals || $report(_exceptionable, {
+                    path: _path + ".equals",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.equals
+                })) && $vu1(input.equals, _path + ".equals", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".equals",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.equals
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "equals"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo24 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.add || $report(_exceptionable, {
+                    path: _path + ".add",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.add
+                })) && (undefined !== input.add || $report(_exceptionable, {
+                    path: _path + ".add",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.add
+                })) && ("string" === typeof input.add || "number" === typeof input.add || ("object" === typeof input.add && null !== input.add || $report(_exceptionable, {
+                    path: _path + ".add",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.add
+                })) && $vu1(input.add, _path + ".add", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".add",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.add
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "add"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo25 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.subtract || $report(_exceptionable, {
+                    path: _path + ".subtract",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.subtract
+                })) && (undefined !== input.subtract || $report(_exceptionable, {
+                    path: _path + ".subtract",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.subtract
+                })) && ("string" === typeof input.subtract || "number" === typeof input.subtract || ("object" === typeof input.subtract && null !== input.subtract || $report(_exceptionable, {
+                    path: _path + ".subtract",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.subtract
+                })) && $vu1(input.subtract, _path + ".subtract", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".subtract",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.subtract
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "subtract"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo26 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.multiply || $report(_exceptionable, {
+                    path: _path + ".multiply",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.multiply
+                })) && (undefined !== input.multiply || $report(_exceptionable, {
+                    path: _path + ".multiply",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.multiply
+                })) && ("string" === typeof input.multiply || "number" === typeof input.multiply || ("object" === typeof input.multiply && null !== input.multiply || $report(_exceptionable, {
+                    path: _path + ".multiply",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.multiply
+                })) && $vu1(input.multiply, _path + ".multiply", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".multiply",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.multiply
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "multiply"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo27 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.divide || $report(_exceptionable, {
+                    path: _path + ".divide",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.divide
+                })) && (undefined !== input.divide || $report(_exceptionable, {
+                    path: _path + ".divide",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.divide
+                })) && ("string" === typeof input.divide || "number" === typeof input.divide || ("object" === typeof input.divide && null !== input.divide || $report(_exceptionable, {
+                    path: _path + ".divide",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.divide
+                })) && $vu1(input.divide, _path + ".divide", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".divide",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.divide
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "divide"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo28 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && (undefined !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && ("string" === typeof input.value || "number" === typeof input.value || ("object" === typeof input.value && null !== input.value || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })) && $vu1(input.value, _path + ".value", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".value",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.value
+                })), (null !== input.modulo || $report(_exceptionable, {
+                    path: _path + ".modulo",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.modulo
+                })) && (undefined !== input.modulo || $report(_exceptionable, {
+                    path: _path + ".modulo",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.modulo
+                })) && ("string" === typeof input.modulo || "number" === typeof input.modulo || ("object" === typeof input.modulo && null !== input.modulo || $report(_exceptionable, {
+                    path: _path + ".modulo",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.modulo
+                })) && $vu1(input.modulo, _path + ".modulo", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".modulo",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.modulo
+                })), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["value", "modulo"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo29 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [("object" === typeof input.random && null !== input.random || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "__type",
+                    value: input.random
+                })) && $vo30(input.random, _path + ".random", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "__type",
+                    value: input.random
+                }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["random"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo30 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [(null !== input.min || $report(_exceptionable, {
+                    path: _path + ".min",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.min
+                })) && (undefined === input.min || "string" === typeof input.min || "number" === typeof input.min || ("object" === typeof input.min && null !== input.min || $report(_exceptionable, {
+                    path: _path + ".min",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.min
+                })) && $vu1(input.min, _path + ".min", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".min",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | undefined | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.min
+                })), (null !== input.max || $report(_exceptionable, {
+                    path: _path + ".max",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.max
+                })) && (undefined !== input.max || $report(_exceptionable, {
+                    path: _path + ".max",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.max
+                })) && ("string" === typeof input.max || "number" === typeof input.max || ("object" === typeof input.max && null !== input.max || $report(_exceptionable, {
+                    path: _path + ".max",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.max
+                })) && $vu1(input.max, _path + ".max", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".max",
+                    expected: "(And | Assign | GlobalFlag | Not | NpcFlag | NpcHasTag | Or | PlayerFlag | PlayerHasItem | PlayerHasTag | Random | number | string | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; })",
+                    value: input.max
+                })), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["min", "max"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo31 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -1867,27 +2898,27 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["text", "require_tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
@@ -1901,7 +2932,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo12 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo32 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -1925,7 +2956,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo13 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo33 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -1935,19 +2966,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), (Array.isArray(input.sequence) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
-                })) && input.sequence.map((elem: any, _index14: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index14 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.sequence.map((elem: any, _index16: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index16 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index14 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index14 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".sequence[" + _index16 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index16 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["text", "require_tag", "sequence"].some((prop: any) => key === prop))
@@ -1961,7 +2992,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo14 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo34 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -2013,7 +3044,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo15 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo35 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -2023,30 +3054,30 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), (Array.isArray(input.random) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 })) && ((2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
                     expected: "Array<> & MinItems<2>",
                     value: input.random
-                })) && input.random.map((elem: any, _index15: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index15 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.random.map((elem: any, _index17: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index17 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".random[" + _index15 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index15 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".random[" + _index17 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index17 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
                     path: _path + ".weights",
                     expected: "(Array<number> | undefined)",
                     value: input.weights
-                })) && input.weights.map((elem: any, _index16: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index16 + "]",
+                })) && input.weights.map((elem: any, _index18: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index18 + "]",
                     expected: "number",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
@@ -2065,7 +3096,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo16 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo36 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -2089,7 +3120,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo17 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
+            const $vo37 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.text || $report(_exceptionable, {
                     path: _path + ".text",
                     expected: "string",
                     value: input.text
@@ -2113,7 +3144,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo18 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.id || $report(_exceptionable, {
+            const $vo38 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.id || $report(_exceptionable, {
                     path: _path + ".id",
                     expected: "string",
                     value: input.id
@@ -2125,13 +3156,13 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     path: _path + ".buttons",
                     expected: "Array<Button>",
                     value: input.buttons
-                })) && input.buttons.map((elem: any, _index17: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
-                    path: _path + ".buttons[" + _index17 + "]",
-                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                })) && input.buttons.map((elem: any, _index19: number) => ("object" === typeof elem && null !== elem || $report(_exceptionable, {
+                    path: _path + ".buttons[" + _index19 + "]",
+                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
-                })) && $vu0(elem, _path + ".buttons[" + _index17 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".buttons[" + _index17 + "]",
-                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
+                })) && $vu0(elem, _path + ".buttons[" + _index19 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".buttons[" + _index19 + "]",
+                    expected: "({ text: string; } & RequireTag & Action | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & RemoveTag | { text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse)",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".buttons",
@@ -2157,1315 +3188,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo19 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.scene || $report(_exceptionable, {
-                    path: _path + ".scene",
-                    expected: "string",
-                    value: input.scene
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "scene"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo20 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.action || $report(_exceptionable, {
-                    path: _path + ".action",
-                    expected: "string",
-                    value: input.action
-                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "action", "args"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo21 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.command || $report(_exceptionable, {
-                    path: _path + ".command",
-                    expected: "string",
-                    value: input.command
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "command"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo22 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "menu"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo23 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
-                    path: _path + ".if_has_tag",
-                    expected: "string",
-                    value: input.if_has_tag
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo24 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo25 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "number" === typeof input.wait || $report(_exceptionable, {
-                    path: _path + ".wait",
-                    expected: "number",
-                    value: input.wait
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "wait"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo26 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                })) && input.sequence.map((elem: any, _index18: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index18 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index18 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index18 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "sequence"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo27 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.sound || $report(_exceptionable, {
-                    path: _path + ".sound",
-                    expected: "string",
-                    value: input.sound
-                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
-                    path: _path + ".volume",
-                    expected: "(number | undefined)",
-                    value: input.volume
-                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
-                    path: _path + ".pitch",
-                    expected: "(number | undefined)",
-                    value: input.pitch
-                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
-                    path: _path + ".x",
-                    expected: "(number | undefined)",
-                    value: input.x
-                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
-                    path: _path + ".y",
-                    expected: "(number | undefined)",
-                    value: input.y
-                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
-                    path: _path + ".z",
-                    expected: "(number | undefined)",
-                    value: input.z
-                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
-                    path: _path + ".dimension",
-                    expected: "(string | undefined)",
-                    value: input.dimension
-                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
-                    path: _path + ".selector",
-                    expected: "(string | undefined)",
-                    value: input.selector
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo28 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), (Array.isArray(input.random) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                })) && ((2 <= input.random.length || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "Array<> & MinItems<2>",
-                    value: input.random
-                })) && input.random.map((elem: any, _index19: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index19 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".random[" + _index19 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index19 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                })) && input.weights.map((elem: any, _index20: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index20 + "]",
-                    expected: "number",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "random", "weights"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo29 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
-                    path: _path + ".apply_tag",
-                    expected: "string",
-                    value: input.apply_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "apply_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo30 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.name || $report(_exceptionable, {
-                    path: _path + ".name",
-                    expected: "string",
-                    value: input.name
-                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
-                    path: _path + ".remove_tag",
-                    expected: "string",
-                    value: input.remove_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "name", "remove_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo31 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index21: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index21 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.scene || $report(_exceptionable, {
-                    path: _path + ".scene",
-                    expected: "string",
-                    value: input.scene
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "scene"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo32 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index22: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index22 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.action || $report(_exceptionable, {
-                    path: _path + ".action",
-                    expected: "string",
-                    value: input.action
-                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "action", "args"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo33 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index23: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index23 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.command || $report(_exceptionable, {
-                    path: _path + ".command",
-                    expected: "string",
-                    value: input.command
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "command"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo34 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index24: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index24 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "menu"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo35 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index25: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index25 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
-                    path: _path + ".if_has_tag",
-                    expected: "string",
-                    value: input.if_has_tag
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo36 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index26: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index26 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo37 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index27: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index27 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "number" === typeof input.wait || $report(_exceptionable, {
-                    path: _path + ".wait",
-                    expected: "number",
-                    value: input.wait
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "wait"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo38 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index28: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index28 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                })) && input.sequence.map((elem: any, _index29: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index29 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index29 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index29 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "sequence"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
             const $vo39 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index30: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index30 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.sound || $report(_exceptionable, {
-                    path: _path + ".sound",
-                    expected: "string",
-                    value: input.sound
-                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
-                    path: _path + ".volume",
-                    expected: "(number | undefined)",
-                    value: input.volume
-                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
-                    path: _path + ".pitch",
-                    expected: "(number | undefined)",
-                    value: input.pitch
-                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
-                    path: _path + ".x",
-                    expected: "(number | undefined)",
-                    value: input.x
-                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
-                    path: _path + ".y",
-                    expected: "(number | undefined)",
-                    value: input.y
-                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
-                    path: _path + ".z",
-                    expected: "(number | undefined)",
-                    value: input.z
-                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
-                    path: _path + ".dimension",
-                    expected: "(string | undefined)",
-                    value: input.dimension
-                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
-                    path: _path + ".selector",
-                    expected: "(string | undefined)",
-                    value: input.selector
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo40 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index31: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index31 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), (Array.isArray(input.random) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                })) && ((2 <= input.random.length || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "Array<> & MinItems<2>",
-                    value: input.random
-                })) && input.random.map((elem: any, _index32: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index32 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".random[" + _index32 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index32 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                })) && input.weights.map((elem: any, _index33: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index33 + "]",
-                    expected: "number",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "random", "weights"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo41 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index34: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index34 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
-                    path: _path + ".apply_tag",
-                    expected: "string",
-                    value: input.apply_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "apply_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo42 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), (Array.isArray(input.lore) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                })) && input.lore.map((elem: any, _index35: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".lore[" + _index35 + "]",
-                    expected: "(null | string)",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".lore",
-                    expected: "Array<string | null>",
-                    value: input.lore
-                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
-                    path: _path + ".remove_tag",
-                    expected: "string",
-                    value: input.remove_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "lore", "remove_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo43 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.scene || $report(_exceptionable, {
-                    path: _path + ".scene",
-                    expected: "string",
-                    value: input.scene
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "scene"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo44 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.action || $report(_exceptionable, {
-                    path: _path + ".action",
-                    expected: "string",
-                    value: input.action
-                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".args",
-                    expected: "(Args | undefined)",
-                    value: input.args
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "action", "args"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo45 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.command || $report(_exceptionable, {
-                    path: _path + ".command",
-                    expected: "string",
-                    value: input.command
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "command"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo46 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".menu",
-                    expected: "MenuDetails",
-                    value: input.menu
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "menu"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo47 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
-                    path: _path + ".if_has_tag",
-                    expected: "string",
-                    value: input.if_has_tag
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo48 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
-                    value: input.if_has_item
-                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input.then
-                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: input["else"]
-                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "if_has_item", "then", "else"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo49 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "number" === typeof input.wait || $report(_exceptionable, {
-                    path: _path + ".wait",
-                    expected: "number",
-                    value: input.wait
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "wait"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo50 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                })) && input.sequence.map((elem: any, _index36: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index36 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index36 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index36 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
-                    value: input.sequence
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "sequence"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo51 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.sound || $report(_exceptionable, {
-                    path: _path + ".sound",
-                    expected: "string",
-                    value: input.sound
-                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
-                    path: _path + ".volume",
-                    expected: "(number | undefined)",
-                    value: input.volume
-                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
-                    path: _path + ".pitch",
-                    expected: "(number | undefined)",
-                    value: input.pitch
-                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
-                    path: _path + ".x",
-                    expected: "(number | undefined)",
-                    value: input.x
-                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
-                    path: _path + ".y",
-                    expected: "(number | undefined)",
-                    value: input.y
-                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
-                    path: _path + ".z",
-                    expected: "(number | undefined)",
-                    value: input.z
-                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
-                    path: _path + ".dimension",
-                    expected: "(string | undefined)",
-                    value: input.dimension
-                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
-                    path: _path + ".selector",
-                    expected: "(string | undefined)",
-                    value: input.selector
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo52 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), (Array.isArray(input.random) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                })) && ((2 <= input.random.length || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "Array<> & MinItems<2>",
-                    value: input.random
-                })) && input.random.map((elem: any, _index37: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index37 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })) && $vo9(elem, _path + ".random[" + _index37 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index37 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
-                    value: elem
-                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
-                    path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
-                    value: input.random
-                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                })) && input.weights.map((elem: any, _index38: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index38 + "]",
-                    expected: "number",
-                    value: elem
-                })).every((flag: boolean) => flag) || $report(_exceptionable, {
-                    path: _path + ".weights",
-                    expected: "(Array<number> | undefined)",
-                    value: input.weights
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "random", "weights"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo53 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
-                    path: _path + ".apply_tag",
-                    expected: "string",
-                    value: input.apply_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "apply_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo54 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
-                    path: _path + ".require_tag",
-                    expected: "(string | undefined)",
-                    value: input.require_tag
-                }), "string" === typeof input.item_type || $report(_exceptionable, {
-                    path: _path + ".item_type",
-                    expected: "string",
-                    value: input.item_type
-                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
-                    path: _path + ".remove_tag",
-                    expected: "string",
-                    value: input.remove_tag
-                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["require_tag", "item_type", "remove_tag"].some((prop: any) => key === prop))
-                        return true;
-                    const value = input[key];
-                    if (undefined === value)
-                        return true;
-                    return $report(_exceptionable, {
-                        path: _path + $join(key),
-                        expected: "undefined",
-                        value: value
-                    });
-                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo55 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3489,7 +3212,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo56 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo40 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3521,7 +3244,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo57 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo41 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3545,7 +3268,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo58 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo42 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3573,7 +3296,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo59 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo43 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3587,19 +3310,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.if_has_tag
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["require_tag", "tag", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
@@ -3613,7 +3336,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo60 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo44 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3623,27 +3346,27 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.tag
                 }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["require_tag", "tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
@@ -3657,7 +3380,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo61 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo45 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3681,7 +3404,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo62 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo46 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3691,19 +3414,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.tag
                 }), (Array.isArray(input.sequence) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
-                })) && input.sequence.map((elem: any, _index39: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index39 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.sequence.map((elem: any, _index20: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index20 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index39 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index39 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".sequence[" + _index20 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index20 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["require_tag", "tag", "sequence"].some((prop: any) => key === prop))
@@ -3717,7 +3440,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo63 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo47 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3769,7 +3492,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo64 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo48 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3779,30 +3502,30 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.tag
                 }), (Array.isArray(input.random) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 })) && ((2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
                     expected: "Array<> & MinItems<2>",
                     value: input.random
-                })) && input.random.map((elem: any, _index40: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index40 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.random.map((elem: any, _index21: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index21 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".random[" + _index40 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index40 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".random[" + _index21 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index21 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
                     path: _path + ".weights",
                     expected: "(Array<number> | undefined)",
                     value: input.weights
-                })) && input.weights.map((elem: any, _index41: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index41 + "]",
+                })) && input.weights.map((elem: any, _index22: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index22 + "]",
                     expected: "number",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
@@ -3821,7 +3544,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo65 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo49 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3845,7 +3568,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo66 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+            const $vo50 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
                     path: _path + ".require_tag",
                     expected: "(string | undefined)",
                     value: input.require_tag
@@ -3869,7 +3592,1715 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo67 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo51 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.scene || $report(_exceptionable, {
+                    path: _path + ".scene",
+                    expected: "string",
+                    value: input.scene
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "scene"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo52 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.action || $report(_exceptionable, {
+                    path: _path + ".action",
+                    expected: "string",
+                    value: input.action
+                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "action", "args"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo53 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.command || $report(_exceptionable, {
+                    path: _path + ".command",
+                    expected: "string",
+                    value: input.command
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "command"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo54 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "menu"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo55 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
+                    path: _path + ".if_has_tag",
+                    expected: "string",
+                    value: input.if_has_tag
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo56 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo57 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "number" === typeof input.wait || $report(_exceptionable, {
+                    path: _path + ".wait",
+                    expected: "number",
+                    value: input.wait
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "wait"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo58 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                })) && input.sequence.map((elem: any, _index23: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index23 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".sequence[" + _index23 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index23 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "sequence"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo59 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.sound || $report(_exceptionable, {
+                    path: _path + ".sound",
+                    expected: "string",
+                    value: input.sound
+                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
+                    path: _path + ".volume",
+                    expected: "(number | undefined)",
+                    value: input.volume
+                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
+                    path: _path + ".pitch",
+                    expected: "(number | undefined)",
+                    value: input.pitch
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
+                    expected: "(number | undefined)",
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo60 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), (Array.isArray(input.random) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                })) && ((2 <= input.random.length || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "Array<> & MinItems<2>",
+                    value: input.random
+                })) && input.random.map((elem: any, _index24: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index24 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".random[" + _index24 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index24 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                })) && input.weights.map((elem: any, _index25: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index25 + "]",
+                    expected: "number",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "random", "weights"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo61 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
+                    path: _path + ".apply_tag",
+                    expected: "string",
+                    value: input.apply_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "apply_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo62 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.name || $report(_exceptionable, {
+                    path: _path + ".name",
+                    expected: "string",
+                    value: input.name
+                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
+                    path: _path + ".remove_tag",
+                    expected: "string",
+                    value: input.remove_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "name", "remove_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo63 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.scene || $report(_exceptionable, {
+                    path: _path + ".scene",
+                    expected: "string",
+                    value: input.scene
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "scene"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo64 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.action || $report(_exceptionable, {
+                    path: _path + ".action",
+                    expected: "string",
+                    value: input.action
+                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "action", "args"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo65 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.command || $report(_exceptionable, {
+                    path: _path + ".command",
+                    expected: "string",
+                    value: input.command
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "command"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo66 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "menu"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo67 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
+                    path: _path + ".if_has_tag",
+                    expected: "string",
+                    value: input.if_has_tag
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo68 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo69 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "number" === typeof input.wait || $report(_exceptionable, {
+                    path: _path + ".wait",
+                    expected: "number",
+                    value: input.wait
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "wait"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo70 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                })) && input.sequence.map((elem: any, _index26: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index26 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".sequence[" + _index26 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index26 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "sequence"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo71 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.sound || $report(_exceptionable, {
+                    path: _path + ".sound",
+                    expected: "string",
+                    value: input.sound
+                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
+                    path: _path + ".volume",
+                    expected: "(number | undefined)",
+                    value: input.volume
+                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
+                    path: _path + ".pitch",
+                    expected: "(number | undefined)",
+                    value: input.pitch
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
+                    expected: "(number | undefined)",
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "sound", "volume", "pitch", "x", "y", "z", "dimension"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo72 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), (Array.isArray(input.random) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                })) && ((2 <= input.random.length || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "Array<> & MinItems<2>",
+                    value: input.random
+                })) && input.random.map((elem: any, _index27: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index27 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".random[" + _index27 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index27 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                })) && input.weights.map((elem: any, _index28: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index28 + "]",
+                    expected: "number",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "random", "weights"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo73 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
+                    path: _path + ".apply_tag",
+                    expected: "string",
+                    value: input.apply_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "apply_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo74 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "string",
+                    value: input.selector
+                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
+                    path: _path + ".remove_tag",
+                    expected: "string",
+                    value: input.remove_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "selector", "remove_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo75 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index29: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index29 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.scene || $report(_exceptionable, {
+                    path: _path + ".scene",
+                    expected: "string",
+                    value: input.scene
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "scene"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo76 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index30: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index30 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.action || $report(_exceptionable, {
+                    path: _path + ".action",
+                    expected: "string",
+                    value: input.action
+                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "action", "args"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo77 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index31: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index31 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.command || $report(_exceptionable, {
+                    path: _path + ".command",
+                    expected: "string",
+                    value: input.command
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "command"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo78 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index32: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index32 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "menu"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo79 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index33: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index33 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
+                    path: _path + ".if_has_tag",
+                    expected: "string",
+                    value: input.if_has_tag
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo80 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index34: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index34 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo81 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index35: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index35 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "number" === typeof input.wait || $report(_exceptionable, {
+                    path: _path + ".wait",
+                    expected: "number",
+                    value: input.wait
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "wait"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo82 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index36: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index36 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                })) && input.sequence.map((elem: any, _index37: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index37 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".sequence[" + _index37 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index37 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "sequence"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo83 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index38: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index38 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.sound || $report(_exceptionable, {
+                    path: _path + ".sound",
+                    expected: "string",
+                    value: input.sound
+                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
+                    path: _path + ".volume",
+                    expected: "(number | undefined)",
+                    value: input.volume
+                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
+                    path: _path + ".pitch",
+                    expected: "(number | undefined)",
+                    value: input.pitch
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
+                    expected: "(number | undefined)",
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo84 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index39: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index39 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), (Array.isArray(input.random) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                })) && ((2 <= input.random.length || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "Array<> & MinItems<2>",
+                    value: input.random
+                })) && input.random.map((elem: any, _index40: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index40 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".random[" + _index40 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index40 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                })) && input.weights.map((elem: any, _index41: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index41 + "]",
+                    expected: "number",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "random", "weights"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo85 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index42: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index42 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
+                    path: _path + ".apply_tag",
+                    expected: "string",
+                    value: input.apply_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "apply_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo86 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), (Array.isArray(input.lore) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                })) && input.lore.map((elem: any, _index43: number) => null === elem || "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".lore[" + _index43 + "]",
+                    expected: "(null | string)",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".lore",
+                    expected: "Array<string | null>",
+                    value: input.lore
+                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
+                    path: _path + ".remove_tag",
+                    expected: "string",
+                    value: input.remove_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "lore", "remove_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo87 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.scene || $report(_exceptionable, {
+                    path: _path + ".scene",
+                    expected: "string",
+                    value: input.scene
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "scene"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo88 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.action || $report(_exceptionable, {
+                    path: _path + ".action",
+                    expected: "string",
+                    value: input.action
+                }), undefined === input.args || ("object" === typeof input.args && null !== input.args && false === Array.isArray(input.args) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                })) && $vo2(input.args, _path + ".args", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".args",
+                    expected: "(Args | undefined)",
+                    value: input.args
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "action", "args"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo89 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.command || $report(_exceptionable, {
+                    path: _path + ".command",
+                    expected: "string",
+                    value: input.command
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "command"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo90 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), ("object" === typeof input.menu && null !== input.menu || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                })) && $vo3(input.menu, _path + ".menu", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".menu",
+                    expected: "MenuDetails",
+                    value: input.menu
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "menu"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo91 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.if_has_tag || $report(_exceptionable, {
+                    path: _path + ".if_has_tag",
+                    expected: "string",
+                    value: input.if_has_tag
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo92 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".if_has_item",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
+                    value: input.if_has_item
+                }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".then",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input.then
+                }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + "[\"else\"]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: input["else"]
+                }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "if_has_item", "then", "else"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo93 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "number" === typeof input.wait || $report(_exceptionable, {
+                    path: _path + ".wait",
+                    expected: "number",
+                    value: input.wait
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "wait"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo94 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), (Array.isArray(input.sequence) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                })) && input.sequence.map((elem: any, _index44: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index44 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".sequence[" + _index44 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index44 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".sequence",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
+                    value: input.sequence
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "sequence"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo95 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.sound || $report(_exceptionable, {
+                    path: _path + ".sound",
+                    expected: "string",
+                    value: input.sound
+                }), undefined === input.volume || "number" === typeof input.volume || $report(_exceptionable, {
+                    path: _path + ".volume",
+                    expected: "(number | undefined)",
+                    value: input.volume
+                }), undefined === input.pitch || "number" === typeof input.pitch || $report(_exceptionable, {
+                    path: _path + ".pitch",
+                    expected: "(number | undefined)",
+                    value: input.pitch
+                }), undefined === input.x || "number" === typeof input.x || $report(_exceptionable, {
+                    path: _path + ".x",
+                    expected: "(number | undefined)",
+                    value: input.x
+                }), undefined === input.y || "number" === typeof input.y || $report(_exceptionable, {
+                    path: _path + ".y",
+                    expected: "(number | undefined)",
+                    value: input.y
+                }), undefined === input.z || "number" === typeof input.z || $report(_exceptionable, {
+                    path: _path + ".z",
+                    expected: "(number | undefined)",
+                    value: input.z
+                }), undefined === input.dimension || "string" === typeof input.dimension || $report(_exceptionable, {
+                    path: _path + ".dimension",
+                    expected: "(string | undefined)",
+                    value: input.dimension
+                }), undefined === input.selector || "string" === typeof input.selector || $report(_exceptionable, {
+                    path: _path + ".selector",
+                    expected: "(string | undefined)",
+                    value: input.selector
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "sound", "volume", "pitch", "x", "y", "z", "dimension", "selector"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo96 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), (Array.isArray(input.random) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                })) && ((2 <= input.random.length || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "Array<> & MinItems<2>",
+                    value: input.random
+                })) && input.random.map((elem: any, _index45: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index45 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })) && $vo9(elem, _path + ".random[" + _index45 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index45 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                    value: elem
+                })).every((flag: boolean) => flag)) || $report(_exceptionable, {
+                    path: _path + ".random",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
+                    value: input.random
+                }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                })) && input.weights.map((elem: any, _index46: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index46 + "]",
+                    expected: "number",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".weights",
+                    expected: "(Array<number> | undefined)",
+                    value: input.weights
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "random", "weights"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo97 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.apply_tag || $report(_exceptionable, {
+                    path: _path + ".apply_tag",
+                    expected: "string",
+                    value: input.apply_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "apply_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo98 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.require_tag || "string" === typeof input.require_tag || $report(_exceptionable, {
+                    path: _path + ".require_tag",
+                    expected: "(string | undefined)",
+                    value: input.require_tag
+                }), "string" === typeof input.item_type || $report(_exceptionable, {
+                    path: _path + ".item_type",
+                    expected: "string",
+                    value: input.item_type
+                }), "string" === typeof input.remove_tag || $report(_exceptionable, {
+                    path: _path + ".remove_tag",
+                    expected: "string",
+                    value: input.remove_tag
+                }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["require_tag", "item_type", "remove_tag"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo99 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -3893,7 +5324,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo68 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo100 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -3925,7 +5356,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo69 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo101 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -3949,7 +5380,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo70 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo102 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -3977,7 +5408,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo71 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo103 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -3991,19 +5422,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.if_has_tag
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["equals", "require_tag", "if_has_tag", "then", "else"].some((prop: any) => key === prop))
@@ -4017,7 +5448,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo72 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo104 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4027,27 +5458,27 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), ("object" === typeof input.if_has_item && null !== input.if_has_item && false === Array.isArray(input.if_has_item) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 })) && $vo10(input.if_has_item, _path + ".if_has_item", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".if_has_item",
-                    expected: "Partial<NameSelector & LoreSelector & ItemTypeSelector>",
+                    expected: "Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>",
                     value: input.if_has_item
                 }), ("object" === typeof input.then && null !== input.then && false === Array.isArray(input.then) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 })) && $vo9(input.then, _path + ".then", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + ".then",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input.then
                 }), ("object" === typeof input["else"] && null !== input["else"] && false === Array.isArray(input["else"]) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 })) && $vo9(input["else"], _path + "[\"else\"]", true && _exceptionable) || $report(_exceptionable, {
                     path: _path + "[\"else\"]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: input["else"]
                 }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["equals", "require_tag", "if_has_item", "then", "else"].some((prop: any) => key === prop))
@@ -4061,7 +5492,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo73 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo105 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4085,7 +5516,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo74 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo106 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4095,19 +5526,19 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), (Array.isArray(input.sequence) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
-                })) && input.sequence.map((elem: any, _index42: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index42 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.sequence.map((elem: any, _index47: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index47 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".sequence[" + _index42 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".sequence[" + _index42 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".sequence[" + _index47 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".sequence[" + _index47 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
                     path: _path + ".sequence",
-                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>>",
+                    expected: "Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>>",
                     value: input.sequence
                 }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
                     if (["equals", "require_tag", "sequence"].some((prop: any) => key === prop))
@@ -4121,7 +5552,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo75 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo107 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4173,7 +5604,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo76 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo108 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4183,30 +5614,30 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     value: input.require_tag
                 }), (Array.isArray(input.random) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 })) && ((2 <= input.random.length || $report(_exceptionable, {
                     path: _path + ".random",
                     expected: "Array<> & MinItems<2>",
                     value: input.random
-                })) && input.random.map((elem: any, _index43: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index43 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && input.random.map((elem: any, _index48: number) => ("object" === typeof elem && null !== elem && false === Array.isArray(elem) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index48 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
-                })) && $vo9(elem, _path + ".random[" + _index43 + "]", true && _exceptionable) || $report(_exceptionable, {
-                    path: _path + ".random[" + _index43 + "]",
-                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                })) && $vo9(elem, _path + ".random[" + _index48 + "]", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".random[" + _index48 + "]",
+                    expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                     value: elem
                 })).every((flag: boolean) => flag)) || $report(_exceptionable, {
                     path: _path + ".random",
-                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>> & MinItems<2>)",
+                    expected: "(Array<Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>> & MinItems<2>)",
                     value: input.random
                 }), undefined === input.weights || (Array.isArray(input.weights) || $report(_exceptionable, {
                     path: _path + ".weights",
                     expected: "(Array<number> | undefined)",
                     value: input.weights
-                })) && input.weights.map((elem: any, _index44: number) => "number" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".weights[" + _index44 + "]",
+                })) && input.weights.map((elem: any, _index49: number) => "number" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".weights[" + _index49 + "]",
                     expected: "number",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
@@ -4225,7 +5656,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo77 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo109 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4249,7 +5680,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo78 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
+            const $vo110 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.equals || $report(_exceptionable, {
                     path: _path + ".equals",
                     expected: "string",
                     value: input.equals
@@ -4273,18 +5704,114 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                         value: value
                     });
                 }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
-            const $vo79 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [false === _exceptionable || Object.keys(input).map((key: any) => {
+            const $vo111 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [false === _exceptionable || Object.keys(input).map((key: any) => {
                     const value = input[key];
                     if (undefined === value)
                         return true;
                     if (RegExp(/(.*)/).test(key))
                         return ("object" === typeof value && null !== value && false === Array.isArray(value) || $report(_exceptionable, {
                             path: _path + $join(key),
-                            expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                            expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
                             value: value
                         })) && $vo9(value, _path + $join(key), true && _exceptionable) || $report(_exceptionable, {
                             path: _path + $join(key),
-                            expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ... 5 more ... & RemoveTag>",
+                            expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & Assign>",
+                            value: value
+                        });
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag)].every((flag: boolean) => flag);
+            const $vo112 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.player || ("object" === typeof input.player && null !== input.player && false === Array.isArray(input.player) || $report(_exceptionable, {
+                    path: _path + ".player",
+                    expected: "(Variables | undefined)",
+                    value: input.player
+                })) && $vo113(input.player, _path + ".player", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".player",
+                    expected: "(Variables | undefined)",
+                    value: input.player
+                }), undefined === input.npc || ("object" === typeof input.npc && null !== input.npc && false === Array.isArray(input.npc) || $report(_exceptionable, {
+                    path: _path + ".npc",
+                    expected: "(Variables | undefined)",
+                    value: input.npc
+                })) && $vo113(input.npc, _path + ".npc", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".npc",
+                    expected: "(Variables | undefined)",
+                    value: input.npc
+                }), undefined === input.global || ("object" === typeof input.global && null !== input.global && false === Array.isArray(input.global) || $report(_exceptionable, {
+                    path: _path + ".global",
+                    expected: "(Variables | undefined)",
+                    value: input.global
+                })) && $vo113(input.global, _path + ".global", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".global",
+                    expected: "(Variables | undefined)",
+                    value: input.global
+                }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["player", "npc", "global"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo113 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [undefined === input.flags || ("object" === typeof input.flags && null !== input.flags && false === Array.isArray(input.flags) || $report(_exceptionable, {
+                    path: _path + ".flags",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.flags
+                })) && $vo114(input.flags, _path + ".flags", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".flags",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.flags
+                }), undefined === input.bools || ("object" === typeof input.bools && null !== input.bools && false === Array.isArray(input.bools) || $report(_exceptionable, {
+                    path: _path + ".bools",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.bools
+                })) && $vo114(input.bools, _path + ".bools", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".bools",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.bools
+                }), undefined === input.bytes || ("object" === typeof input.bytes && null !== input.bytes && false === Array.isArray(input.bytes) || $report(_exceptionable, {
+                    path: _path + ".bytes",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.bytes
+                })) && $vo114(input.bytes, _path + ".bytes", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".bytes",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.bytes
+                }), undefined === input.u32 || ("object" === typeof input.u32 && null !== input.u32 && false === Array.isArray(input.u32) || $report(_exceptionable, {
+                    path: _path + ".u32",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.u32
+                })) && $vo114(input.u32, _path + ".u32", true && _exceptionable) || $report(_exceptionable, {
+                    path: _path + ".u32",
+                    expected: "(IndexedFields | undefined)",
+                    value: input.u32
+                }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+                    if (["flags", "bools", "bytes", "u32"].some((prop: any) => key === prop))
+                        return true;
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return $report(_exceptionable, {
+                        path: _path + $join(key),
+                        expected: "undefined",
+                        value: value
+                    });
+                }).every((flag: boolean) => flag))].every((flag: boolean) => flag);
+            const $vo114 = (input: any, _path: string, _exceptionable: boolean = true): boolean => [false === _exceptionable || Object.keys(input).map((key: any) => {
+                    const value = input[key];
+                    if (undefined === value)
+                        return true;
+                    if (RegExp(/(.*)/).test(key))
+                        return "string" === typeof value || $report(_exceptionable, {
+                            path: _path + $join(key),
+                            expected: "string",
                             value: value
                         });
                     return $report(_exceptionable, {
@@ -4305,68 +5832,74 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                 else if (undefined !== input.if_has_tag)
                     return $vo8(input, _path, true && _exceptionable);
                 else if (undefined !== input.if_has_item)
-                    return $vo11(input, _path, true && _exceptionable);
+                    return $vo31(input, _path, true && _exceptionable);
                 else if (undefined !== input.wait)
-                    return $vo12(input, _path, true && _exceptionable);
+                    return $vo32(input, _path, true && _exceptionable);
                 else if (undefined !== input.sequence)
-                    return $vo13(input, _path, true && _exceptionable);
+                    return $vo33(input, _path, true && _exceptionable);
                 else if (undefined !== input.sound)
-                    return $vo14(input, _path, true && _exceptionable);
+                    return $vo34(input, _path, true && _exceptionable);
                 else if (undefined !== input.random)
-                    return $vo15(input, _path, true && _exceptionable);
+                    return $vo35(input, _path, true && _exceptionable);
                 else if (undefined !== input.apply_tag)
-                    return $vo16(input, _path, true && _exceptionable);
+                    return $vo36(input, _path, true && _exceptionable);
                 else if (undefined !== input.remove_tag)
-                    return $vo17(input, _path, true && _exceptionable);
+                    return $vo37(input, _path, true && _exceptionable);
                 else
                     return $report(_exceptionable, {
                         path: _path,
-                        expected: "({ text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Action | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse | { text: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & RemoveTag)",
+                        expected: "({ text: string; } & RequireTag & Scene | { text: string; } & RequireTag & Action | { text: string; } & RequireTag & Command | { text: string; } & RequireTag & Menu | { text: string; } & RequireTag & { if_has_tag: string; } & ThenElse | { text: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { text: string; } & RequireTag & Wait | { text: string; } & RequireTag & Sequence | { text: string; } & RequireTag & Sound | { text: string; } & RequireTag & Random | { text: string; } & RequireTag & ApplyTag | { text: string; } & RequireTag & RemoveTag)",
                         value: input
                     });
             })();
             const $vu1 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
-                if ($vo19(input, _path, false && _exceptionable))
+                if (undefined !== input.set)
+                    return $vo11(input, _path, true && _exceptionable);
+                else if (undefined !== input.and)
+                    return $vo12(input, _path, true && _exceptionable);
+                else if (undefined !== input.or)
+                    return $vo13(input, _path, true && _exceptionable);
+                else if (undefined !== input.not)
+                    return $vo14(input, _path, true && _exceptionable);
+                else if (undefined !== input.player_has_item)
+                    return $vo15(input, _path, true && _exceptionable);
+                else if (undefined !== input.player_has_tag)
+                    return $vo16(input, _path, true && _exceptionable);
+                else if (undefined !== input.player_flag)
+                    return $vo17(input, _path, true && _exceptionable);
+                else if (undefined !== input.npc_has_tag)
+                    return $vo18(input, _path, true && _exceptionable);
+                else if (undefined !== input.npc_flag)
                     return $vo19(input, _path, true && _exceptionable);
-                else if ($vo20(input, _path, false && _exceptionable))
+                else if (undefined !== input.global_flag)
                     return $vo20(input, _path, true && _exceptionable);
-                else if ($vo21(input, _path, false && _exceptionable))
+                else if (undefined !== input.greater_than)
                     return $vo21(input, _path, true && _exceptionable);
-                else if ($vo22(input, _path, false && _exceptionable))
+                else if (undefined !== input.less_than)
                     return $vo22(input, _path, true && _exceptionable);
-                else if ($vo23(input, _path, false && _exceptionable))
+                else if (undefined !== input.equals)
                     return $vo23(input, _path, true && _exceptionable);
-                else if ($vo24(input, _path, false && _exceptionable))
+                else if (undefined !== input.add)
                     return $vo24(input, _path, true && _exceptionable);
-                else if ($vo25(input, _path, false && _exceptionable))
+                else if (undefined !== input.subtract)
                     return $vo25(input, _path, true && _exceptionable);
-                else if ($vo26(input, _path, false && _exceptionable))
+                else if (undefined !== input.multiply)
                     return $vo26(input, _path, true && _exceptionable);
-                else if ($vo27(input, _path, false && _exceptionable))
+                else if (undefined !== input.divide)
                     return $vo27(input, _path, true && _exceptionable);
-                else if ($vo28(input, _path, false && _exceptionable))
+                else if (undefined !== input.modulo)
                     return $vo28(input, _path, true && _exceptionable);
-                else if ($vo29(input, _path, false && _exceptionable))
+                else if (undefined !== input.random)
                     return $vo29(input, _path, true && _exceptionable);
-                else if ($vo30(input, _path, false && _exceptionable))
-                    return $vo30(input, _path, true && _exceptionable);
-                else if ($vo31(input, _path, false && _exceptionable))
-                    return $vo31(input, _path, true && _exceptionable);
-                else if ($vo32(input, _path, false && _exceptionable))
-                    return $vo32(input, _path, true && _exceptionable);
-                else if ($vo33(input, _path, false && _exceptionable))
-                    return $vo33(input, _path, true && _exceptionable);
-                else if ($vo34(input, _path, false && _exceptionable))
-                    return $vo34(input, _path, true && _exceptionable);
-                else if ($vo35(input, _path, false && _exceptionable))
-                    return $vo35(input, _path, true && _exceptionable);
-                else if ($vo36(input, _path, false && _exceptionable))
-                    return $vo36(input, _path, true && _exceptionable);
-                else if ($vo37(input, _path, false && _exceptionable))
-                    return $vo37(input, _path, true && _exceptionable);
-                else if ($vo38(input, _path, false && _exceptionable))
-                    return $vo38(input, _path, true && _exceptionable);
-                else if ($vo39(input, _path, false && _exceptionable))
+                else
+                    return $report(_exceptionable, {
+                        path: _path,
+                        expected: "(Assign | And | Or | Not | PlayerHasItem | PlayerHasTag | PlayerFlag | NpcHasTag | NpcFlag | GlobalFlag | { value: OperationReference; } & Boolean & { greater_than: OperationReference; } | { value: OperationReference; } & Boolean & { less_than: OperationReference; } | { value: OperationReference; } & Boolean & { equals: OperationReference; } | { value: OperationReference; } & Boolean & { add: OperationReference; } | { value: OperationReference; } & Boolean & { subtract: OperationReference; } | { value: OperationReference; } & Boolean & { multiply: OperationReference; } | { value: OperationReference; } & Boolean & { divide: OperationReference; } | { value: OperationReference; } & Boolean & { modulo: OperationReference; } | Random)",
+                        value: input
+                    });
+            })();
+            const $vu2 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
+                if ($vo39(input, _path, false && _exceptionable))
                     return $vo39(input, _path, true && _exceptionable);
                 else if ($vo40(input, _path, false && _exceptionable))
                     return $vo40(input, _path, true && _exceptionable);
@@ -4422,42 +5955,106 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     return $vo65(input, _path, true && _exceptionable);
                 else if ($vo66(input, _path, false && _exceptionable))
                     return $vo66(input, _path, true && _exceptionable);
+                else if ($vo67(input, _path, false && _exceptionable))
+                    return $vo67(input, _path, true && _exceptionable);
+                else if ($vo68(input, _path, false && _exceptionable))
+                    return $vo68(input, _path, true && _exceptionable);
+                else if ($vo69(input, _path, false && _exceptionable))
+                    return $vo69(input, _path, true && _exceptionable);
+                else if ($vo70(input, _path, false && _exceptionable))
+                    return $vo70(input, _path, true && _exceptionable);
+                else if ($vo71(input, _path, false && _exceptionable))
+                    return $vo71(input, _path, true && _exceptionable);
+                else if ($vo72(input, _path, false && _exceptionable))
+                    return $vo72(input, _path, true && _exceptionable);
+                else if ($vo73(input, _path, false && _exceptionable))
+                    return $vo73(input, _path, true && _exceptionable);
+                else if ($vo74(input, _path, false && _exceptionable))
+                    return $vo74(input, _path, true && _exceptionable);
+                else if ($vo75(input, _path, false && _exceptionable))
+                    return $vo75(input, _path, true && _exceptionable);
+                else if ($vo76(input, _path, false && _exceptionable))
+                    return $vo76(input, _path, true && _exceptionable);
+                else if ($vo77(input, _path, false && _exceptionable))
+                    return $vo77(input, _path, true && _exceptionable);
+                else if ($vo78(input, _path, false && _exceptionable))
+                    return $vo78(input, _path, true && _exceptionable);
+                else if ($vo79(input, _path, false && _exceptionable))
+                    return $vo79(input, _path, true && _exceptionable);
+                else if ($vo80(input, _path, false && _exceptionable))
+                    return $vo80(input, _path, true && _exceptionable);
+                else if ($vo81(input, _path, false && _exceptionable))
+                    return $vo81(input, _path, true && _exceptionable);
+                else if ($vo82(input, _path, false && _exceptionable))
+                    return $vo82(input, _path, true && _exceptionable);
+                else if ($vo83(input, _path, false && _exceptionable))
+                    return $vo83(input, _path, true && _exceptionable);
+                else if ($vo84(input, _path, false && _exceptionable))
+                    return $vo84(input, _path, true && _exceptionable);
+                else if ($vo85(input, _path, false && _exceptionable))
+                    return $vo85(input, _path, true && _exceptionable);
+                else if ($vo86(input, _path, false && _exceptionable))
+                    return $vo86(input, _path, true && _exceptionable);
+                else if ($vo87(input, _path, false && _exceptionable))
+                    return $vo87(input, _path, true && _exceptionable);
+                else if ($vo88(input, _path, false && _exceptionable))
+                    return $vo88(input, _path, true && _exceptionable);
+                else if ($vo89(input, _path, false && _exceptionable))
+                    return $vo89(input, _path, true && _exceptionable);
+                else if ($vo90(input, _path, false && _exceptionable))
+                    return $vo90(input, _path, true && _exceptionable);
+                else if ($vo91(input, _path, false && _exceptionable))
+                    return $vo91(input, _path, true && _exceptionable);
+                else if ($vo92(input, _path, false && _exceptionable))
+                    return $vo92(input, _path, true && _exceptionable);
+                else if ($vo93(input, _path, false && _exceptionable))
+                    return $vo93(input, _path, true && _exceptionable);
+                else if ($vo94(input, _path, false && _exceptionable))
+                    return $vo94(input, _path, true && _exceptionable);
+                else if ($vo95(input, _path, false && _exceptionable))
+                    return $vo95(input, _path, true && _exceptionable);
+                else if ($vo96(input, _path, false && _exceptionable))
+                    return $vo96(input, _path, true && _exceptionable);
+                else if ($vo97(input, _path, false && _exceptionable))
+                    return $vo97(input, _path, true && _exceptionable);
+                else if ($vo98(input, _path, false && _exceptionable))
+                    return $vo98(input, _path, true && _exceptionable);
                 else
                     return $report(_exceptionable, {
                         path: _path,
-                        expected: "(RequireTag & NameSelector & Scene | RequireTag & NameSelector & Action | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & Wait | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Random | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & RemoveTag | RequireTag & TagSelector & Scene | RequireTag & TagSelector & Action | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & Wait | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Random | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & RemoveTag)",
+                        expected: "(RequireTag & TagSelector & Scene | RequireTag & TagSelector & Action | RequireTag & TagSelector & Command | RequireTag & TagSelector & Menu | RequireTag & TagSelector & { if_has_tag: string; } & ThenElse | RequireTag & TagSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & TagSelector & Wait | RequireTag & TagSelector & Sequence | RequireTag & TagSelector & Sound | RequireTag & TagSelector & Random | RequireTag & TagSelector & ApplyTag | RequireTag & TagSelector & RemoveTag | RequireTag & NameSelector & Scene | RequireTag & NameSelector & Action | RequireTag & NameSelector & Command | RequireTag & NameSelector & Menu | RequireTag & NameSelector & { if_has_tag: string; } & ThenElse | RequireTag & NameSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & NameSelector & Wait | RequireTag & NameSelector & Sequence | RequireTag & NameSelector & Sound | RequireTag & NameSelector & Random | RequireTag & NameSelector & ApplyTag | RequireTag & NameSelector & RemoveTag | RequireTag & SelectorSelector & Scene | RequireTag & SelectorSelector & Action | RequireTag & SelectorSelector & Command | RequireTag & SelectorSelector & Menu | RequireTag & SelectorSelector & { if_has_tag: string; } & ThenElse | RequireTag & SelectorSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & SelectorSelector & Wait | RequireTag & SelectorSelector & Sequence | RequireTag & SelectorSelector & Sound | RequireTag & SelectorSelector & Random | RequireTag & SelectorSelector & ApplyTag | RequireTag & SelectorSelector & RemoveTag | RequireTag & LoreSelector & Scene | RequireTag & LoreSelector & Action | RequireTag & LoreSelector & Command | RequireTag & LoreSelector & Menu | RequireTag & LoreSelector & { if_has_tag: string; } & ThenElse | RequireTag & LoreSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & LoreSelector & Wait | RequireTag & LoreSelector & Sequence | RequireTag & LoreSelector & Sound | RequireTag & LoreSelector & Random | RequireTag & LoreSelector & ApplyTag | RequireTag & LoreSelector & RemoveTag | RequireTag & ItemTypeSelector & Scene | RequireTag & ItemTypeSelector & Action | RequireTag & ItemTypeSelector & Command | RequireTag & ItemTypeSelector & Menu | RequireTag & ItemTypeSelector & { if_has_tag: string; } & ThenElse | RequireTag & ItemTypeSelector & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | RequireTag & ItemTypeSelector & Wait | RequireTag & ItemTypeSelector & Sequence | RequireTag & ItemTypeSelector & Sound | RequireTag & ItemTypeSelector & Random | RequireTag & ItemTypeSelector & ApplyTag | RequireTag & ItemTypeSelector & RemoveTag)",
                         value: input
                     });
             })();
-            const $vu2 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
+            const $vu3 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
                 if (undefined !== input.scene)
-                    return $vo67(input, _path, true && _exceptionable);
+                    return $vo99(input, _path, true && _exceptionable);
                 else if (undefined !== input.action)
-                    return $vo68(input, _path, true && _exceptionable);
+                    return $vo100(input, _path, true && _exceptionable);
                 else if (undefined !== input.command)
-                    return $vo69(input, _path, true && _exceptionable);
+                    return $vo101(input, _path, true && _exceptionable);
                 else if (undefined !== input.menu)
-                    return $vo70(input, _path, true && _exceptionable);
+                    return $vo102(input, _path, true && _exceptionable);
                 else if (undefined !== input.if_has_tag)
-                    return $vo71(input, _path, true && _exceptionable);
+                    return $vo103(input, _path, true && _exceptionable);
                 else if (undefined !== input.if_has_item)
-                    return $vo72(input, _path, true && _exceptionable);
+                    return $vo104(input, _path, true && _exceptionable);
                 else if (undefined !== input.wait)
-                    return $vo73(input, _path, true && _exceptionable);
+                    return $vo105(input, _path, true && _exceptionable);
                 else if (undefined !== input.sequence)
-                    return $vo74(input, _path, true && _exceptionable);
+                    return $vo106(input, _path, true && _exceptionable);
                 else if (undefined !== input.sound)
-                    return $vo75(input, _path, true && _exceptionable);
+                    return $vo107(input, _path, true && _exceptionable);
                 else if (undefined !== input.random)
-                    return $vo76(input, _path, true && _exceptionable);
+                    return $vo108(input, _path, true && _exceptionable);
                 else if (undefined !== input.apply_tag)
-                    return $vo77(input, _path, true && _exceptionable);
+                    return $vo109(input, _path, true && _exceptionable);
                 else if (undefined !== input.remove_tag)
-                    return $vo78(input, _path, true && _exceptionable);
+                    return $vo110(input, _path, true && _exceptionable);
                 else
                     return $report(_exceptionable, {
                         path: _path,
-                        expected: "({ equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse | { equals: string; } & RequireTag & { if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & RemoveTag)",
+                        expected: "({ equals: string; } & RequireTag & Scene | { equals: string; } & RequireTag & Action | { equals: string; } & RequireTag & Command | { equals: string; } & RequireTag & Menu | { equals: string; } & RequireTag & { if_has_tag: string; } & ThenElse | { equals: string; } & RequireTag & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ThenElse | { equals: string; } & RequireTag & Wait | { equals: string; } & RequireTag & Sequence | { equals: string; } & RequireTag & Sound | { equals: string; } & RequireTag & Random | { equals: string; } & RequireTag & ApplyTag | { equals: string; } & RequireTag & RemoveTag)",
                         value: input
                     });
             })();

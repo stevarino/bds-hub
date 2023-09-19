@@ -21,6 +21,7 @@ import { actionList } from './buildArtifacts.js';
 import { readBuildFile, SceneFile, SceneFileScene } from '../types/configFile.js';
 import { UniqueMap } from '../types/unique_map.js';
 import { npcSkins } from '../types/dialogueTypes.js';
+import { DefaultMap } from '../types/default_map.js';
 
 const COPY_DIRS: [string, string][] = [
   [join(lib.root, 'dist/behavior_pack/static'), Constants.BP_OUTPUT],
@@ -36,6 +37,8 @@ class SceneFileData {
   items: Dialogue.ItemUse[] = [];
   chats: Dialogue.Chat[] = [];
   actions = new UniqueMap<string, Dialogue.Transition>();
+  variables = new UniqueMap<string, [scope: string, type: string, index: number]>();
+  variableTypes = new DefaultMap((scopeAndType: string) => new UniqueMap<number, string>());
 }
 
 /** Assemble all the files for the add-on pack */
@@ -54,6 +57,7 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
     items: sceneData.items,
     chats: sceneData.chats,
     actions: Object.fromEntries(sceneData.actions),
+    variables: Object.fromEntries(sceneData.variables),
   });
   await rollupPack();
   await createZipFiles();
@@ -184,10 +188,14 @@ export async function parseScriptFiles(config: ConfigFile) {
 }
 
 function parseScriptFile(script: Dialogue.ScriptFile, data: SceneFileData) {
-  const referencedScenes = new Set<string>();
-
   data.items.push(...(script.items ?? []));
   data.chats.push(...(script.chats ?? []));
+  parseVariables(script, data);
+  return parseActors(script, data);;
+}
+
+function parseActors(script: Dialogue.ScriptFile, data: SceneFileData) {
+  const referencedScenes = new Set<string>();
 
   for (const actor of script.actors ?? []) {
     const extra: {skin?: number, scene: string, roles: string[]} = {
@@ -213,6 +221,27 @@ function parseScriptFile(script: Dialogue.ScriptFile, data: SceneFileData) {
     referencedScenes.add(extra.scene);
   }
   return referencedScenes;
+}
+
+function parseVariables(script: Dialogue.ScriptFile, data: SceneFileData) {
+  for (const [vScope, variables] of Object.entries(script.variables ?? {})) {
+    console.log(vScope);
+    for (const [vType, varFields] of Object.entries(variables)) {
+      for (const [vIndex, vName] of Object.entries(varFields)) {
+        const index = parseInt(vIndex);
+        try {
+          data.variables.set(vName as string, [vScope, vType, index]);
+        } catch (e) {
+          throw new Error(`Duplicate variable key defined: ${vName}`);
+        }
+        try {
+          data.variableTypes.get(`${vScope}_${vType}`).set(index, vName as string);
+        } catch (e) {
+          throw new Error(`Duplicate variable index for [${vScope} ${vType}]: ${index}`);
+        }
+      }
+    }
+  }
 }
 
 /** Trim any unused scenes */

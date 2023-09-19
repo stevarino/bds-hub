@@ -2,6 +2,12 @@
  * Interface types (menus, dialogues, forms, etc)
 *******************************************************************************/
 
+import * as logic from './logic.js';
+import * as selectors from './/selectors.js';
+
+export * as logic from './logic.js'
+export * as selectors from './selectors.js'
+
 export type Obj<T> = {[key: string]: T};
 
 /** Pack-side function */
@@ -99,14 +105,18 @@ export interface MenuDetails {
 export interface ThenElse {
   then: Transition,
   else: Transition,
-}
+};
+
+export type If = {
+  if: logic.OperationReference,
+} & ThenElse;
 
 export type HasTag = {
   if_has_tag: string,
 } & ThenElse;
 
 export type HasItem = {
-  if_has_item: Partial<NameSelector & LoreSelector & ItemTypeSelector>
+  if_has_item: selectors.SuperSelector
 } & ThenElse
 
 export interface Wait {
@@ -155,15 +165,12 @@ export interface Random {
   weights?: number[],
 }
 
-export interface TagSelector { tag: string }
-export interface NameSelector { name: string }
-export interface SelectorSelector { selector: string };
-export interface LoreSelector { lore: (string|null)[] };
-export interface ItemTypeSelector {item_type: string };
-
 /** A dialogue response */
 export type BaseTransition = Scene | Action | Command | Menu | HasTag | HasItem | Wait | Sequence | Sound | Random | ApplyTag | RemoveTag;
-export type Transition = Partial< Scene & Action & Command & Menu & HasTag & HasItem & Wait & Sequence & Sound & Random & ApplyTag & RemoveTag >;
+export type Transition = Partial< 
+  Scene & Action & Command & Menu & HasTag & HasItem & Wait & 
+  Sequence & Sound & Random & ApplyTag & RemoveTag & 
+  logic.VariableReference >;
 export type TransitionMap = {[key: string]: Transition};
 
 export type Actor = { 
@@ -187,8 +194,8 @@ type RequireTag = { require_tag?: string };
 export type Button = { text: string } & RequireTag &  BaseTransition;
 export type SuperButton = Button & Transition & RequireTag;
 
-export type ItemUse = RequireTag & (TagSelector | NameSelector | LoreSelector | ItemTypeSelector) & BaseTransition;
-export type SuperItemUse = Partial<RequireTag & TagSelector & NameSelector & LoreSelector & ItemTypeSelector & Transition>;
+export type ItemUse = RequireTag & selectors.SubSelector & BaseTransition;
+export type SuperItemUse = Partial<RequireTag & selectors.SuperSelector & Transition>;
 
 export type Chat = { 
   equals: string,

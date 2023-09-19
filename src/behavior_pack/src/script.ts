@@ -6,12 +6,13 @@
 
 import { Chat, NormalizedActor, SuperItemUse, TransitionMap } from './types/packTypes.js';
 
-type Script = {
+export type Script = {
   transitions: TransitionMap,
   actions: TransitionMap,
   actors: Record<string, NormalizedActor>,
   items: SuperItemUse[],
   chats: Chat[],
+  variables: Record<string, [scope: string, type: string, index: number]>,
 };
 
 /** @overwrite */
@@ -21,6 +22,7 @@ export const script: Script = {
   actors: {},
   items: [],
   chats: [],
+  variables: {},
 };
 
 /** @overwrite */

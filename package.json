@@ -41,7 +41,7 @@
   "scripts": {
     "build": "npm run types && tsc && npm run finish && npm run hubValidateExamples",
     "prepare": "ts-patch install",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc; npx test",
     "finish": "node dist/scripts/finishBuild.js",
     "rollup": "node dist/scripts/rollup.js",
     "types": "npx typia generate --input src/types --output src/types_gen --project tsconfig.json",
@@ -50,6 +50,8 @@
     "hubConfig": "node dist/scripts/hubConfig.js",
     "hubPack": "node dist/scripts/hubPack.js",
     "hubValidateExamples": "node dist/scripts/hubValidateExamples.js",
+    "buildAndPack": "npm run build; npm run hubPack",
+    "buildAndInstall": "npm run build; npm run hubInstall",
     "patch": "npm run build && npm version patch && npm publish",
     "minor": "npm run build && npm version minor && npm publish",
     "major": "npm run build && npm version major && npm publish"

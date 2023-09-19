@@ -1,2 +1,2 @@
-export { btoa } from './btoa';
-export { atob } from './atob';
+export { btoa } from './btoa.js';
+export { atob } from './atob.js';

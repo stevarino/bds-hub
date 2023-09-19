@@ -36,6 +36,7 @@ export function configPath(filePath?: string): string {
 
 export function readConfig(filePath?: string): ConfigFile  {
   let p = configPath(filePath)
+  console.info('Loading config: ', p);
   if (!fs.existsSync(p)) {
     throw new Error(`Unable to find config file ${p}`);
   }

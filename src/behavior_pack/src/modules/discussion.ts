@@ -8,8 +8,10 @@ import { ActionFormData } from "@minecraft/server-ui";
 import { script } from '../script.js';
 import * as types from '../types/packTypes.js';
 import * as formlib from '../lib/form.js';
-import { DELAY } from "../lib/constants.js";
+import { DELAY, DIMENSION } from "../lib/constants.js";
 import { getFormResponse, showErrorMessage, timeout } from "../lib.js";
+import * as logic from "./logicParser.js";
+import * as data from './data.js'
 export { Args, Action } from '../types/packTypes.js';
 
 export type Callable = (
@@ -64,6 +66,36 @@ export class Discussion {
       return defaultValue;
     }
     return value as T;
+  }
+
+  /** Attempts to find the linked npc */
+  findNpc() {
+    if (this.npc === undefined) {
+      return undefined;
+    }
+    const npcs = [];
+    for (const dim of Object.values(DIMENSION)) {
+      try {
+        npcs.push(...mc.world.getDimension(dim).getEntities({tags: [this.npc]}));
+      } catch {
+        console.error('Invalid dimension: ', dim);
+      }
+    }
+    if (npcs.length === 0) return undefined;
+    if (npcs.length === 1) return npcs[0];
+    console.error(`Returned (${npcs.length}) entities for tag "${this.npc}"`);
+    return undefined;
+  }
+
+  getLogicParser(namespace: string) {
+    const npc = this.findNpc();
+    return new logic.Parser(
+      this.player,
+      data.globalMap.getNamespace(namespace),
+      data.getPlayerMap(this.player).getNamespace(namespace),
+      npc,
+      npc !== undefined ? data.getEntityMap(npc).getNamespace(namespace) : undefined,
+    )
   }
 
   async error(message: string, title?: string) {
@@ -131,6 +163,8 @@ const handlers = {
   sound: respondSound,
   apply_tag: applyTag,
   remove_tag: removeTag,
+  variable: computeVariable,
+  if: respondIf,
 }
 
 /** Iterates through all transition handlers, running the first that matches */
@@ -289,4 +323,20 @@ async function handleRandom(d: Discussion, args: types.Random) {
   if (transition !== undefined) {
     await d.handleTransition(transition);
   }
+}
+
+async function computeVariable(d: Discussion, args: logic.types.VariableReference) {
+  const parser = d.getLogicParser('s');
+  if (args.value !== undefined) {
+    const value = parser.parseLogic(args.value);
+    parser.setValue(args.variable, value);
+  }
+}
+
+async function respondIf(d: Discussion, args: types.If) {
+  const parser = d.getLogicParser('s');
+  if (parser.parseLogic(args.if)) {
+    return await d.handleTransition(args.then);
+  }
+  return await d.handleTransition(args.else);
 }

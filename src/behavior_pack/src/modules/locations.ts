@@ -55,7 +55,7 @@ async function startup() {
 function onTick() {
   mc.system.runTimeout(onTick, 5);
   for (const player of mc.world.getAllPlayers()) {
-    if (settings.getPlayerDefaultBit(player, LocationShown, true)) {
+    if (settings.getPlayerBit(player, LocationShown, true)) {
       const locs: [string, number][] = [];
       const ploc = player.location;
       for (const loc of locations) {

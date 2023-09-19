@@ -26,7 +26,7 @@ function onTick() {
 }
 
 function getPlayerText(player: mc.Player) {
-  if (settings.getPlayerDefaultBit(player, showItemDurability) === true) {
+  if (settings.getPlayerBit(player, showItemDurability) === true) {
     const equipment = player.getComponent(
       'minecraft:equipment_inventory'
     ) as mc.EntityEquipmentInventoryComponent|undefined;
