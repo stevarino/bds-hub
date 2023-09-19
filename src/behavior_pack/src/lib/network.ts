@@ -1,13 +1,13 @@
-import { variables } from "@minecraft/server-admin";
 import * as mcnet from "@minecraft/server-net";
-import { Ctx } from "../types/requests";
-export * from '../types/requests';
+import { Ctx } from "../types/requests.js";
+import * as script from '../script.js'
+export * from '../types/requests.js';
 
 Ctx.listener = async (endpoint: string, req: object|undefined) => {
   return await _request(endpoint, req)
 }
 
-export const HOST = variables.get('host');
+export const HOST = script.host;
 
 export async function _request<T = unknown>(endpoint: string, body?: string|object, headers?: Record<string, string>) {
   if (typeof body !== 'string') {
@@ -19,7 +19,7 @@ export async function _request<T = unknown>(endpoint: string, body?: string|obje
 
   if (body !== undefined) {
     req.setBody(body);
-    req.setMethod(mcnet.HttpRequestMethod.Post);
+    req.setMethod(mcnet.HttpRequestMethod.POST);
   }
   if (headers !== undefined) {
     const headerObjs: mcnet.HttpHeader[] = [];

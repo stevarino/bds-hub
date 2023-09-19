@@ -92,6 +92,10 @@ system.afterEvents.scriptEventReceive.subscribe(e => {
       console.error('Invalid interact message: ', e.message);
       return;
     }
+    if (e.sourceEntity === undefined) {
+      console.error('Received undefined for sourceEntity: ', e.id, e.message);
+      return;
+    }
     const playerName = e.message.slice(index + 1).replace(/^\s+/, '');
     const players = world.getAllPlayers().filter(p => p.name === playerName);
     if (players.length !== 1) {

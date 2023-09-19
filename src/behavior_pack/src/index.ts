@@ -119,14 +119,14 @@ world.afterEvents.playerLeave.subscribe(e => {
   }
 });
 
-world.afterEvents.blockBreak.subscribe(e => {
+world.afterEvents.playerBreakBlock.subscribe(e => {
   addEntityEvent(e.player.name, {
     action: types.Actions.breakBlock,
     object: e.brokenBlockPermutation.type.id,
   });
 });
 
-world.afterEvents.blockPlace.subscribe(e => {
+world.afterEvents.playerPlaceBlock.subscribe(e => {
   addEntityEvent(e.player.name, {
     action: types.Actions.placeBlock,
     object: e.block.typeId,

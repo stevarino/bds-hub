@@ -16,10 +16,9 @@
     "yaml": "^2.3.1"
   },
   "devDependencies": {
-    "@minecraft/server": "^1.6.0-beta.1.20.30-preview.20",
-    "@minecraft/server-admin": "^1.0.0-beta.1.20.30-preview.20",
-    "@minecraft/server-net": "^1.0.0-beta.1.20.30-preview.20",
-    "@minecraft/server-ui": "^1.2.0-beta.1.20.30-preview.20",
+    "@minecraft/server": "^1.6.0-beta.1.20.30-stable",
+    "@minecraft/server-net": "^1.0.0-beta.1.20.30-stable",
+    "@minecraft/server-ui": "^1.2.0-beta.1.20.30-stable",
     "@types/archiver": "^5.3.2",
     "@types/node": "^20.4.10",
     "@typescript-eslint/eslint-plugin": "^6.2.0",

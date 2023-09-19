@@ -14,7 +14,6 @@ import { createPackFiles } from './hubPack.js';
 
 const modules = [
   "@minecraft/server",
-  "@minecraft/server-admin",
   "@minecraft/server-net",
   "@minecraft/server-ui",
 ];
@@ -99,24 +98,6 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
       console.info("Updating permissions file: ", permFile);
       fs.writeFileSync(permFile, JSON.stringify(contents));
     }
-  }
-
-  // install variables file
-  const varFile = join(configDir, 'variables.json');
-  needWrite = false;
-  fs.mkdirSync(configDir, {recursive: true});
-  let vars: Obj<unknown> = {};
-  if (fs.existsSync(varFile)) {
-    vars = JSON.parse(fs.readFileSync(varFile, 'utf-8'));
-  }
-  const host = config.host ?? `http://127.0.0.1:${config.port ?? 8888}`;
-  if (vars.host != host) {
-    vars.host = host;
-    needWrite = true;
-  }
-  if (needWrite) {
-    console.info('Updating ', varFile);
-    fs.writeFileSync(varFile, JSON.stringify(vars));
   }
 }
 

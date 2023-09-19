@@ -29,12 +29,12 @@ function getPlayerText(player: mc.Player) {
   if (settings.getPlayerBit(player, showItemDurability) === true) {
     const equipment = player.getComponent(
       'minecraft:equipment_inventory'
-    ) as mc.EntityEquipmentInventoryComponent|undefined;
+    ) as mc.EntityEquippableComponent|undefined;
     if (equipment === undefined) {
       console.error('Unable to get player equipment');
       return;
     }
-    const item = equipment.getEquipment(mc.EquipmentSlot.mainhand);
+    const item = equipment.getEquipment(mc.EquipmentSlot.Mainhand);
     if (item === undefined) return;
     const durability = item.getComponent('minecraft:durability') as mc.ItemDurabilityComponent|undefined;
     if (durability === undefined) return;
