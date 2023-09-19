@@ -36,6 +36,7 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
     },
   }
 
+  /** Install pack files into directories and world_*_packs.json */
   for (const [name, props] of Object.entries(mapping)) {
     const dir = join(mcDir, `${argn.dev === undefined ? '' : 'development_'}${name}_packs`);
     const packFile = join(dir, basename(props.pack));
@@ -49,7 +50,7 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
     }
   }
   
-  // check allowed_modules
+  /** Add dependencies to permissions.json */
   const permissionsFile = join(mcDir, 'config', 'default', 'permissions.json');
   const permissions = JSON.parse(fs.readFileSync(permissionsFile, 'utf-8'));
   if (!(permissions.allowed_modules as string[]).includes('@minecraft/server-net')) {
@@ -94,10 +95,10 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
         }
       }
     }
-    if (needWrite) {
-      console.info("Updating permissions file: ", permFile);
-      fs.writeFileSync(permFile, JSON.stringify(contents));
-    }
+  }
+  if (needWrite) {
+    console.info("Updating permissions file: ", permFile);
+    fs.writeFileSync(permFile, JSON.stringify(contents));
   }
 }
 

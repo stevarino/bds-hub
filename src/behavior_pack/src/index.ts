@@ -46,7 +46,7 @@ async function poll() {
   try {
     res = await CheckIn.request(copy);
   } catch(e) {
-    console.error('Failed to poll: ', e);
+    console.error(`Failed to poll: ${e}\n${(e as Error).stack}`);
     return;
   }
   if (res === undefined) {  // 2147954429 on error?

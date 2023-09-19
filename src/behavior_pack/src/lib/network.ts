@@ -18,8 +18,10 @@ export async function _request<T = unknown>(endpoint: string, body?: string|obje
   req.setTimeout(0.5);
 
   if (body !== undefined) {
+    //@ts-ignore
+    const method = mcnet.HttpRequestMethod.POST ?? mcnet.HttpRequestMethod.Post;
+    req.setMethod(method);
     req.setBody(body);
-    req.setMethod(mcnet.HttpRequestMethod.POST);
   }
   if (headers !== undefined) {
     const headerObjs: mcnet.HttpHeader[] = [];
