@@ -25,7 +25,9 @@ export interface ConfigFile {
     users: {[discordUsername: string]: string},
   }
   // list of files to be included as dialogues (accepts json and yaml)
-  script_files?: string[]
+  script_files?: string[],
+  // list of optiaonl addons to include.
+  addons?: string[],
 };
 export const validateConfigFile = typia.createValidateEquals<ConfigFile>();
 
@@ -48,22 +50,52 @@ export interface ManifestFile {
     version: Version,
     min_engine_version: Version
   },
-  modules: {
+  modules: Array<{
     type: string,
     uuid: string,
     version: Version
     language?: string,
     entry?: string,
     description?: string,
-  }[]
-  dependencies?: {
+  }>
+  dependencies?: Array<{
     uuid?: string,
     module_name?: string,
     version: Version|string
-  }[]
+  }>
 }
 const parseManifest = typia.createAssert<ManifestFile>();
 export const readManifest = readAndParseJson(parseManifest);
+
+export namespace MinecraftAssetFiles {
+  export interface Entity {
+    description: {
+      identifier: string,
+    },
+    components?: {
+      "minecraft:type_family"?: {
+        family: string[],
+      },
+    },
+  };
+  export interface ClientEntity {
+    description: {
+      identifier: string,
+      render_controllers: string[],
+    },
+  };
+  export interface RenderContoller {
+    render_controllers: {
+      [key: string] : {
+        arrays?: {
+          textures?: {
+            "Array.skins"?: string[]
+          }
+        }
+      },
+    },
+  };
+}
 
 export interface SceneFileScene {
   scene_tag: string,
@@ -76,6 +108,7 @@ export interface SceneFileScene {
     commands: string[]
   }[],
 }
+
 export interface SceneFile {
   format_version: "1.17",
   "minecraft:npc_dialogue": {

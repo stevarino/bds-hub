@@ -50,7 +50,9 @@
     "hubPack": "node dist/scripts/hubPack.js",
     "hubValidateExamples": "node dist/scripts/hubValidateExamples.js",
     "buildAndPack": "npm run build; npm run hubPack",
+    "buildAndPackDev": "npm run build; npm run hubPack -- --preserveTempFiles",
     "buildAndInstall": "npm run build; npm run hubInstall",
+    "buildAndInstallDev": "npm run build; npm run hubInstall -- --preserveTempFiles",
     "patch": "npm run build && npm version patch && npm publish",
     "minor": "npm run build && npm version minor && npm publish",
     "major": "npm run build && npm version major && npm publish"

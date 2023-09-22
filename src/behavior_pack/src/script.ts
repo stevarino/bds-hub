@@ -26,6 +26,9 @@ export const script: Script = {
 };
 
 /** @overwrite */
+export const npcSkins: Record<string, string[]> = {};
+
+/** @overwrite */
 export const host: string|undefined = undefined;
 
 /** @overwrite */

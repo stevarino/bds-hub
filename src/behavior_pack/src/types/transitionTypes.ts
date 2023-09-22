@@ -179,6 +179,8 @@ export type Actor = {
   scene?: string,
   /** NPC scale percentage, with 100 being normal */
   scale?: 25|50|75|100|125|150,
+  /** entity class - ie hub:npc */
+  entityId?: string,
   skin?: string,
   /** additional roles this Actor performs */
   roles?: string[],

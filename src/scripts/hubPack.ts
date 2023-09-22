@@ -19,9 +19,9 @@ import { BuildFile, ConfigFile, Dialogue, failValidation, Obj, readManifest, typ
 
 import { actionList } from './buildArtifacts.js';
 import { readBuildFile, SceneFile, SceneFileScene } from '../types/configFile.js';
-import { UniqueMap } from '../types/unique_map.js';
-import { npcSkins } from '../types/dialogueTypes.js';
-import { DefaultMap } from '../types/default_map.js';
+
+import { PackData } from './pack_lib/pack_data.js';
+import { parseAddons } from './pack_lib/addons.js';
 
 const COPY_DIRS: [string, string][] = [
   [join(lib.root, 'dist/behavior_pack/static'), Constants.BP_OUTPUT],
@@ -31,27 +31,19 @@ const COPY_DIRS: [string, string][] = [
 
 let BUILD_INFO: BuildFile;
 
-class SceneFileData {
-  scenes = new UniqueMap<string, Dialogue.SavedScene>();
-  actors = new UniqueMap<string, Dialogue.NormalizedActor>();
-  items: Dialogue.ItemUse[] = [];
-  chats: Dialogue.Chat[] = [];
-  actions = new UniqueMap<string, Dialogue.Transition>();
-  variables = new UniqueMap<string, [scope: string, type: string, index: number]>();
-  variableTypes = new DefaultMap((scopeAndType: string) => new UniqueMap<number, string>());
-}
-
 /** Assemble all the files for the add-on pack */
 export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   loadBuildFile();
+  const packData = new PackData();
   if (argn === undefined) argn = {};
   await copyStatic();
-  const sceneData = await parseScriptFiles(config);
+  await parseAddons(config, packData);
+  const sceneData = await parseScriptFiles(config, packData);
   // WIP.
   // trimScriptData(sceneData);
   const { transitions, sceneFile } = assembleScenes(sceneData);
   writeSceneFile(sceneFile);
-  writeScriptFile(config, {
+  writeScriptFile(config, packData, {
     transitions,
     actors: Object.fromEntries(sceneData.actors),
     items: sceneData.items,
@@ -78,7 +70,6 @@ function loadBuildFile() {
       rp_version: [1,0,0],
       rp_hash: ''
     };
-    
     lib.write(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
   }
 }
@@ -90,12 +81,13 @@ async function copyStatic() {
   }
 }
 
-function writeScriptFile(config: ConfigFile, script: unknown) {
+function writeScriptFile(config: ConfigFile, data: PackData, script: unknown) {
   const manifest = readManifest(Constants.BP_MAN);
   lib.updateConstantsFile(Constants.ADDON_SCRIPT, {
     script: script,
     host: config.host,
     version: manifest.header.version.join('.'),
+    npcSkins: Object.fromEntries(data.npcSkins),
   });
 }
 
@@ -121,9 +113,8 @@ async function rollupPack() {
 }
 
 /** Parse and validate dialogue files */
-export async function parseScriptFiles(config: ConfigFile) {
+export async function parseScriptFiles(config: ConfigFile, data: PackData) {
   const referencedScenes = new Set<string>();
-  const data = new SceneFileData();
   
   const scenes_dir = join(lib.root, 'dist/scenes');
   
@@ -187,14 +178,14 @@ export async function parseScriptFiles(config: ConfigFile) {
   return data;
 }
 
-function parseScriptFile(script: Dialogue.ScriptFile, data: SceneFileData) {
+function parseScriptFile(script: Dialogue.ScriptFile, data: PackData) {
   data.items.push(...(script.items ?? []));
   data.chats.push(...(script.chats ?? []));
   parseVariables(script, data);
   return parseActors(script, data);;
 }
 
-function parseActors(script: Dialogue.ScriptFile, data: SceneFileData) {
+function parseActors(script: Dialogue.ScriptFile, data: PackData) {
   const referencedScenes = new Set<string>();
 
   for (const actor of script.actors ?? []) {
@@ -213,8 +204,17 @@ function parseActors(script: Dialogue.ScriptFile, data: SceneFileData) {
       });
     }
 
+    if (actor.entityId === undefined) actor.entityId = 'hub:npc';
+
     if (actor.skin !== undefined) {
-      extra.skin = npcSkins[actor.skin as keyof typeof npcSkins];
+      const skins = data.npcSkins.get(actor.entityId);
+      if (skins === undefined || skins.length === 0) {
+        throw new Error(`[Actor ${actor.id}]: No skins defined for entity "${actor.entityId}"`);
+      }
+      extra.skin = skins.indexOf(actor.skin);
+      if (extra.skin === -1) throw new Error(
+        `[Actor ${actor.id}]: Skin "${actor.skin}" not found for entity "${actor.entityId}"`
+      );
     }
 
     data.actors.set(actor.id, Object.assign({}, actor, extra));
@@ -223,7 +223,7 @@ function parseActors(script: Dialogue.ScriptFile, data: SceneFileData) {
   return referencedScenes;
 }
 
-function parseVariables(script: Dialogue.ScriptFile, data: SceneFileData) {
+function parseVariables(script: Dialogue.ScriptFile, data: PackData) {
   for (const [vScope, variables] of Object.entries(script.variables ?? {})) {
     console.log(vScope);
     for (const [vType, varFields] of Object.entries(variables)) {
@@ -245,7 +245,7 @@ function parseVariables(script: Dialogue.ScriptFile, data: SceneFileData) {
 }
 
 /** Trim any unused scenes */
-function trimScriptData(data: SceneFileData) {
+function trimScriptData(data: PackData) {
   let cnt = 0;
   const scenes = new Set<string>();
   const stack: string[] = [];
@@ -293,7 +293,7 @@ function trimScriptData(data: SceneFileData) {
 }
 
 /** Construct behavior pack dialogue file */
-export function assembleScenes(data: SceneFileData) {
+export function assembleScenes(data: PackData) {
   const sceneFile: SceneFileScene[] = [];
   const transitions: Dialogue.TransitionMap = {};
 

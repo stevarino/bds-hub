@@ -29,21 +29,23 @@ export interface ConfigFile {
     };
     // list of files to be included as dialogues (accepts json and yaml)
     script_files?: string[];
+    // list of optiaonl addons to include.
+    addons?: string[];
 }
 ;
 export const validateConfigFile = (input: any): typia.IValidation<ConfigFile> => {
     const errors = [] as any[];
     const __is = (input: any, _exceptionable: boolean = true): input is ConfigFile => {
         const $join = (typia.createValidateEquals as any).join;
-        const $io0 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.port || "number" === typeof input.port) && (undefined === input.host || "string" === typeof input.host) && (undefined === input.databaseFilename || "string" === typeof input.databaseFilename) && (undefined === input.discord || "object" === typeof input.discord && null !== input.discord && $io1(input.discord, true && _exceptionable)) && (undefined === input.script_files || Array.isArray(input.script_files) && input.script_files.every((elem: any, _index1: number) => "string" === typeof elem)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-            if (["port", "host", "databaseFilename", "discord", "script_files"].some((prop: any) => key === prop))
+        const $io0 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.port || "number" === typeof input.port) && (undefined === input.host || "string" === typeof input.host) && (undefined === input.databaseFilename || "string" === typeof input.databaseFilename) && (undefined === input.discord || "object" === typeof input.discord && null !== input.discord && $io1(input.discord, true && _exceptionable)) && (undefined === input.script_files || Array.isArray(input.script_files) && input.script_files.every((elem: any, _index1: number) => "string" === typeof elem)) && (undefined === input.addons || Array.isArray(input.addons) && input.addons.every((elem: any, _index2: number) => "string" === typeof elem)) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+            if (["port", "host", "databaseFilename", "discord", "script_files", "addons"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
                 return true;
             return false;
         }));
-        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.token && "string" === typeof input.app_id && (Array.isArray(input.channels) && input.channels.every((elem: any, _index2: number) => "string" === typeof elem)) && (undefined === input.nick || "string" === typeof input.nick) && ("object" === typeof input.users && null !== input.users && false === Array.isArray(input.users) && $io2(input.users, true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        const $io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.token && "string" === typeof input.app_id && (Array.isArray(input.channels) && input.channels.every((elem: any, _index3: number) => "string" === typeof elem)) && (undefined === input.nick || "string" === typeof input.nick) && ("object" === typeof input.users && null !== input.users && false === Array.isArray(input.users) && $io2(input.users, true && _exceptionable)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
             if (["token", "app_id", "channels", "nick", "users"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
@@ -97,8 +99,20 @@ export const validateConfigFile = (input: any): typia.IValidation<ConfigFile> =>
                     path: _path + ".script_files",
                     expected: "(Array<string> | undefined)",
                     value: input.script_files
+                }), undefined === input.addons || (Array.isArray(input.addons) || $report(_exceptionable, {
+                    path: _path + ".addons",
+                    expected: "(Array<string> | undefined)",
+                    value: input.addons
+                })) && input.addons.map((elem: any, _index2: number) => "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".addons[" + _index2 + "]",
+                    expected: "string",
+                    value: elem
+                })).every((flag: boolean) => flag) || $report(_exceptionable, {
+                    path: _path + ".addons",
+                    expected: "(Array<string> | undefined)",
+                    value: input.addons
                 }), 0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-                    if (["port", "host", "databaseFilename", "discord", "script_files"].some((prop: any) => key === prop))
+                    if (["port", "host", "databaseFilename", "discord", "script_files", "addons"].some((prop: any) => key === prop))
                         return true;
                     const value = input[key];
                     if (undefined === value)
@@ -121,8 +135,8 @@ export const validateConfigFile = (input: any): typia.IValidation<ConfigFile> =>
                     path: _path + ".channels",
                     expected: "Array<string>",
                     value: input.channels
-                })) && input.channels.map((elem: any, _index2: number) => "string" === typeof elem || $report(_exceptionable, {
-                    path: _path + ".channels[" + _index2 + "]",
+                })) && input.channels.map((elem: any, _index3: number) => "string" === typeof elem || $report(_exceptionable, {
+                    path: _path + ".channels[" + _index3 + "]",
                     expected: "string",
                     value: elem
                 })).every((flag: boolean) => flag) || $report(_exceptionable, {
@@ -281,19 +295,19 @@ export interface ManifestFile {
         version: Version;
         min_engine_version: Version;
     };
-    modules: {
+    modules: Array<{
         type: string;
         uuid: string;
         version: Version;
         language?: string;
         entry?: string;
         description?: string;
-    }[];
-    dependencies?: {
+    }>;
+    dependencies?: Array<{
         uuid?: string;
         module_name?: string;
         version: Version | string;
-    }[];
+    }>;
 }
 const parseManifest = (input: any): ManifestFile => {
     const __is = (input: any): input is ManifestFile => {
@@ -511,6 +525,38 @@ const parseManifest = (input: any): ManifestFile => {
     return input;
 };
 export const readManifest = readAndParseJson(parseManifest);
+export namespace MinecraftAssetFiles {
+    export interface Entity {
+        description: {
+            identifier: string;
+        };
+        components?: {
+            "minecraft:type_family"?: {
+                family: string[];
+            };
+        };
+    }
+    ;
+    export interface ClientEntity {
+        description: {
+            identifier: string;
+            render_controllers: string[];
+        };
+    }
+    ;
+    export interface RenderContoller {
+        render_controllers: {
+            [key: string]: {
+                arrays?: {
+                    textures?: {
+                        "Array.skins"?: string[];
+                    };
+                };
+            };
+        };
+    }
+    ;
+}
 export interface SceneFileScene {
     scene_tag: string;
     text: string;

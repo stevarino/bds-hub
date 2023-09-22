@@ -105,6 +105,18 @@
       "hub:event_reset": { "set_property": { "hub:has_interact": false } }
     },
     "component_groups": {
+      "hub:reset": { "minecraft:mark_variant": { "value": 0 } },
+      "hub:interacted": { "minecraft:mark_variant": { "value": 1 } },
+      "hub:npc_scale_25": { "minecraft:scale": { "value": 0.25 } },
+      "hub:npc_scale_50": { "minecraft:scale": { "value": 0.50 } },
+      "hub:npc_scale_75": { "minecraft:scale": { "value": 0.75 } },
+      "hub:npc_scale_100": { "minecraft:scale": { "value": 1 } },
+      "hub:npc_scale_125": { "minecraft:scale": { "value": 1.25 } },
+      "hub:npc_scale_150": { "minecraft:scale": { "value": 1.50 } },
+      "hub:npc_scale_175": { "minecraft:scale": { "value": 1.75 } },
+      "hub:npc_scale_200": { "minecraft:scale": { "value": 2 } },
+      "hub:npc_scale_225": { "minecraft:scale": { "value": 2.25 } },
+      "hub:npc_scale_250": { "minecraft:scale": { "value": 2.50 } }
     }
   }
 }
