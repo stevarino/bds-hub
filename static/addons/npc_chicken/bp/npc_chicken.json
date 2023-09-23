@@ -31,7 +31,7 @@
       "minecraft:physics": {},
       "minecraft:nameable": {},
       "minecraft:scale": {
-        "value": 2.0
+        "value": 1.5
       },
       "minecraft:damage_sensor": {
         "triggers": {

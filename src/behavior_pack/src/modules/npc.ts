@@ -132,7 +132,9 @@ async function CreateNpc(d: Discussion) {
   });
   if (res === undefined) return;
 
-  const npc = d.player.dimension.spawnEntity('hub:npc', {
+  const entityId = script.actors[res.role.get()]?.entityId ?? 'hub:npc';
+  console.log('spawning entity: ', entityId);
+  const npc = d.player.dimension.spawnEntity(entityId, {
     x: Number(res.x.get()),
     y: Number(res.y.get()),
     z: Number(res.z.get()),
@@ -218,7 +220,7 @@ async function editBot(d: Discussion, isAdmin: boolean, npc: NpcState) {
     if (results.delete.get()) {
       STATE.rmNpc(npc.id);
       const success = await loadNpc(npc.location, npc.id, entity => {
-        entity.kill();
+        entity.remove();
       });
       if (!success) showErrorMessage(d.player, 'Failed to kill bot.');
     }

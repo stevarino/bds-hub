@@ -2,7 +2,7 @@
 actors:
   - id: example_greeter
     scene: example_greeter
-    skin: npc_teacher_5
+    skin: Texture.npc_teacher_5
     name: Old Man Jimmy
     scale: 75
 scenes:

@@ -205,6 +205,12 @@ function parseActors(script: Dialogue.ScriptFile, data: PackData) {
     }
 
     if (actor.entityId === undefined) actor.entityId = 'hub:npc';
+    if (data.npcSkins.get(actor.entityId) === undefined) {
+      const ids = JSON.stringify(Array.from(data.npcSkins.keys()));
+      throw new Error(
+        `NPC entity ID not found: "${actor.entityId}"; availalbe ids: ${ids}`
+      );
+    }
 
     if (actor.skin !== undefined) {
       const skins = data.npcSkins.get(actor.entityId);
@@ -212,9 +218,12 @@ function parseActors(script: Dialogue.ScriptFile, data: PackData) {
         throw new Error(`[Actor ${actor.id}]: No skins defined for entity "${actor.entityId}"`);
       }
       extra.skin = skins.indexOf(actor.skin);
-      if (extra.skin === -1) throw new Error(
-        `[Actor ${actor.id}]: Skin "${actor.skin}" not found for entity "${actor.entityId}"`
-      );
+      if (extra.skin === -1) {
+        const all = JSON.stringify(skins);
+        throw new Error(
+          `[Actor ${actor.id}]: Skin "${actor.skin}" not found for entity "${actor.entityId}"; available skins: ${all}`
+        );
+      }
     }
 
     data.actors.set(actor.id, Object.assign({}, actor, extra));
