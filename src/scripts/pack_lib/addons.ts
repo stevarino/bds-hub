@@ -27,7 +27,7 @@ type AddonAssets = {
 /** Load addons specified in your configuration file */
 export async function parseAddons(config: ConfigFile, data: PackData) {
 
-  const mappings = {
+  const assets: AddonAssets = {
     assets: new DefaultMap((assetType: string) => new Map<string, string>()),
     rcSkins: new Map<string, string[]>(),
     entityRcs: new Map<string, string[]>(),
@@ -40,15 +40,15 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
     if (!addon.includes('/')) {
       path = join(lib.root, 'static', 'addons', addon);
     }
-    if (!await loadAddon(data, addon, path, mappings)) {
+    if (!await loadAddon(data, addon, path, assets)) {
       throw new Error(`No manifest found for addon: ${addon}`);
     }
   }
 
-  for (const npcType of mappings.npcTypes) {
+  for (const npcType of assets.npcTypes) {
     data.npcSkins.set(npcType, []);
-    for (const rcId of mappings.entityRcs.get(npcType) ?? []) {
-      const rc = mappings.rcSkins.get(rcId);
+    for (const rcId of assets.entityRcs.get(npcType) ?? []) {
+      const rc = assets.rcSkins.get(rcId);
       if (rc === undefined) continue;
       data.npcSkins.set(npcType, rc);
     }
@@ -56,7 +56,7 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
 }
 
 /** Attempts to find the requested addon (may load multiple) */
-async function loadAddon(data: PackData, name: string, path: string, mappings: AddonAssets): Promise<boolean> {
+async function loadAddon(data: PackData, name: string, path: string, assets: AddonAssets): Promise<boolean> {
   if (!existsSync(path)) throw new Error(`Addon not found: ${name}`);
   const contents = readdirSync(path);
   let success = false;
@@ -74,54 +74,54 @@ async function loadAddon(data: PackData, name: string, path: string, mappings: A
     if (isBp === isRp) {
       throw new Error(`[${name}: ${path}] Unable to determine pack type: ${JSON.stringify(types)}`)
     }
-    if (isBp) await readBp(mappings, name, path);
-    if (isRp) await readRp(mappings, name, path);
+    if (isBp) await readBp(assets, name, path);
+    if (isRp) await readRp(assets, name, path);
     return true;
   }
   for (const part of contents) {
     const newPath = join(path, part);
     const stat = statSync(newPath);
     if (stat.isDirectory()) {
-      success = await loadAddon(data, name, newPath, mappings) || success;
+      success = await loadAddon(data, name, newPath, assets) || success;
     } else {
       if (part.endsWith('.mcaddon') || part.endsWith('.zip')) {
-        success = await unzipAddon(data, name, newPath, mappings) || success;
+        success = await unzipAddon(data, name, newPath, assets) || success;
       }
     }
   }
   return success;
 }
 
-async function unzipAddon(data: PackData, name: string, path: string, mappings: AddonAssets) {
+async function unzipAddon(data: PackData, name: string, path: string, assets: AddonAssets) {
   throw new Error('Function not implemented.');
   return false;
 }
 
-function checkAssetCollisions(mappings: AddonAssets, assetName: string, ns: string, assetId: string) {
-  const exists = mappings.assets.get(ns).get(assetId);
+function checkAssetCollisions(assets: AddonAssets, assetName: string, ns: string, assetId: string) {
+  const exists = assets.assets.get(ns).get(assetId);
   if (exists !== undefined) {
     throw new Error(`Collision found between addons (${exists} and ${assetName}) for ${ns}: ${assetId}`);
   }
-  mappings.assets.get(ns).set(assetId, assetName);
+  assets.assets.get(ns).set(assetId, assetName);
 }
 
 /** Parse behavior packs, looking for entities */
-async function readBp(mappings: AddonAssets, name: string, path: string) {
+async function readBp(assetss: AddonAssets, name: string, path: string) {
   for (const file of await lib.getFiles(path)) {
     if (basename(file) === 'manifest.json') continue;
     const rel = relative(path, file);
 
     console.info(name, 'Evaluating addon file: ', rel);
-    checkAssetCollisions(mappings, name, 'filename', rel);
+    checkAssetCollisions(assetss, name, 'filename', rel);
     if (file.endsWith('.json')) {
       const record = JSON.parse(readFileSync(file, 'utf-8'));
       for (const [key, val] of Object.entries(record)) {
         if (key === 'minecraft:entity') {
           const entity = val as MinecraftAssetFiles.Entity;
           const id = entity.description.identifier;
-          checkAssetCollisions(mappings, name, key, id);
+          checkAssetCollisions(assetss, name, key, id);
           const families = entity.components?.['minecraft:type_family']?.family;
-          if (families?.includes('hub_npc')) mappings.npcTypes.add(id);
+          if (families?.includes('hub_npc')) assetss.npcTypes.add(id);
         }
 
         if (key === 'animation_controllers') {
@@ -135,29 +135,29 @@ async function readBp(mappings: AddonAssets, name: string, path: string) {
 }
 
 /** Parse resource packs, looking for client entities and render controllers */
-async function readRp(mappings: AddonAssets, name: string, path: string) {
+async function readRp(assets: AddonAssets, name: string, path: string) {
   for (const file of await lib.getFiles(path)) {
     if (basename(file) === 'manifest.json') continue;
     const rel = relative(path, file);
     console.info(name, 'Evaluating addon file: ', rel);
-    checkAssetCollisions(mappings, name, 'filename', rel);
+    checkAssetCollisions(assets, name, 'filename', rel);
     if (file.endsWith('.json')) {
       const record = JSON.parse(readFileSync(file, 'utf-8'));
       for (const [key, val] of Object.entries(record)) {
         if (key === 'minecraft:client_entity') {
           const entity = val as MinecraftAssetFiles.ClientEntity;
           const id = entity.description.identifier;
-          checkAssetCollisions(mappings, name, key, id);
-          mappings.entityRcs.set(id, entity.description.render_controllers);
+          checkAssetCollisions(assets, name, key, id);
+          assets.entityRcs.set(id, entity.description.render_controllers);
         }
 
         if (key === 'render_controllers') {
           const controllers = record as MinecraftAssetFiles.RenderContoller;
           for (const [controllerId, controller] of Object.entries(controllers.render_controllers)) {
-            checkAssetCollisions(mappings, name, key, controllerId);
+            checkAssetCollisions(assets, name, key, controllerId);
             const skins = controller.arrays?.textures?.['Array.skins'];
             if (skins !== undefined) {
-              mappings.rcSkins.set(controllerId, skins);
+              assets.rcSkins.set(controllerId, skins);
             }
           }
         }
