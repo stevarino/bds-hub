@@ -14,7 +14,7 @@ type DBLocationResult = Omit<LocationResult, 'dimension'|'owner'> & {dimension: 
 
 export async function openDatabase(filename: string) {
   const db = await open({ filename, driver: sqlite3.Database });
-  await db.migrate({migrationsPath: join(root, 'dist', 'server', 'migrations')});
+  await db.migrate({migrationsPath: join(root, 'static', 'server', 'migrations')});
 
   // cache all the things
   const strings: StringLookup[] = await db.all(

@@ -3,9 +3,7 @@
   "minecraft:client_entity": {
     "description": {
       "identifier": "hub:npc",
-      "materials": {
-        "default": "npc"
-      },
+      "materials": {"default": "npc"},
       "textures": {
         "npc_1": "textures/entity/npc/npc_1",
         "npc_2": "textures/entity/npc/npc_2",
@@ -68,13 +66,11 @@
         "npc_Kiosk_4": "textures/entity/npc/npc_Kiosk_4",
         "npc_Kiosk_5": "textures/entity/npc/npc_Kiosk_5"
       },
-      "geometry": {
-        "default": "geometry.npc"
-      },
+      "geometry": {"default": "geometry.npc"},
       "scripts": {
         "animate": [
           "general",
-          { "move": "query.modified_move_speed" },
+          {"move": "query.modified_move_speed"},
           "look_at_target"
         ]
       },
@@ -83,11 +79,8 @@
         "look_at_target": "animation.common.look_at_target",
         "move": "animation.npc.move"
       },
-      "render_controllers": [ "controller.render.hub_npc" ],
-      "spawn_egg": {
-        "texture": "spawn_egg",
-        "texture_index": 35
-      }
+      "render_controllers": ["controller.render.hub__npc"],
+      "spawn_egg": {"texture": "spawn_egg", "texture_index": 35}
     }
   }
 }

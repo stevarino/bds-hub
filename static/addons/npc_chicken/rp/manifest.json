@@ -1,17 +1,11 @@
 {
   "format_version": 2,
   "header": {
-    "name": "BDS-Hub Chicken Resource Pack",
-    "description": "",
+    "name": "Blank RP",
+    "description": "A blank resource pack manifest",
     "uuid": "",
     "version": [1, 0, 0],
-    "min_engine_version": [ 1, 20, 0 ]
+    "min_engine_version": [1, 20, 0]
   },
-  "modules": [
-    {
-      "type": "resources",
-      "uuid": "",
-      "version": [1, 0, 0]
-    }
-  ]
+  "modules": [{"type": "resources", "uuid": "", "version": [1, 0, 0]}]
 }

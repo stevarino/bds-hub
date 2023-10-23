@@ -1,0 +1,26 @@
+{
+  "format_version": "1.8.0",
+  "render_controllers": {
+    "controller.render.hub__npc_chicken": {
+      "arrays": {
+        "textures": {
+          "Array.skins": [
+            "Texture.chicken_brown",
+            "Texture.chicken_brown_beach",
+            "Texture.chicken_brown_beach2",
+            "Texture.chicken_brown_beach3",
+            "Texture.chicken_brown_beach4",
+            "Texture.chicken_cora_beach",
+            "Texture.chicken_golden",
+            "Texture.chicken_moss",
+            "Texture.chicken_sea"
+          ]
+        }
+      },
+      "geometry": "Geometry.default",
+      "part_visibility": [{"*": true}],
+      "materials": [{"*": "Material.default"}, {"leg*": "Material.legs"}],
+      "textures": ["Array.skins[query.variant]"]
+    }
+  }
+}

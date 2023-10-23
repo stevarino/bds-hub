@@ -1,0 +1,59 @@
+{
+  "npc_entities": {
+    "hub:npc_chicken": {
+      "textures": [ "rp/textures/entity/hub__npc_chicken" ],
+      "npc_bp_entity": [
+        {
+          "path": "minecraft:entity.components.minecraft:collision_box",
+          "value": { "width": 0.6, "height": 0.8 }
+        },
+        {
+          "path": "minecraft:entity.components.minecraft:scale",
+          "value": { "value": 1.5 }
+        },
+        {
+          "path": "minecraft:entity.components.minecraft:balloonable",
+          "value": { "mass": 0.5 }
+        },
+        {
+          "path": "minecraft:entity.component_groups.hub:npc_mingle",
+          "value": { 
+            "minecraft:behavior.mingle": { 
+              "mingle_partner_type": "hub:npc_chicken",
+              "duration": 30,
+              "cooldown_time": 5,
+              "priority": 5,
+              "mingle_distance": 8.0
+            }
+          }
+        }
+      ],
+      "npc_rp_entity": [
+        {
+          "path": "minecraft:client_entity.description.materials",
+          "value": { "default": "chicken", "legs": "chicken_legs" }
+        },
+        {
+          "path": "minecraft:client_entity.description.geometry",
+          "value": { "default": "geometry.chicken.v1.12" }
+        },
+        {
+          "path": "minecraft:client_entity.description.animations",
+          "merge": {
+            "move": "animation.chicken.move",
+            "general": "animation.chicken.general"
+          }
+        }
+      ],
+      "npc_rp_rc": [
+        {
+          "path": "render_controllers.entity_id.materials",
+          "value":  [
+            { "*": "Material.default" },
+            { "leg*": "Material.legs" }
+          ]
+        }
+      ]
+    }
+  }
+}

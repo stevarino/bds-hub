@@ -1,8 +1,8 @@
 /**
  * addons.ts - Finds, parses, and loads additional optional addons.
  */
-import { copyFileSync, existsSync, read, readdirSync, readFileSync, statSync } from 'node:fs';
-import { basename, relative, join } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync, read, readdirSync, readFileSync, statSync } from 'node:fs';
+import { basename, relative, join, dirname } from 'node:path';
 
 import { ConfigFile, readManifest, MinecraftAssetFiles } from '../../types.js';
 import { PackData } from './pack_data.js';
@@ -111,7 +111,8 @@ async function readBp(mappings: AddonAssets, name: string, path: string) {
     if (basename(file) === 'manifest.json') continue;
     const rel = relative(path, file);
 
-    console.info(name, 'Evaluating addon file: ', rel);    checkAssetCollisions(mappings, name, 'filename', rel);
+    console.info(name, 'Evaluating addon file: ', rel);
+    checkAssetCollisions(mappings, name, 'filename', rel);
     if (file.endsWith('.json')) {
       const record = JSON.parse(readFileSync(file, 'utf-8'));
       for (const [key, val] of Object.entries(record)) {
@@ -128,6 +129,7 @@ async function readBp(mappings: AddonAssets, name: string, path: string) {
         }
       }
     }
+    mkdirSync(dirname(join(constants.BP_OUTPUT, rel)), {recursive: true});
     copyFileSync(file, join(constants.BP_OUTPUT, rel));
   }
 }
@@ -161,6 +163,7 @@ async function readRp(mappings: AddonAssets, name: string, path: string) {
         }
       }
     }
+    mkdirSync(dirname(join(constants.RP_OUTPUT, rel)), {recursive: true});
     copyFileSync(file, join(constants.RP_OUTPUT, rel));
   }
 }

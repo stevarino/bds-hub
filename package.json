@@ -9,6 +9,8 @@
   "dependencies": {
     "archiver": "^5.3.1",
     "discord.js": "^14.11.0",
+    "json-stringify-pretty-compact": "^4.0.0",
+    "jsonpath-plus": "^7.2.0",
     "rollup": "^3.27.0",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
@@ -39,6 +41,7 @@
   },
   "scripts": {
     "build": "npm run types && tsc && npm run finish && npm run hubValidateExamples",
+    "qbuild": "tsc && npm run finish",
     "prepare": "ts-patch install",
     "test": "tsc; npx test",
     "finish": "node dist/scripts/finishBuild.js",
@@ -48,6 +51,7 @@
     "hubStart": "node dist/scripts/hubStart.js",
     "hubConfig": "node dist/scripts/hubConfig.js",
     "hubPack": "node dist/scripts/hubPack.js",
+    "hubSupplemental": "node dist/scripts/hubSupplemental.js",
     "hubValidateExamples": "node dist/scripts/hubValidateExamples.js",
     "buildAndPack": "npm run build; npm run hubPack",
     "buildAndPackDev": "npm run build; npm run hubPack -- --preserveTempFiles",

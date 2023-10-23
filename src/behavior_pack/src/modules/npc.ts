@@ -60,6 +60,10 @@ async function syncNpcs() {
           `event entity @e[tag="${npcid}"] hub:npc_skin_${actor.skin}`);
         await timeout(1);
       }
+      for (const event of actor.events) {
+        results[event] = await dim.runCommandAsync(
+          `event entity @e[tag="${npcid}"] ${event}`);
+      }
 
       console.info(`Synced NPC ${npcid}: ${
         Object.entries(results).map(([k, v]) => `${k}: ${v?.successCount}`).join(', ')
@@ -133,7 +137,6 @@ async function CreateNpc(d: Discussion) {
   if (res === undefined) return;
 
   const entityId = script.actors[res.role.get()]?.entityId ?? 'hub:npc';
-  console.log('spawning entity: ', entityId);
   const npc = d.player.dimension.spawnEntity(entityId, {
     x: Number(res.x.get()),
     y: Number(res.y.get()),
@@ -171,6 +174,7 @@ export async function ManageNpcs(d: Discussion, args: Args): Promise<void> {
       name: 'Unknown',
       scene: '',
       roles: [],
+      events: [],
     }
     if (isAdmin || (bot.owner === d.player.name)) {
       buttons.push({

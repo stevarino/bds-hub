@@ -82,6 +82,6 @@ function validateConfigs() {
   
 }
 
-copyStatic();
+// copyStatic();
 writeActionList();
 validateConfigs();

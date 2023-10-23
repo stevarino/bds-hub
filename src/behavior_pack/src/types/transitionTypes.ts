@@ -184,12 +184,15 @@ export type Actor = {
   skin?: string,
   /** additional roles this Actor performs */
   roles?: string[],
+  /** entity events to run during syncing */
+  events?: string[],
 } & Transition;
 
 export type NormalizedActor = Omit<Actor, 'skin'|'scene'|'roles'> & {
   skin?: number,
   scene: string,
   roles: string[],
+  events: string[],
 };
 
 type RequireTag = { require_tag?: string };

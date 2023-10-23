@@ -114,11 +114,11 @@ function enablePack(packList: string, manifest: ManifestFile) {
     if (entry.pack_id === manifest.header.uuid) {
       found = true;
       if (JSON.stringify(entry.version) === JSON.stringify(manifest.header.version)) {
-        console.info(`${packList} up to date`);
+        console.info(`${packList} up to date (${manifest.header.version})`);
         needWrite = false;
         break;
       }
-      console.info('Updating ', packList);
+      console.info(`Updating ${packList} to ${manifest.header.version}`);
       entry.version = manifest.header.version;
     }
   }

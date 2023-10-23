@@ -1,0 +1,35 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "hub:npc_chicken",
+      "materials": {"default": "chicken", "legs": "chicken_legs"},
+      "textures": {
+        "chicken_brown": "textures/entity/hub__npc_chicken/chicken_brown",
+        "chicken_brown_beach": "textures/entity/hub__npc_chicken/chicken_brown_beach",
+        "chicken_brown_beach2": "textures/entity/hub__npc_chicken/chicken_brown_beach2",
+        "chicken_brown_beach3": "textures/entity/hub__npc_chicken/chicken_brown_beach3",
+        "chicken_brown_beach4": "textures/entity/hub__npc_chicken/chicken_brown_beach4",
+        "chicken_cora_beach": "textures/entity/hub__npc_chicken/chicken_cora_beach",
+        "chicken_golden": "textures/entity/hub__npc_chicken/chicken_golden",
+        "chicken_moss": "textures/entity/hub__npc_chicken/chicken_moss",
+        "chicken_sea": "textures/entity/hub__npc_chicken/chicken_sea"
+      },
+      "geometry": {"default": "geometry.chicken.v1.12"},
+      "scripts": {
+        "animate": [
+          "general",
+          {"move": "query.modified_move_speed"},
+          "look_at_target"
+        ]
+      },
+      "animations": {
+        "general": "animation.chicken.general",
+        "look_at_target": "animation.common.look_at_target",
+        "move": "animation.chicken.move"
+      },
+      "render_controllers": ["controller.render.hub__npc_chicken"],
+      "spawn_egg": {"texture": "spawn_egg", "texture_index": 35}
+    }
+  }
+}

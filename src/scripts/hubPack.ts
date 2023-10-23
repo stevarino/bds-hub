@@ -24,8 +24,8 @@ import { PackData } from './pack_lib/pack_data.js';
 import { parseAddons } from './pack_lib/addons.js';
 
 const COPY_DIRS: [string, string][] = [
-  [join(lib.root, 'dist/behavior_pack/static'), Constants.BP_OUTPUT],
-  [join(lib.root, 'dist/resource_pack/static'), Constants.RP_OUTPUT],
+  [join(lib.root, 'static/behavior_pack/static'), Constants.BP_OUTPUT],
+  [join(lib.root, 'static/resource_pack/static'), Constants.RP_OUTPUT],
   [join(lib.root, 'dist/behavior_pack/src'), Constants.ADDON_TEMP],
 ]
 
@@ -36,6 +36,8 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   loadBuildFile();
   const packData = new PackData();
   if (argn === undefined) argn = {};
+  await fs.rmSync(Constants.BP_OUTPUT, { recursive: true, force: true });
+  await fs.rmSync(Constants.RP_OUTPUT, { recursive: true, force: true });
   await copyStatic();
   await parseAddons(config, packData);
   const sceneData = await parseScriptFiles(config, packData);
@@ -65,9 +67,9 @@ function loadBuildFile() {
     BUILD_INFO = readBuildFile(Constants.BUILD_INFO);
   } else {
     BUILD_INFO = {
-      bp_version: [1,0,0],
+      bp_version: [1, 0, versionNumber()],
       bp_hash: '',
-      rp_version: [1,0,0],
+      rp_version: [1, 0, versionNumber()],
       rp_hash: ''
     };
     lib.write(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
@@ -116,7 +118,7 @@ async function rollupPack() {
 export async function parseScriptFiles(config: ConfigFile, data: PackData) {
   const referencedScenes = new Set<string>();
   
-  const scenes_dir = join(lib.root, 'dist/scenes');
+  const scenes_dir = join(lib.root, 'static/scenes');
   
   const globalScenes = await lib.getFiles(scenes_dir, /\.(yaml|yml|json)$/);
 
@@ -189,9 +191,10 @@ function parseActors(script: Dialogue.ScriptFile, data: PackData) {
   const referencedScenes = new Set<string>();
 
   for (const actor of script.actors ?? []) {
-    const extra: {skin?: number, scene: string, roles: string[]} = {
+    const extra: {skin?: number, scene: string, roles: string[], events: string[]} = {
       scene: actor.scene ?? '',
       roles: [actor.id, ...(actor.roles ?? [])],
+      events: actor.events ?? [],
     };
     if (actor.scene === undefined) {
       extra.scene = `hub:${actor.id}:_dummy`
@@ -234,7 +237,6 @@ function parseActors(script: Dialogue.ScriptFile, data: PackData) {
 
 function parseVariables(script: Dialogue.ScriptFile, data: PackData) {
   for (const [vScope, variables] of Object.entries(script.variables ?? {})) {
-    console.log(vScope);
     for (const [vType, varFields] of Object.entries(variables)) {
       for (const [vIndex, vName] of Object.entries(varFields)) {
         const index = parseInt(vIndex);
@@ -343,7 +345,7 @@ async function createZipFiles() {
   updateManifest(Constants.RP_MAN, BUILD_INFO.rp_version, BUILD_INFO.bp_version);
   let hash = await zipPack(Constants.RP_OUTPUT, Constants.RP_NAME + '.mcaddon');
   if (hash !== BUILD_INFO.rp_hash) {
-    BUILD_INFO.rp_version[2] += 1;
+    BUILD_INFO.rp_version[2] = versionNumber();
     const outPath = join(dirname(Constants.RP_OUTPUT), Constants.RP_NAME + '.mcaddon');
     console.info(`Bumping RP version to ${JSON.stringify(BUILD_INFO.rp_version)}`);
     updateManifest(Constants.RP_MAN, BUILD_INFO.rp_version, BUILD_INFO.bp_version);
@@ -354,7 +356,7 @@ async function createZipFiles() {
   updateManifest(Constants.BP_MAN, BUILD_INFO.bp_version, BUILD_INFO.rp_version);
   hash = await zipPack(Constants.BP_OUTPUT, Constants.BP_NAME + '.mcaddon');
   if (hash !== BUILD_INFO.bp_hash) {
-    BUILD_INFO.bp_version[2] += 1;
+    BUILD_INFO.bp_version[2] = versionNumber();
     console.info('Bumping BP version to ', JSON.stringify(BUILD_INFO.bp_version));
     updateManifest(Constants.BP_MAN, BUILD_INFO.bp_version, BUILD_INFO.rp_version);
     BUILD_INFO.bp_hash = await zipPack(Constants.BP_OUTPUT, Constants.BP_NAME + '.mcaddon');
@@ -485,4 +487,8 @@ if (lib.isScriptRun('hubPack')) {
     npx hubPack [--config="/foo/bar/config.yaml] [--preserveTempFiles]
   `);
   createPackFiles(lib.readConfig(argn.config), argn);
+}
+
+function versionNumber() {
+  return Math.floor(new Date().getTime() / 1000);
 }
