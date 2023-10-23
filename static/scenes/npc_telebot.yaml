@@ -21,7 +21,7 @@ scenes:
     - text: Let's go!
       action: NpcTravel
   - id: telebot_binary
-    text: §a01100010 01100101 01100101 01110000\n01100010 01101111 01101111 01110000 00001010§r\n\nTeleportation ready
+    text: "§a01100010 01100101 01100101 01110000\n01100010 01101111 01101111 01110000 00001010§r\n\nTeleportation ready"
     buttons:
     - text: Let's go!
       action: NpcTravel

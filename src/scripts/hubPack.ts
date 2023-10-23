@@ -311,7 +311,7 @@ export function assembleScenes(data: PackData) {
   for (const scene of data.scenes.values()) {
     const scn: SceneFileScene = {
       scene_tag: scene.id,
-      text: scene.text,
+      text: { rawtext: [ { text: scene.text } ] },
       buttons: [],
     }
     if (scene.npc_name !== undefined) {

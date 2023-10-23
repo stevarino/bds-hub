@@ -99,7 +99,7 @@ export namespace MinecraftAssetFiles {
 
 export interface SceneFileScene {
   scene_tag: string,
-  text: string,
+  text: string | { rawtext: unknown[] },
   npc_name?: string,
   on_open_commands?: string[],
   on_close_commands?: string[],
