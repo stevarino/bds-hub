@@ -10,6 +10,6 @@ export * from './lib/runtimeState.js';
 export * as forms from './lib/form.js';
 
 export const Emitter = new EventEmitter();
-export const StartupEvent = Emitter.getHandler<null>('startup');
+export const StartupEvent = Emitter.getHandler('startup');
 
 export { TagMap, DummyTagMap } from './lib/tag_map.js';

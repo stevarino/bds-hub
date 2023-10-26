@@ -11,11 +11,11 @@
 export type Callback<T> = (e: T) => void;
 
 /** Standard event-emitter */
-export class EventEmitter {
+export class EventEmitter<T=unknown> {
   nextId = 0;
-  listeners: {[eventType: string]: Callback<unknown>[]} = {}
+  listeners: {[eventType: string]: Callback<T>[]} = {}
 
-  addListener(eventName: string, callback: Callback<unknown>) {
+  addListener(eventName: string, callback: Callback<T>) {
     let event = this.listeners[eventName];
     if (event === undefined) {
       event = [];
@@ -33,13 +33,13 @@ export class EventEmitter {
     delete event[id];
   } 
 
-  emit(eventName: string, event: unknown) {
+  emit(eventName: string, event: T) {
     for (const listener of this.listeners[eventName] ?? []) {
       listener(event);
     }
   }
 
-  getHandler<T>(eventName: string) {
+  getHandler(eventName: string) {
     return new EventHandler<T>(this, eventName);
   }
 }
@@ -48,10 +48,10 @@ export class EventEmitter {
 export class EventHandler<T> {
   listeners: Callback<T>[] = []
   constructor(
-    private emitter: EventEmitter,
+    private emitter: EventEmitter<T>,
     private eventName: string,
   ) {
-    this.emitter.addListener(this.eventName, (event) => this.listener(event as T));
+    this.emitter.addListener(this.eventName, (event) => this.listener(event));
   }
 
   listener(event: T) {
