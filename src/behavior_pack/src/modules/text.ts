@@ -44,6 +44,8 @@ function onTick() {
     for (const text of active.sort((a,b) => a[1]-b[1])) {
       final.push(text[0]);
     }
-    player.onScreenDisplay.setActionBar(final.join('§r\n'));
+    player.runCommand(`titleraw @s actionbar {"rawtext": [ { "text": ${
+      JSON.stringify(final.join('§r\n'))
+    } } ] }`);
   }
 }
