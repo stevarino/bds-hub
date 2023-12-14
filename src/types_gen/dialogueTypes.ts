@@ -44,7 +44,7 @@ export const ActionArgs: {
                 const value = input[key];
                 if (undefined === value)
                     return true;
-                if (RegExp(/(.*)/).test(key))
+                if (true)
                     return "number" === typeof value;
                 return false;
             });
@@ -106,7 +106,7 @@ export const ActionArgs: {
                         const value = input[key];
                         if (undefined === value)
                             return true;
-                        if (RegExp(/(.*)/).test(key))
+                        if (true)
                             return "number" === typeof value || $report(_exceptionable, {
                                 path: _path + $join(key),
                                 expected: "number",
@@ -424,7 +424,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
             const value = input[key];
             if (undefined === value)
                 return true;
-            if (RegExp(/(.*)/).test(key))
+            if (true)
                 return true;
             return false;
         });
@@ -1320,7 +1320,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
             const value = input[key];
             if (undefined === value)
                 return true;
-            if (RegExp(/(.*)/).test(key))
+            if (true)
                 return "object" === typeof value && null !== value && false === Array.isArray(value) && $io9(value, true && _exceptionable);
             return false;
         });
@@ -1344,7 +1344,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
             const value = input[key];
             if (undefined === value)
                 return true;
-            if (RegExp(/(.*)/).test(key))
+            if ("string" === typeof key && /^[0-9]+$/.test(key))
                 return "string" === typeof value;
             return false;
         });
@@ -1898,7 +1898,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     const value = input[key];
                     if (undefined === value)
                         return true;
-                    if (RegExp(/(.*)/).test(key))
+                    if (true)
                         return true;
                     return $report(_exceptionable, {
                         path: _path + $join(key),
@@ -5978,7 +5978,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     const value = input[key];
                     if (undefined === value)
                         return true;
-                    if (RegExp(/(.*)/).test(key))
+                    if (true)
                         return ("object" === typeof value && null !== value && false === Array.isArray(value) || $report(_exceptionable, {
                             path: _path + $join(key),
                             expected: "Partial<Scene & Action & Command & Menu & { if_has_tag: string; } & ThenElse & { if_has_item: Partial<TagSelector & NameSelector & SelectorSelector & LoreSelector & ItemTypeSelector>; } & ... 6 more ... & VariableReference>",
@@ -6078,7 +6078,7 @@ export const validateScript = (input: any): typia.IValidation<ScriptFile> => {
                     const value = input[key];
                     if (undefined === value)
                         return true;
-                    if (RegExp(/(.*)/).test(key))
+                    if ("string" === typeof key && /^[0-9]+$/.test(key))
                         return "string" === typeof value || $report(_exceptionable, {
                             path: _path + $join(key),
                             expected: "string",
