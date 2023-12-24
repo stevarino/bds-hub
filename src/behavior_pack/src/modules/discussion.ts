@@ -232,7 +232,7 @@ async function respondIfItem(d: Discussion, args: types.HasItem) {
     return console.error('Failed to fetch inventory!?!');
   }
   for (let i=0; i<component.inventorySize; i++) {
-    const item = component.container.getItem(i);
+    const item = component?.container?.getItem(i);
     if (item === undefined) {
       continue;
     }

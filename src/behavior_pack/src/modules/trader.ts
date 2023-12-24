@@ -217,7 +217,7 @@ function performTrade(player: mc.Player, offer: NormalizedTradeOffer, op: Invent
     let need = item.cost * (all ? op.maxTrades : 1);
     for (const slot of item.slots) {
       if (need === 0) break;
-      const stack = container.getSlot(slot);
+      const stack = container?.getSlot(slot);
       if (stack?.typeId !== item.item) {
         return showErrorMessage(player, `Unable to complete trade. Invalid inventory item: ${JSON.stringify({
           received: stack?.typeId, expteced: item.item, slot})}`)
@@ -233,7 +233,7 @@ function performTrade(player: mc.Player, offer: NormalizedTradeOffer, op: Invent
   }
 
   for (const [slot, qty] of mutations) {
-    const s = container.getSlot(slot);
+    const s = container!.getSlot(slot);
     if (s.amount === qty) {
       s.setItem();
     } else {
@@ -242,7 +242,7 @@ function performTrade(player: mc.Player, offer: NormalizedTradeOffer, op: Invent
   }
 
   for (const {item, qty} of offer.gives) {
-    container.addItem(new ItemStack(item, (qty ?? 1) * (all ? op.maxTrades : 1)));
+    container!.addItem(new ItemStack(item, (qty ?? 1) * (all ? op.maxTrades : 1)));
   }
 }
 
@@ -297,7 +297,7 @@ function getInventory(player: mc.Player) {
 
   const component = player.getComponent('minecraft:inventory') as mc.EntityInventoryComponent;
   for (let i=0; i<component.inventorySize; i++) {
-    const item = component.container.getItem(i);
+    const item = component?.container?.getItem(i);
     if (item?.typeId === undefined) continue;
     let invItem = inventory.get(item.typeId);
     if (invItem === undefined) {

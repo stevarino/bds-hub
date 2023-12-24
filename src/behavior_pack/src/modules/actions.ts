@@ -58,7 +58,7 @@ async function InventoryInspect(d: Discussion) {
 
   const items: string[] = [];
   for (let i=0; i<component.inventorySize; i++) {
-    const item = component.container.getItem(i);
+    const item = component?.container?.getItem(i);
     if (item === undefined) {
       JSON.stringify({index: i, type: undefined});
       continue;

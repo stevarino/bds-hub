@@ -57,7 +57,7 @@ export const validateConfigFile = (input: any): typia.IValidation<ConfigFile> =>
             const value = input[key];
             if (undefined === value)
                 return true;
-            if (RegExp(/(.*)/).test(key))
+            if (true)
                 return "string" === typeof value;
             return false;
         });
@@ -171,7 +171,7 @@ export const validateConfigFile = (input: any): typia.IValidation<ConfigFile> =>
                     const value = input[key];
                     if (undefined === value)
                         return true;
-                    if (RegExp(/(.*)/).test(key))
+                    if (true)
                         return "string" === typeof value || $report(_exceptionable, {
                             path: _path + $join(key),
                             expected: "string",
