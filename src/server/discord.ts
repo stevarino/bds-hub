@@ -1,27 +1,37 @@
-import {Client, Events, GatewayIntentBits, Partials, TextChannel} from 'discord.js';
-import { ConfigFile, Obj } from '../types';
+import {
+  Client,
+  Events,
+  GatewayIntentBits,
+  Partials,
+  TextChannel,
+} from 'discord.js';
+import {ConfigFile, Obj} from '../types';
 
 // https://discordapi.com/permissions.html#67111936
 const PERMISSIONS = 67111936;
 
-const channelUrl = new RegExp('^https://discord\\.com/channels/([0-9]+)/([0-9]+)$');
+const channelUrl = new RegExp(
+  '^https://discord\\.com/channels/([0-9]+)/([0-9]+)$',
+);
 
 export class DiscordClient {
   config: ConfigFile;
-  client: Client<true>|undefined;
+  client: Client<true> | undefined;
   channels: Obj<TextChannel> = {};
 
   inbound: string[] = [];
 
   constructor(config: ConfigFile) {
     this.config = config;
-    if (config.discord !== undefined) {
-    }
+    // if (config.discord !== undefined) {
+    // }
   }
 
   async start() {
     if (this.config.discord === undefined) return;
-    console.info(`Permissions Link: https://discord.com/oauth2/authorize?client_id=${this.config.discord.app_id}&scope=bot&permissions=${PERMISSIONS}`);
+    console.info(
+      `Permissions Link: https://discord.com/oauth2/authorize?client_id=${this.config.discord.app_id}&scope=bot&permissions=${PERMISSIONS}`,
+    );
     const client = new Client({
       partials: [Partials.Channel],
       intents: [
@@ -33,20 +43,23 @@ export class DiscordClient {
     });
 
     client.on(Events.ClientReady, c => this.setup(c));
-    client.login(this.config.discord.token);
+    await client.login(this.config.discord.token);
   }
 
   async setup(client: Client<true>) {
     this.client = client;
     const guilds = new Set<string>();
     console.info(`Discord logged in as ${client.user.tag}`);
-    const channels: [string, string, string][] = [];
     for (const channel of this.config.discord?.channels ?? []) {
       const match = channelUrl.exec(channel);
       if (match === null) {
         throw new Error(`Invalid discord channel: ${channel}`);
       }
-      const [url, g, ch] = [match[0], match[1], match[2]] as [string, string, string];
+      const [url, g, ch] = [match[0], match[1], match[2]] as [
+        string,
+        string,
+        string,
+      ];
       if (!guilds.has(g)) {
         const guild = await client.guilds.fetch({guild: g});
         const profile = await guild.members.fetch(client.user.id);
@@ -61,17 +74,21 @@ export class DiscordClient {
         throw new Error(`Not a text based channel: ${url}`);
       }
       this.channels[ch] = channelObj as TextChannel;
-      console.info('Discord Channel setup: ', channelObj.url)
+      console.info('Discord Channel setup: ', channelObj.url);
     }
-    
-    client.on(Events.MessageCreate, async (m) => {
-      if (m.author.bot || this.channels[m.channelId] === undefined || m.guild === null) {
+
+    client.on(Events.MessageCreate, async m => {
+      if (
+        m.author.bot ||
+        this.channels[m.channelId] === undefined ||
+        m.guild === null
+      ) {
         return;
       }
       const user = (await m.guild.members.fetch(m.author)).user;
       let username = user.username;
       if (user.discriminator !== '0') {
-        username = `${username}#${user.discriminator}`
+        username = `${username}#${user.discriminator}`;
       }
       const gamertag = this.config.discord?.users[username];
       let msg = `[${username}] ${m.content}`;
@@ -85,7 +102,9 @@ export class DiscordClient {
 
   sendMessage(msg: string) {
     for (const channel of Object.values(this.channels)) {
-      channel.send(msg);
+      channel
+        .send(msg)
+        .catch(e => console.error(`Discord Error [${channel}]: ${e}`));
     }
   }
 }

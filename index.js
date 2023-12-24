@@ -1,8 +1,7 @@
-
-import { readFileSync } from 'fs';
-import { getServer } from './dist/scripts/start.js';
-import { isAbsolute, resolve } from 'path';
-import { parse } from 'yaml'
+import {readFileSync} from 'fs';
+import {getServer} from './dist/scripts/start.js';
+import {isAbsolute, resolve} from 'path';
+import {parse} from 'yaml';
 
 let configPath = './bds_hub.config.yaml';
 

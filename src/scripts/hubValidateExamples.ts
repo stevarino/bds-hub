@@ -1,9 +1,8 @@
 import * as lib from './lib.js';
 import * as path from 'path';
-import { parseScriptFiles } from './hubPack.js';
-import { PackData } from './pack_lib/pack_data.js';
-import { parseAddons } from './pack_lib/addons.js';
-
+import {parseScriptFiles} from './hubPack.js';
+import {PackData} from './pack_lib/pack_data.js';
+import {parseAddons} from './pack_lib/addons.js';
 
 async function validate() {
   const configPath = path.join(lib.root, 'bds_hub.example.yaml');
@@ -18,4 +17,4 @@ async function validate() {
   console.info('+------------------------------+\n');
 }
 
-validate();
+validate().catch(lib.showErrorTraceback);

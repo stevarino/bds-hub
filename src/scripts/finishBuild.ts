@@ -2,28 +2,19 @@
  * Copies files during build.
  */
 
-import { join } from 'path';
+import {join} from 'path';
 // very unsure what is going on here - maybe https://github.com/microsoft/TypeScript/issues/2719 ?
-import { default as ts } from 'typescript'
-import { readFileSync } from 'fs';
+import {default as ts} from 'typescript';
+import {readFileSync} from 'fs';
 
-import { getFiles, recursiveCopy, root, updateConstantsFile } from './lib.js';
+import {
+  getFiles,
+  root,
+  showErrorTraceback,
+  updateConstantsFile,
+} from './lib.js';
 
-const ActionsFunction = 'defineActions'
-
-const files: [string, string][] = [
-  [join(root, 'static'), join(root, 'dist')], 
-];
-
-async function copyStatic() {
-  // copy static files
-  for (const [from, to] of files) {
-    await recursiveCopy(from, to, (from: string, target: string) => {
-      // console.info('Copying ', target.slice(to.length + 1));
-      return false;
-    });
-  }
-}
+const ActionsFunction = 'defineActions';
 
 async function writeActionList() {
   updateConstantsFile(join(root, 'dist/scripts/buildArtifacts.js'), {
@@ -33,11 +24,11 @@ async function writeActionList() {
 
 /**
  * Parses behavoir-pack ts files, extracting registered actions.
- * 
+ *
  * https://ts-ast-viewer.com/
  */
 async function getActionList() {
-  const files = await getFiles(join(root, 'src/behavior_pack/src/'));
+  const files = await getFiles(join(root, 'src/behavior_pack/'));
   const actions: string[] = [];
   for (const filename of files) {
     const sourceFile = ts.createSourceFile(
@@ -45,15 +36,24 @@ async function getActionList() {
       readFileSync(filename).toString(),
       ts.ScriptTarget.ES2020,
     );
-    const exprs = getChildNodesByType(sourceFile, ts.SyntaxKind.ExpressionStatement);
+    const exprs = getChildNodesByType(
+      sourceFile,
+      ts.SyntaxKind.ExpressionStatement,
+    );
     const calls = getChildNodesByType(exprs, ts.SyntaxKind.CallExpression);
     for (const call of calls) {
       const parts = getChildren(call);
-      if ((parts[0] as ts.Identifier)?.escapedText  !== ActionsFunction) continue;
-      const objs = parts.filter(n => n.kind === ts.SyntaxKind.ObjectLiteralExpression);
+      if ((parts[0] as ts.Identifier)?.escapedText !== ActionsFunction)
+        continue;
+      const objs = parts.filter(
+        n => n.kind === ts.SyntaxKind.ObjectLiteralExpression,
+      );
       for (const prop of getChildren(objs)) {
-        if (prop.kind !== ts.SyntaxKind.ShorthandPropertyAssignment 
-          && prop.kind !== ts.SyntaxKind.PropertyAssignment) continue;
+        if (
+          prop.kind !== ts.SyntaxKind.ShorthandPropertyAssignment &&
+          prop.kind !== ts.SyntaxKind.PropertyAssignment
+        )
+          continue;
         const id = getChildren(prop)[0];
         if (id?.kind !== ts.SyntaxKind.Identifier) continue;
         actions.push((id as ts.Identifier).escapedText.toString());
@@ -63,11 +63,11 @@ async function getActionList() {
   return actions;
 }
 
-function getChildNodesByType(node: ts.Node|ts.Node[], type: ts.SyntaxKind) {
+function getChildNodesByType(node: ts.Node | ts.Node[], type: ts.SyntaxKind) {
   return getChildren(node).filter(child => child.kind === type);
 }
 
-function getChildren(node: ts.Node|ts.Node[]) {
+function getChildren(node: ts.Node | ts.Node[]) {
   const nodes: ts.Node[] = [];
   if (!Array.isArray(node)) node = [node];
   for (const n of node) {
@@ -78,10 +78,8 @@ function getChildren(node: ts.Node|ts.Node[]) {
   return nodes;
 }
 
-function validateConfigs() {
-  
-}
+function validateConfigs() {}
 
 // copyStatic();
-writeActionList();
+writeActionList().catch(showErrorTraceback);
 validateConfigs();

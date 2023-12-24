@@ -1,18 +1,18 @@
 import typia from 'typia';
 
-export * from './types_gen/configFile.js'
-export * as Dialogue from './types_gen/dialogueTypes.js';
-export { Obj } from './types_gen/dialogueTypes.js';
-import { Obj } from './types_gen/dialogueTypes.js';
-export * as Requests from './behavior_pack/src/types/requests.js';
+export * from './types_gen/config_file.js';
+export * as Dialogue from './types_gen/dialogue_types.js';
+export {Obj} from './types_gen/dialogue_types.js';
+import {Obj} from './types_gen/dialogue_types.js';
+export * as Requests from './behavior_pack/types/requests.js';
 
 export function failValidation(errors: Obj<string[]>) {
-  console.error(`\nValidation failed: \n\n`);
+  const errorStr: string[] = ['\nValidation failed: \n\n'];
   for (const [file, errs] of Object.entries(errors)) {
     const deduped = Array.from(new Set(errs)).sort();
-    console.error(`${file}\n - ${deduped.join('\n - ')}\n\n`);
+    errorStr.push(`${file}\n - ${deduped.join('\n - ')}\n\n`);
   }
-  process.exit(1);
+  throw new Error(errorStr.join(''));
 }
 
 export function typiaErrorsFormat(result: typia.IValidation) {
