@@ -5,21 +5,21 @@
  */
 
 import * as fs from 'node:fs';
-import { basename, join } from 'node:path';
+import {basename, join} from 'node:path';
 
-import { isScriptRun, parseArgs, readConfig } from './lib.js';
-import { ManifestFile, Obj, readManifest } from '../types.js';
+import {isScriptRun, parseArgs, readConfig, showErrorTraceback} from './lib.js';
+import {ManifestFile, Obj, readManifest} from '../types.js';
 import * as constants from '../constants.js';
-import { createPackFiles } from './hubPack.js';
+import {createPackFiles} from './hubPack.js';
 
 const modules = [
-  "@minecraft/server",
-  "@minecraft/server-net",
-  "@minecraft/server-ui",
+  '@minecraft/server',
+  '@minecraft/server-net',
+  '@minecraft/server-ui',
 ];
 
 /** Install behavior/resource pack into server */
-async function install(mcDir: string, argn: Obj<string|undefined>) {
+async function install(mcDir: string, argn: Obj<string | undefined>) {
   const config = readConfig(argn.config);
 
   // build the pack code
@@ -34,11 +34,14 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
       pack: constants.RP_FILE,
       manifest: readManifest(constants.RP_MAN),
     },
-  }
+  };
 
   /** Install pack files into directories and world_*_packs.json */
   for (const [name, props] of Object.entries(mapping)) {
-    const dir = join(mcDir, `${argn.dev === undefined ? '' : 'development_'}${name}_packs`);
+    const dir = join(
+      mcDir,
+      `${argn.dev === undefined ? '' : 'development_'}${name}_packs`,
+    );
     const packFile = join(dir, basename(props.pack));
     if (fs.existsSync(packFile)) fs.rmSync(packFile);
     console.info(`Copying ${basename(props.pack)} to ${dir}`);
@@ -49,17 +52,22 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
       enablePack(packList, props.manifest);
     }
   }
-  
+
   /** Add dependencies to permissions.json */
   const permissionsFile = join(mcDir, 'config', 'default', 'permissions.json');
   const permissions = JSON.parse(fs.readFileSync(permissionsFile, 'utf-8'));
-  if (!(permissions.allowed_modules as string[]).includes('@minecraft/server-net')) {
+  if (
+    !(permissions.allowed_modules as string[]).includes('@minecraft/server-net')
+  ) {
     console.info('Add net module to allowed_modules');
     permissions.allowed_modules.push('@minecraft/server-net');
-    fs.writeFileSync(permissionsFile, JSON.stringify(permissions, undefined, 2));
+    fs.writeFileSync(
+      permissionsFile,
+      JSON.stringify(permissions, undefined, 2),
+    );
   }
 
-  let script_uuid: string|undefined = undefined;
+  let script_uuid: string | undefined = undefined;
   for (const mod of mapping.behavior.manifest.modules) {
     if (mod.type === 'script') {
       script_uuid = mod.uuid;
@@ -71,16 +79,19 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
   const configDir = join(mcDir, 'config', script_uuid);
   fs.mkdirSync(configDir, {recursive: true});
   if (!fs.existsSync(join(configDir, '/readme.txt'))) {
-    fs.writeFileSync(join(configDir, '/readme.txt'), `Used by ${basename(mapping.behavior.pack)}`);
+    fs.writeFileSync(
+      join(configDir, '/readme.txt'),
+      `Used by ${basename(mapping.behavior.pack)}`,
+    );
   }
   // install permisisons file
   let contents: {allowed_modules?: string[]} = {
-    allowed_modules: modules
+    allowed_modules: modules,
   };
   let needWrite = false;
   const permFile = join(configDir, 'permissions.json');
   if (!fs.existsSync(permFile)) {
-    console.info("Creating permissions file: ", permFile);
+    console.info('Creating permissions file: ', permFile);
     needWrite = true;
   } else {
     contents = JSON.parse(fs.readFileSync(permFile, 'utf-8'));
@@ -97,13 +108,13 @@ async function install(mcDir: string, argn: Obj<string|undefined>) {
     }
   }
   if (needWrite) {
-    console.info("Updating permissions file: ", permFile);
+    console.info('Updating permissions file: ', permFile);
     fs.writeFileSync(permFile, JSON.stringify(contents));
   }
 }
 
 function enablePack(packList: string, manifest: ManifestFile) {
-  let packContent: {pack_id: string, version: number[]}[] = [];
+  let packContent: {pack_id: string; version: number[]}[] = [];
   if (fs.existsSync(packList)) {
     packContent = JSON.parse(fs.readFileSync(packList, 'utf-8'));
   }
@@ -113,7 +124,10 @@ function enablePack(packList: string, manifest: ManifestFile) {
   for (const entry of packContent) {
     if (entry.pack_id === manifest.header.uuid) {
       found = true;
-      if (JSON.stringify(entry.version) === JSON.stringify(manifest.header.version)) {
+      if (
+        JSON.stringify(entry.version) ===
+        JSON.stringify(manifest.header.version)
+      ) {
         console.info(`${packList} up to date (${manifest.header.version})`);
         needWrite = false;
         break;
@@ -135,22 +149,26 @@ function enablePack(packList: string, manifest: ManifestFile) {
 }
 
 if (isScriptRun('hubInstall')) {
-
-  const help = 'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
+  const help =
+    'npx hubInstall [--dev] [--config="/foo/bar/config.yaml"] {minecraft_server_dir}';
 
   const {argv, argn} = parseArgs(`
     Installs the behavior pack in the specified server directory.
 
     ${help}
-  `)
+  `);
 
   if (argv[0] === undefined) {
-    console.error(`Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`);
-    process.exit(1);
+    throw new Error(
+      `Did not receive Minecraft directory: ${JSON.stringify(argv)}\n\n${help}`,
+    );
   }
   if (argv.length > 1) {
-    console.error(`Received multiple Minecraft directories: ${JSON.stringify(argv)}\n\n${help}`);
-    process.exit(1);
+    throw new Error(
+      `Received multiple Minecraft directories: ${JSON.stringify(
+        argv,
+      )}\n\n${help}`,
+    );
   }
-  install(argv[0], argn);
+  install(argv[0], argn).catch(showErrorTraceback);
 }

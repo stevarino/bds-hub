@@ -8,5 +8,9 @@ actions:
         command: gamemode c @p
       - text: Survival Mode
         command: gamemode s @p
+      - text: Spectator Mode
+        command: gamemode spectator @p
       - text: Teleport To
         action: Teleport
+      - text: Manage Dynamic Properties
+        action: BrowseDirectories

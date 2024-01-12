@@ -6,28 +6,42 @@
 
 import assert from 'assert';
 import * as fs from 'fs';
-import { dirname, join } from 'path';
-import crypto from 'node:crypto'
-import { cwd } from 'process';
+import {dirname, join} from 'path';
+import crypto from 'node:crypto';
+import {cwd} from 'process';
 
 import archiver from 'archiver';
-import { rollup } from 'rollup';
+import {rollup} from 'rollup';
 
 import * as Constants from '../constants.js';
 import * as lib from './lib.js';
-import { BuildFile, ConfigFile, Dialogue, failValidation, Obj, readManifest, typiaErrorsFormat, Version } from '../types.js';
+import {
+  BuildFile,
+  ConfigFile,
+  Dialogue,
+  failValidation,
+  Obj,
+  readManifest,
+  typiaErrorsFormat,
+  Version,
+} from '../types.js';
 
-import { actionList } from './buildArtifacts.js';
-import { readBuildFile, SceneFile, SceneFileScene } from '../types/configFile.js';
+import {actionList} from './buildArtifacts.js';
+import {
+  readBuildFile,
+  SceneFile,
+  SceneFileScene,
+} from '../types/config_file.js';
 
-import { PackData } from './pack_lib/pack_data.js';
-import { parseAddons } from './pack_lib/addons.js';
+import {PackData} from './pack_lib/pack_data.js';
+import {parseAddons} from './pack_lib/addons.js';
 
 const COPY_DIRS: [string, string][] = [
   [join(lib.root, 'static/behavior_pack/static'), Constants.BP_OUTPUT],
   [join(lib.root, 'static/resource_pack/static'), Constants.RP_OUTPUT],
-  [join(lib.root, 'dist/behavior_pack/src'), Constants.ADDON_TEMP],
-]
+  [join(lib.root, 'dist/behavior_pack'), Constants.ADDON_TEMP_BP],
+  [join(lib.root, 'dist/lib'), Constants.ADDON_TEMP_LIB],
+];
 
 let BUILD_INFO: BuildFile;
 
@@ -36,14 +50,14 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   loadBuildFile();
   const packData = new PackData();
   if (argn === undefined) argn = {};
-  await fs.rmSync(Constants.BP_OUTPUT, { recursive: true, force: true });
-  await fs.rmSync(Constants.RP_OUTPUT, { recursive: true, force: true });
+  await fs.rmSync(Constants.BP_OUTPUT, {recursive: true, force: true});
+  await fs.rmSync(Constants.RP_OUTPUT, {recursive: true, force: true});
   await copyStatic();
   await parseAddons(config, packData);
   const sceneData = await parseScriptFiles(config, packData);
   // WIP.
   // trimScriptData(sceneData);
-  const { transitions, sceneFile } = assembleScenes(sceneData);
+  const {transitions, sceneFile} = assembleScenes(sceneData);
   writeSceneFile(sceneFile);
   writeScriptFile(config, packData, {
     transitions,
@@ -56,7 +70,7 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
   await rollupPack();
   await createZipFiles();
   if (argn['preserveTempFiles'] === undefined) {
-    fs.rmSync(Constants.ADDON_TEMP, { force: true, recursive: true });
+    fs.rmSync(Constants.ADDON_TEMP, {force: true, recursive: true});
   } else {
     console.info('Preserving temp files.');
   }
@@ -70,15 +84,15 @@ function loadBuildFile() {
       bp_version: [1, 0, versionNumber()],
       bp_hash: '',
       rp_version: [1, 0, versionNumber()],
-      rp_hash: ''
+      rp_hash: '',
     };
     lib.write(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
   }
 }
 
 async function copyStatic() {
-  const manifests: string[] = [];
   for (const [src_d, dest_d] of COPY_DIRS) {
+    fs.mkdirSync(dest_d, {recursive: true});
     await lib.recursiveCopy(src_d, dest_d);
   }
 }
@@ -96,10 +110,10 @@ function writeScriptFile(config: ConfigFile, data: PackData, script: unknown) {
 /** Write the behavior pack scene file */
 function writeSceneFile(scenes: SceneFileScene[]) {
   const sceneFileFormat: SceneFile = {
-    "format_version": "1.17",
-    "minecraft:npc_dialogue": {
-      "scenes": scenes
-    }
+    format_version: '1.17',
+    'minecraft:npc_dialogue': {
+      scenes: scenes,
+    },
   };
   lib.write(Constants.BP_SCENES, JSON.stringify(sceneFileFormat, undefined, 2));
 }
@@ -111,20 +125,20 @@ async function rollupPack() {
     input: Constants.ADDON_ENTRY,
     external: /@minecraft/,
   });
-  await bundle.write({ file: Constants.BP_ROLLUP });
+  await bundle.write({file: Constants.BP_ROLLUP});
 }
 
 /** Parse and validate dialogue files */
 export async function parseScriptFiles(config: ConfigFile, data: PackData) {
   const referencedScenes = new Set<string>();
-  
+
   const scenes_dir = join(lib.root, 'static/scenes');
-  
+
   const globalScenes = await lib.getFiles(scenes_dir, /\.(yaml|yml|json)$/);
 
   const scriptFiles: Obj<Dialogue.ScriptFile> = {};
   for (const df of [...globalScenes, ...(config.script_files ?? [])]) {
-    let script = lib.loadScriptFile(df);
+    const script = lib.loadScriptFile(df);
     scriptFiles[df] = script;
 
     const refScenes = parseScriptFile(script, data);
@@ -149,14 +163,17 @@ export async function parseScriptFiles(config: ConfigFile, data: PackData) {
 
   // scene-actor mapping - creates an actor-specific scene.
   for (const actor of data.actors.values()) {
-    let sceneId = actor.scene;
-    let scene = data.scenes.get(actor.scene)!;
+    const sceneId = actor.scene;
+    const scene = data.scenes.get(actor.scene)!;
     if (scene.is_dummy === true) continue;
     const mergedId = `hub:${actor.id}:${sceneId}`;
-    data.scenes.set(mergedId, Object.assign({}, scene, {
-      id: mergedId,
-      npc_name: actor.name,
-    }));
+    data.scenes.set(
+      mergedId,
+      Object.assign({}, scene, {
+        id: mergedId,
+        npc_name: actor.name,
+      }),
+    );
     actor.scene = mergedId;
   }
 
@@ -164,7 +181,7 @@ export async function parseScriptFiles(config: ConfigFile, data: PackData) {
   for (const id of referencedScenes) {
     if (!data.scenes.has(id)) missing.push(id);
   }
-  assert(missing.length === 0,  `Missing scenes: ${JSON.stringify(missing)}`);
+  assert(missing.length === 0, `Missing scenes: ${JSON.stringify(missing)}`);
 
   const errors: Obj<string[]> = {};
   for (const [filename, script] of Object.entries(scriptFiles)) {
@@ -175,7 +192,7 @@ export async function parseScriptFiles(config: ConfigFile, data: PackData) {
     failValidation(errors);
   }
 
-  console.info(`Loaded ${data.scenes.size} scenes...`)
+  console.info(`Loaded ${data.scenes.size} scenes...`);
 
   return data;
 }
@@ -184,20 +201,25 @@ function parseScriptFile(script: Dialogue.ScriptFile, data: PackData) {
   data.items.push(...(script.items ?? []));
   data.chats.push(...(script.chats ?? []));
   parseVariables(script, data);
-  return parseActors(script, data);;
+  return parseActors(script, data);
 }
 
 function parseActors(script: Dialogue.ScriptFile, data: PackData) {
   const referencedScenes = new Set<string>();
 
   for (const actor of script.actors ?? []) {
-    const extra: {skin?: number, scene: string, roles: string[], events: string[]} = {
+    const extra: {
+      skin?: number;
+      scene: string;
+      roles: string[];
+      events: string[];
+    } = {
       scene: actor.scene ?? '',
       roles: [actor.id, ...(actor.roles ?? [])],
       events: actor.events ?? [],
     };
     if (actor.scene === undefined) {
-      extra.scene = `hub:${actor.id}:_dummy`
+      extra.scene = `hub:${actor.id}:_dummy`;
       data.scenes.set(extra.scene, {
         id: extra.scene,
         text: '',
@@ -211,20 +233,22 @@ function parseActors(script: Dialogue.ScriptFile, data: PackData) {
     if (data.npcSkins.get(actor.entityId) === undefined) {
       const ids = JSON.stringify(Array.from(data.npcSkins.keys()));
       throw new Error(
-        `NPC entity ID not found: "${actor.entityId}"; availalbe ids: ${ids}`
+        `NPC entity ID not found: "${actor.entityId}"; availalbe ids: ${ids}`,
       );
     }
 
     if (actor.skin !== undefined) {
       const skins = data.npcSkins.get(actor.entityId);
       if (skins === undefined || skins.length === 0) {
-        throw new Error(`[Actor ${actor.id}]: No skins defined for entity "${actor.entityId}"`);
+        throw new Error(
+          `[Actor ${actor.id}]: No skins defined for entity "${actor.entityId}"`,
+        );
       }
       extra.skin = skins.indexOf(actor.skin);
       if (extra.skin === -1) {
         const all = JSON.stringify(skins);
         throw new Error(
-          `[Actor ${actor.id}]: Skin "${actor.skin}" not found for entity "${actor.entityId}"; available skins: ${all}`
+          `[Actor ${actor.id}]: Skin "${actor.skin}" not found for entity "${actor.entityId}"; available skins: ${all}`,
         );
       }
     }
@@ -246,9 +270,13 @@ function parseVariables(script: Dialogue.ScriptFile, data: PackData) {
           throw new Error(`Duplicate variable key defined: ${vName}`);
         }
         try {
-          data.variableTypes.get(`${vScope}_${vType}`).set(index, vName as string);
+          data.variableTypes
+            .get(`${vScope}_${vType}`)
+            .set(index, vName as string);
         } catch (e) {
-          throw new Error(`Duplicate variable index for [${vScope} ${vType}]: ${index}`);
+          throw new Error(
+            `Duplicate variable index for [${vScope} ${vType}]: ${index}`,
+          );
         }
       }
     }
@@ -262,13 +290,15 @@ function trimScriptData(data: PackData) {
   const stack: string[] = [];
 
   /** recursively seaarch through an object to find scenes */
-  const findScenes = (haystack: any, needles?: Set<string>) => {
+  const findScenes = (haystack: unknown, needles?: Set<string>) => {
     if (needles === undefined) needles = new Set<string>();
     if (Array.isArray(haystack)) {
-      for (const item of haystack) findScenes(item, needles);
+      for (const item of haystack) {
+        findScenes(item, needles);
+      }
     }
     if (typeof haystack === 'object' && haystack !== null) {
-      for (const [key, val] of Object.entries(haystack))  {
+      for (const [key, val] of Object.entries(haystack)) {
         if (key === 'scene' && typeof val === 'string') {
           needles.add(val);
         } else {
@@ -290,8 +320,9 @@ function trimScriptData(data: PackData) {
     if (scenes.has(sceneId)) continue;
     scenes.add(sceneId);
     const scene = data.scenes.get(sceneId);
-    if (scene === undefined) throw new Error(`Unable to find scene: ${sceneId}`);
-    stack.push(...findScenes('scene'));
+    if (scene === undefined)
+      throw new Error(`Unable to find scene: ${sceneId}`);
+    stack.push(...findScenes(scene));
   }
   for (const key in Array.from(data.scenes.keys())) {
     if (!scenes.has(key)) {
@@ -299,7 +330,7 @@ function trimScriptData(data: PackData) {
       data.scenes.delete(key);
     }
   }
-  console.info(`Trimmed ${cnt} scenes`)
+  console.info(`Trimmed ${cnt} scenes`);
   return data;
 }
 
@@ -311,14 +342,14 @@ export function assembleScenes(data: PackData) {
   for (const scene of data.scenes.values()) {
     const scn: SceneFileScene = {
       scene_tag: scene.id,
-      text: { rawtext: [ { text: scene.text } ] },
+      text: {rawtext: [{text: scene.text}]},
       buttons: [],
-    }
+    };
     if (scene.npc_name !== undefined) {
-      scn.npc_name = scene.npc_name
+      scn.npc_name = scene.npc_name;
     }
     sceneFile.push(scn);
-    transitions[scn.scene_tag] = { scene: scene.id };
+    transitions[scn.scene_tag] = {scene: scene.id};
 
     let button: Dialogue.SuperButton;
     for (button of scene.buttons ?? []) {
@@ -331,35 +362,61 @@ export function assembleScenes(data: PackData) {
 
       scn.buttons.push({
         name: button.text,
-        commands: [`/scriptevent hub:dialogue_transition ${btnId}`]
+        commands: [`/scriptevent hub:dialogue_transition ${btnId}`],
       });
     }
   }
 
-  return { transitions, sceneFile };
+  return {transitions, sceneFile};
 }
 
 /** Create the mcaddon files, optionally updating the verison number if changed */
 async function createZipFiles() {
   console.info('Checking bp: ', JSON.stringify(BUILD_INFO.rp_version));
-  updateManifest(Constants.RP_MAN, BUILD_INFO.rp_version, BUILD_INFO.bp_version);
+  updateManifest(
+    Constants.RP_MAN,
+    BUILD_INFO.rp_version,
+    BUILD_INFO.bp_version,
+  );
   let hash = await zipPack(Constants.RP_OUTPUT, Constants.RP_NAME + '.mcaddon');
   if (hash !== BUILD_INFO.rp_hash) {
     BUILD_INFO.rp_version[2] = versionNumber();
-    const outPath = join(dirname(Constants.RP_OUTPUT), Constants.RP_NAME + '.mcaddon');
-    console.info(`Bumping RP version to ${JSON.stringify(BUILD_INFO.rp_version)}`);
-    updateManifest(Constants.RP_MAN, BUILD_INFO.rp_version, BUILD_INFO.bp_version);
-    BUILD_INFO.rp_hash = await zipPack(Constants.RP_OUTPUT, Constants.RP_NAME + '.mcaddon');
+    console.info(
+      `Bumping RP version to ${JSON.stringify(BUILD_INFO.rp_version)}`,
+    );
+    updateManifest(
+      Constants.RP_MAN,
+      BUILD_INFO.rp_version,
+      BUILD_INFO.bp_version,
+    );
+    BUILD_INFO.rp_hash = await zipPack(
+      Constants.RP_OUTPUT,
+      Constants.RP_NAME + '.mcaddon',
+    );
   } else {
     console.info('RP unchanged.');
   }
-  updateManifest(Constants.BP_MAN, BUILD_INFO.bp_version, BUILD_INFO.rp_version);
+  updateManifest(
+    Constants.BP_MAN,
+    BUILD_INFO.bp_version,
+    BUILD_INFO.rp_version,
+  );
   hash = await zipPack(Constants.BP_OUTPUT, Constants.BP_NAME + '.mcaddon');
   if (hash !== BUILD_INFO.bp_hash) {
     BUILD_INFO.bp_version[2] = versionNumber();
-    console.info('Bumping BP version to ', JSON.stringify(BUILD_INFO.bp_version));
-    updateManifest(Constants.BP_MAN, BUILD_INFO.bp_version, BUILD_INFO.rp_version);
-    BUILD_INFO.bp_hash = await zipPack(Constants.BP_OUTPUT, Constants.BP_NAME + '.mcaddon');
+    console.info(
+      'Bumping BP version to ',
+      JSON.stringify(BUILD_INFO.bp_version),
+    );
+    updateManifest(
+      Constants.BP_MAN,
+      BUILD_INFO.bp_version,
+      BUILD_INFO.rp_version,
+    );
+    BUILD_INFO.bp_hash = await zipPack(
+      Constants.BP_OUTPUT,
+      Constants.BP_NAME + '.mcaddon',
+    );
   } else {
     console.info('BP unchanged.');
   }
@@ -381,8 +438,7 @@ function updateManifest(path: string, version: Version, dep_version: Version) {
   fs.writeFileSync(path, JSON.stringify(man, undefined, 2));
 }
 
-
-export type validators = {[field: string]: (val: unknown) => string[]}
+export type validators = {[field: string]: (val: unknown) => string[]};
 export function validateDeep(obj: unknown, validators: validators) {
   const errors: [path: string, msg: string][] = [];
   const stack: [path: string[], value: unknown][] = [[['$'], obj]];
@@ -392,9 +448,11 @@ export function validateDeep(obj: unknown, validators: validators) {
     if (typeof value === 'object' && value !== null) {
       for (const [key, validator] of Object.entries(validators)) {
         if ((value as Obj<unknown>)[key] !== undefined) {
-          errors.push(...validator((value as Obj<unknown>)).map(
-            e => [path.join('.'), e] as [string, string]
-          ));
+          errors.push(
+            ...validator(value as Obj<unknown>).map(
+              e => [path.join('.'), e] as [string, string],
+            ),
+          );
         }
       }
       for (const [key, val] of Object.entries(value)) {
@@ -411,15 +469,18 @@ export function validateDeep(obj: unknown, validators: validators) {
   return errors;
 }
 
-export function validateScript(filename: string, script: Dialogue.ScriptFile, actionList: string[]) {
-  const errors: string[] = []
+export function validateScript(
+  filename: string,
+  script: Dialogue.ScriptFile,
+  actionList: string[],
+) {
+  const errors: string[] = [];
   const result = Dialogue.validateScript(script);
   errors.push(...typiaErrorsFormat(result));
 
   for (const validator of Object.keys(Dialogue.ActionArgs)) {
-    if (!actionList.includes(validator)) throw new Error(
-      `Unrecognized ActionArg validator: ${validator}`
-    )
+    if (!actionList.includes(validator))
+      throw new Error(`Unrecognized ActionArg validator: ${validator}`);
   }
 
   validateDeep(script, {
@@ -431,13 +492,14 @@ export function validateScript(filename: string, script: Dialogue.ScriptFile, ac
       }
       const argValidator = Dialogue.ActionArgs[actionName];
       if (argValidator !== undefined) {
-        errors.push(...typiaErrorsFormat(
-          argValidator((obj as Dialogue.Action).args)));
+        errors.push(
+          ...typiaErrorsFormat(argValidator((obj as Dialogue.Action).args)),
+        );
       }
       return errors;
     },
   }).forEach(([path, msg]) => {
-    errors.push(`${path} : ${msg}`)
+    errors.push(`${path} : ${msg}`);
   });
   const errorObj: Obj<string[]> = {};
   if (errors.length !== 0) errorObj[filename] = errors;
@@ -456,7 +518,9 @@ async function zipPack(dir: string, filename: string) {
 
   console.info('Creating Add-On: ', outPath.slice(cwd().length + 1));
   const zipper = archiver('zip');
-  zipper.on('error', (err: unknown) => {throw err});
+  zipper.on('error', (err: unknown) => {
+    throw err;
+  });
 
   const stream = fs.createWriteStream(outPath);
   const streamIsClosed = new Promise<void>(res => stream.on('close', res));
@@ -469,24 +533,26 @@ async function zipPack(dir: string, filename: string) {
 }
 
 /** Returns the MD5 Sum of a string or json encoded object */
-export function md5sum(input: string|any) {
+export function md5sum(input: string | unknown) {
   if (typeof input !== 'string') {
-    input = JSON.stringify(input);
+    return _md5sum(JSON.stringify(input));
   }
   return _md5sum(input);
 }
 
-function _md5sum(input: string|Buffer) {
-  return crypto.createHash('md5').update(input).digest('hex')
+function _md5sum(input: string | Buffer) {
+  return crypto.createHash('md5').update(input).digest('hex');
 }
 
 if (lib.isScriptRun('hubPack')) {
-  const { argn } = lib.parseArgs(`
+  const {argn} = lib.parseArgs(`
     Compiles and assembles the behavior pack code.
 
     npx hubPack [--config="/foo/bar/config.yaml] [--preserveTempFiles]
   `);
-  createPackFiles(lib.readConfig(argn.config), argn);
+  createPackFiles(lib.readConfig(argn.config), argn).catch(
+    lib.showErrorTraceback,
+  );
 }
 
 function versionNumber() {

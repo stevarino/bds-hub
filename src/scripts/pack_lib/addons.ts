@@ -1,14 +1,21 @@
 /**
  * addons.ts - Finds, parses, and loads additional optional addons.
  */
-import { copyFileSync, existsSync, mkdirSync, read, readdirSync, readFileSync, statSync } from 'node:fs';
-import { basename, relative, join, dirname } from 'node:path';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+} from 'node:fs';
+import {basename, relative, join, dirname} from 'node:path';
 
-import { ConfigFile, readManifest, MinecraftAssetFiles } from '../../types.js';
-import { PackData } from './pack_data.js';
-import * as constants from './../../constants.js'
+import {ConfigFile, readManifest, MinecraftAssetFiles} from '../../types.js';
+import {PackData} from './pack_data.js';
+import * as constants from './../../constants.js';
 import * as lib from './../lib.js';
-import { DefaultMap } from '../../types/default_map.js';
+import {DefaultMap} from '../../lib/default_map.js';
 
 const rpModuleTypes = ['resources'];
 const bpModuleTypes = ['data', 'script'];
@@ -26,13 +33,12 @@ type AddonAssets = {
 
 /** Load addons specified in your configuration file */
 export async function parseAddons(config: ConfigFile, data: PackData) {
-
   const assets: AddonAssets = {
-    assets: new DefaultMap((assetType: string) => new Map<string, string>()),
+    assets: new DefaultMap(() => new Map<string, string>()),
     rcSkins: new Map<string, string[]>(),
     entityRcs: new Map<string, string[]>(),
     npcTypes: new Set<string>(),
-  }
+  };
 
   const addons = ['default', ...(config.addons ?? [])];
   for (const addon of addons) {
@@ -40,7 +46,7 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
     if (!addon.includes('/')) {
       path = join(lib.root, 'static', 'addons', addon);
     }
-    if (!await loadAddon(data, addon, path, assets)) {
+    if (!(await loadAddon(data, addon, path, assets))) {
       throw new Error(`No manifest found for addon: ${addon}`);
     }
   }
@@ -56,7 +62,12 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
 }
 
 /** Attempts to find the requested addon (may load multiple) */
-async function loadAddon(data: PackData, name: string, path: string, assets: AddonAssets): Promise<boolean> {
+async function loadAddon(
+  data: PackData,
+  name: string,
+  path: string,
+  assets: AddonAssets,
+): Promise<boolean> {
   if (!existsSync(path)) throw new Error(`Addon not found: ${name}`);
   const contents = readdirSync(path);
   let success = false;
@@ -72,7 +83,11 @@ async function loadAddon(data: PackData, name: string, path: string, assets: Add
     }
     // either both or none were set
     if (isBp === isRp) {
-      throw new Error(`[${name}: ${path}] Unable to determine pack type: ${JSON.stringify(types)}`)
+      throw new Error(
+        `[${name}: ${path}] Unable to determine pack type: ${JSON.stringify(
+          types,
+        )}`,
+      );
     }
     if (isBp) await readBp(assets, name, path);
     if (isRp) await readRp(assets, name, path);
@@ -82,25 +97,38 @@ async function loadAddon(data: PackData, name: string, path: string, assets: Add
     const newPath = join(path, part);
     const stat = statSync(newPath);
     if (stat.isDirectory()) {
-      success = await loadAddon(data, name, newPath, assets) || success;
+      success = (await loadAddon(data, name, newPath, assets)) || success;
     } else {
       if (part.endsWith('.mcaddon') || part.endsWith('.zip')) {
-        success = await unzipAddon(data, name, newPath, assets) || success;
+        continue;
+        // success = (await unzipAddon(data, name, newPath, assets)) || success;
       }
     }
   }
   return success;
 }
 
-async function unzipAddon(data: PackData, name: string, path: string, assets: AddonAssets) {
-  throw new Error('Function not implemented.');
-  return false;
-}
+// async function unzipAddon(
+//   data: PackData,
+//   name: string,
+//   path: string,
+//   assets: AddonAssets,
+// ) {
+//   throw new Error('Function not implemented.');
+//   return false;
+// }
 
-function checkAssetCollisions(assets: AddonAssets, assetName: string, ns: string, assetId: string) {
+function checkAssetCollisions(
+  assets: AddonAssets,
+  assetName: string,
+  ns: string,
+  assetId: string,
+) {
   const exists = assets.assets.get(ns).get(assetId);
   if (exists !== undefined) {
-    throw new Error(`Collision found between addons (${exists} and ${assetName}) for ${ns}: ${assetId}`);
+    throw new Error(
+      `Collision found between addons (${exists} and ${assetName}) for ${ns}: ${assetId}`,
+    );
   }
   assets.assets.get(ns).set(assetId, assetName);
 }
@@ -153,7 +181,9 @@ async function readRp(assets: AddonAssets, name: string, path: string) {
 
         if (key === 'render_controllers') {
           const controllers = record as MinecraftAssetFiles.RenderContoller;
-          for (const [controllerId, controller] of Object.entries(controllers.render_controllers)) {
+          for (const [controllerId, controller] of Object.entries(
+            controllers.render_controllers,
+          )) {
             checkAssetCollisions(assets, name, key, controllerId);
             const skins = controller.arrays?.textures?.['Array.skins'];
             if (skins !== undefined) {

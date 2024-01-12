@@ -1,25 +1,38 @@
 {
   "compilerOptions": {
-    "composite": false,
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": false,
     "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "pretty": true,
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["es2021"],
     "target": "es2021",
     "module": "ES2020",
+    "skipLibCheck": true,
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "outDir": "./dist/",
-    "strict": true,
-    /* Completeness */
-    "skipLibCheck": true,
-    "rootDir": "src",
     "plugins": [
       {
         "transform": "typia/lib/transform"
       }
     ],
     "strictNullChecks": true,
-    "noUncheckedIndexedAccess": true
+    "strict": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
   },
   "include": [
-    "./src/**/*"
+    "src/**/*.ts",
+    "test/**/*.ts"
   ]
 }
