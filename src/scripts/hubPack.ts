@@ -109,7 +109,7 @@ async function rollupPack() {
   console.info('Rolling up behavior pack script');
   const bundle = await rollup({
     input: Constants.ADDON_ENTRY,
-    external: /@minecraft/,
+    external: [/@minecraft/],
   });
   await bundle.write({ file: Constants.BP_ROLLUP });
 }
