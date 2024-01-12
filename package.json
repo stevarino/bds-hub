@@ -19,7 +19,7 @@
     "yaml": "^2.3.1"
   },
   "devDependencies": {
-    "@minecraft/server": "^1.9.0-beta.1.20.60-preview.20",
+    "@minecraft/server": "^1.9.0-beta.1.20.60-preview.25",
     "@minecraft/server-net": "^1.0.0-beta.1.20.30-stable",
     "@minecraft/server-ui": "^1.2.0-beta.1.20.30-stable",
     "@types/archiver": "^5.3.2",
@@ -33,7 +33,6 @@
     "typescript": "^5.3.2"
   },
   "bin": {
-    "hubInstall": "dist/scripts/hubInstall.js",
     "hubStart": "dist/scripts/hubStart.js",
     "hubConfig": "dist/scripts/hubConfig.js",
     "hubPack": "dist/scripts/hubPack.js"
@@ -45,8 +44,7 @@
     "test": "tsc && npx ava",
     "finish": "node dist/scripts/finishBuild.js",
     "rollup": "node dist/scripts/rollup.js",
-    "types": "npx typia generate --input src/types --output src/types_gen --project tsconfig.json",
-    "hubInstall": "node dist/scripts/hubInstall.js",
+    "types": "npx typia generate --input src/types/src --output src/types/gen --project tsconfig.json",
     "hubStart": "node dist/scripts/hubStart.js",
     "hubConfig": "node dist/scripts/hubConfig.js",
     "hubPack": "node dist/scripts/hubPack.js",

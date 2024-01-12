@@ -11,9 +11,10 @@ import {
 } from 'node:fs';
 import {basename, relative, join, dirname} from 'node:path';
 
-import {ConfigFile, readManifest, MinecraftAssetFiles} from '../../types.js';
+import {
+  readManifest, MinecraftAssetFiles, BuildSettings
+} from '../../types.js';
 import {PackData} from './pack_data.js';
-import * as constants from './../../constants.js';
 import * as lib from './../lib.js';
 import {DefaultMap} from '../../lib/default_map.js';
 
@@ -32,7 +33,7 @@ type AddonAssets = {
 };
 
 /** Load addons specified in your configuration file */
-export async function parseAddons(config: ConfigFile, data: PackData) {
+export async function parseAddons(settings: BuildSettings, data: PackData) {
   const assets: AddonAssets = {
     assets: new DefaultMap(() => new Map<string, string>()),
     rcSkins: new Map<string, string[]>(),
@@ -40,13 +41,13 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
     npcTypes: new Set<string>(),
   };
 
-  const addons = ['default', ...(config.addons ?? [])];
+  const addons = ['default', ...(settings.config.addons ?? [])];
   for (const addon of addons) {
     let path = addon;
     if (!addon.includes('/')) {
-      path = join(lib.root, 'static', 'addons', addon);
+      path = join(lib.root, 'data', 'addons', addon);
     }
-    if (!(await loadAddon(data, addon, path, assets))) {
+    if (!(await loadAddon(settings, data, addon, path, assets))) {
       throw new Error(`No manifest found for addon: ${addon}`);
     }
   }
@@ -63,6 +64,7 @@ export async function parseAddons(config: ConfigFile, data: PackData) {
 
 /** Attempts to find the requested addon (may load multiple) */
 async function loadAddon(
+  settings: BuildSettings,
   data: PackData,
   name: string,
   path: string,
@@ -89,15 +91,15 @@ async function loadAddon(
         )}`,
       );
     }
-    if (isBp) await readBp(assets, name, path);
-    if (isRp) await readRp(assets, name, path);
+    if (isBp) await readBp(settings, assets, name, path);
+    if (isRp) await readRp(settings, assets, name, path);
     return true;
   }
   for (const part of contents) {
     const newPath = join(path, part);
     const stat = statSync(newPath);
     if (stat.isDirectory()) {
-      success = (await loadAddon(data, name, newPath, assets)) || success;
+      success = (await loadAddon(settings, data, name, newPath, assets)) || success;
     } else {
       if (part.endsWith('.mcaddon') || part.endsWith('.zip')) {
         continue;
@@ -134,9 +136,14 @@ function checkAssetCollisions(
 }
 
 /** Parse behavior packs, looking for entities */
-async function readBp(assetss: AddonAssets, name: string, path: string) {
+async function readBp(
+  settings: BuildSettings, assetss: AddonAssets, name: string, path: string
+) {
   for (const file of await lib.getFiles(path)) {
-    if (basename(file) === 'manifest.json') continue;
+    if (basename(file) === 'manifest.json') {
+      console.info('Processing BP ', file);
+      continue;
+    }
     const rel = relative(path, file);
 
     console.info(name, 'Evaluating addon file: ', rel);
@@ -157,15 +164,22 @@ async function readBp(assetss: AddonAssets, name: string, path: string) {
         }
       }
     }
-    mkdirSync(dirname(join(constants.BP_OUTPUT, rel)), {recursive: true});
-    copyFileSync(file, join(constants.BP_OUTPUT, rel));
+    const bpPath = join(settings.bpDir, rel);
+    console.log('copying to ', bpPath)
+    mkdirSync(dirname(bpPath), {recursive: true});
+    copyFileSync(file, bpPath);
   }
 }
 
 /** Parse resource packs, looking for client entities and render controllers */
-async function readRp(assets: AddonAssets, name: string, path: string) {
+async function readRp(
+  settings: BuildSettings, assets: AddonAssets, name: string, path: string
+) {
   for (const file of await lib.getFiles(path)) {
-    if (basename(file) === 'manifest.json') continue;
+    if (basename(file) === 'manifest.json') {
+      console.info('Processing RP ', file);
+      continue;
+    }
     const rel = relative(path, file);
     console.info(name, 'Evaluating addon file: ', rel);
     checkAssetCollisions(assets, name, 'filename', rel);
@@ -193,7 +207,9 @@ async function readRp(assets: AddonAssets, name: string, path: string) {
         }
       }
     }
-    mkdirSync(dirname(join(constants.RP_OUTPUT, rel)), {recursive: true});
-    copyFileSync(file, join(constants.RP_OUTPUT, rel));
+    const rpPath = join(settings.rpDir, rel);
+    console.log('copying to ', rpPath)
+    mkdirSync(dirname(rpPath), {recursive: true});
+    copyFileSync(file, rpPath);
   }
 }

@@ -21,6 +21,12 @@ Runs a companion server for a BDS server. This add-on and companion server offer
    - Server health metrics
    - [Prometheus support](https://prometheus.io/)
 
+## Installation
+
+ -[ ] Add packs
+ -[ ] Add to world_*_packs.json
+ -[ ] permissions.json
+
 ## Requirements
 
  - [Bedrock Dedicated Server](https://www.minecraft.net/en-us/download/server/bedrock) (no realms, no LAN play sadly)

@@ -1,12 +1,11 @@
 import typia from 'typia';
 
-export * from './types_gen/config_file.js';
-export * as Dialogue from './types_gen/dialogue_types.js';
-export {Obj} from './types_gen/dialogue_types.js';
-import {Obj} from './types_gen/dialogue_types.js';
-export * as Requests from './behavior_pack/types/requests.js';
+export * from './types/common.js';
+export * from './types/gen/config_file.js';
+export * as Dialogue from './types/gen/dialogue_types.js';
+export * as Requests from './types/requests.js';
 
-export function failValidation(errors: Obj<string[]>) {
+export function failValidation(errors: {[key: string]: string[]}) {
   const errorStr: string[] = ['\nValidation failed: \n\n'];
   for (const [file, errs] of Object.entries(errors)) {
     const deduped = Array.from(new Set(errs)).sort();

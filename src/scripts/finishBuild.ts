@@ -2,22 +2,17 @@
  * Copies files during build.
  */
 
-import {join} from 'path';
+import *  as path from 'path';
 // very unsure what is going on here - maybe https://github.com/microsoft/TypeScript/issues/2719 ?
 import {default as ts} from 'typescript';
-import {readFileSync} from 'fs';
+import * as fs from 'fs';
 
-import {
-  getFiles,
-  root,
-  showErrorTraceback,
-  updateConstantsFile,
-} from './lib.js';
+import * as lib from './lib.js';
 
 const ActionsFunction = 'defineActions';
 
 async function writeActionList() {
-  updateConstantsFile(join(root, 'dist/scripts/buildArtifacts.js'), {
+  lib.updateConstantsFile(path.join(lib.root, 'dist/scripts/buildArtifacts.js'), {
     actionList: await getActionList(),
   });
 }
@@ -28,12 +23,15 @@ async function writeActionList() {
  * https://ts-ast-viewer.com/
  */
 async function getActionList() {
-  const files = await getFiles(join(root, 'src/behavior_pack/'));
+  const files = [
+    ...await lib.getFiles(path.join(lib.root, 'src/bedrock_studio/modules')),
+    ...await lib.getFiles(path.join(lib.root, 'src/lib')),
+  ];
   const actions: string[] = [];
   for (const filename of files) {
     const sourceFile = ts.createSourceFile(
       filename,
-      readFileSync(filename).toString(),
+      fs.readFileSync(filename).toString(),
       ts.ScriptTarget.ES2020,
     );
     const exprs = getChildNodesByType(
@@ -69,6 +67,7 @@ function getChildNodesByType(node: ts.Node | ts.Node[], type: ts.SyntaxKind) {
 
 function getChildren(node: ts.Node | ts.Node[]) {
   const nodes: ts.Node[] = [];
+  
   if (!Array.isArray(node)) node = [node];
   for (const n of node) {
     ts.forEachChild(n, child => {
@@ -81,5 +80,5 @@ function getChildren(node: ts.Node | ts.Node[]) {
 function validateConfigs() {}
 
 // copyStatic();
-writeActionList().catch(showErrorTraceback);
+writeActionList().catch(lib.showErrorTraceback);
 validateConfigs();

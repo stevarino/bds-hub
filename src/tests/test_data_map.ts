@@ -1,5 +1,5 @@
 import test from 'ava';
-import * as dm from '../behavior_pack/lib/data_map.js';
+import * as dm from '../lib/data_map.js';
 
 class FakeTagMap {
   map = new Map<string, string>();

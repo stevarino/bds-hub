@@ -13,10 +13,8 @@ import {cwd} from 'process';
 import archiver from 'archiver';
 import {rollup} from 'rollup';
 
-import * as Constants from '../constants.js';
 import * as lib from './lib.js';
 import {
-  BuildFile,
   ConfigFile,
   Dialogue,
   failValidation,
@@ -28,38 +26,63 @@ import {
 
 import {actionList} from './buildArtifacts.js';
 import {
-  readBuildFile,
   SceneFile,
   SceneFileScene,
-} from '../types/config_file.js';
+  BuildSettings,
+  settingsInit,
+} from '../types/gen/config_file.js';
 
 import {PackData} from './pack_lib/pack_data.js';
 import {parseAddons} from './pack_lib/addons.js';
+import { ID } from '../lib/constants.js';
 
-const COPY_DIRS: [string, string][] = [
-  [join(lib.root, 'static/behavior_pack/static'), Constants.BP_OUTPUT],
-  [join(lib.root, 'static/resource_pack/static'), Constants.RP_OUTPUT],
-  [join(lib.root, 'dist/behavior_pack'), Constants.ADDON_TEMP_BP],
-  [join(lib.root, 'dist/lib'), Constants.ADDON_TEMP_LIB],
-];
 
-let BUILD_INFO: BuildFile;
+export async function createPacks(config: ConfigFile, argn?: Obj<string>) {
+  const settings = settingsInit(config, argn);
 
-/** Assemble all the files for the add-on pack */
-export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
-  loadBuildFile();
+  await fs.rmSync(settings.tempDir, {recursive: true, force: true});
+  fs.mkdirSync(settings.srcDir, {recursive: true});
+  await lib.recursiveCopy(join(lib.root, 'dist'), settings.srcDir);
+  
+  createHubPack(settings);
+  createStudioResourcePack(settings);
+  createStudioBehaviorPack(settings);
+  if (settings.argn.preserveTempFiles === undefined) {
+    await fs.rmSync(settings.tempDir, {recursive: true, force: true});
+  }
+  return settings;
+}
+
+function saveBuildFile(settings: BuildSettings) {
+  lib.write(settings.buildFile, JSON.stringify(settings.build));
+}
+
+async function createHubPack(settings: BuildSettings) {
+  const packName = 'bds_hub_bp';
+  await initPackDir(settings, packName);
+  await rollupPack(
+    join(settings.srcDir, 'bds_hub', 'index.js'),
+    join(settings.tempDir, packName, 'script', 'index.rollup.js'),
+  );
+  packagePackFiles(settings, packName);
+}
+
+async function createStudioResourcePack(settings: BuildSettings) {
+  const packName = 'bedrock_studio_rp';
+  await initPackDir(settings, packName);
+  packagePackFiles(settings, packName);
+}
+
+async function createStudioBehaviorPack(settings: BuildSettings) {
+  const packName = 'bedrock_studio_bp';
   const packData = new PackData();
-  if (argn === undefined) argn = {};
-  await fs.rmSync(Constants.BP_OUTPUT, {recursive: true, force: true});
-  await fs.rmSync(Constants.RP_OUTPUT, {recursive: true, force: true});
-  await copyStatic();
-  await parseAddons(config, packData);
-  const sceneData = await parseScriptFiles(config, packData);
-  // WIP.
-  // trimScriptData(sceneData);
-  const {transitions, sceneFile} = assembleScenes(sceneData);
-  writeSceneFile(sceneFile);
-  writeScriptFile(config, packData, {
+
+  const dir = await initPackDir(settings, packName);
+  const sceneData = await parseScriptFiles(settings.config, packData);
+  const {transitions, dialogueFile} = assembleScenes(sceneData);
+  parseAddons(settings, packData);
+  writeDialogue(join(dir, 'dialogue', 'dialogue.json'), dialogueFile);
+  writeData(settings, packData, {
     transitions,
     actors: Object.fromEntries(sceneData.actors),
     items: sceneData.items,
@@ -67,72 +90,53 @@ export async function createPackFiles(config: ConfigFile, argn?: Obj<string>) {
     actions: Object.fromEntries(sceneData.actions),
     variables: Object.fromEntries(sceneData.variables),
   });
-  await rollupPack();
-  await createZipFiles();
-  if (argn['preserveTempFiles'] === undefined) {
-    fs.rmSync(Constants.ADDON_TEMP, {force: true, recursive: true});
-  } else {
-    console.info('Preserving temp files.');
-  }
+  await rollupPack(
+    join(settings.srcDir, 'bedrock_studio', 'index.js'),
+    join(settings.tempDir, packName, 'script', 'index.rollup.js'),
+  );
+  packagePackFiles(settings, packName);
 }
 
-function loadBuildFile() {
-  if (fs.existsSync(Constants.BUILD_INFO)) {
-    BUILD_INFO = readBuildFile(Constants.BUILD_INFO);
-  } else {
-    BUILD_INFO = {
-      bp_version: [1, 0, versionNumber()],
-      bp_hash: '',
-      rp_version: [1, 0, versionNumber()],
-      rp_hash: '',
-    };
-    lib.write(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
+/** Creates the directory and copies over any data files. */
+async function initPackDir(settings: BuildSettings, packName: string) {
+  const dir = join(settings.tempDir, packName);
+  fs.mkdirSync(dir, {recursive: true});
+  const data_dir = join(lib.root, 'data', packName);
+  if (fs.existsSync(data_dir)) {
+    await lib.recursiveCopy(data_dir, dir);
   }
+  return dir;
 }
 
-async function copyStatic() {
-  for (const [src_d, dest_d] of COPY_DIRS) {
-    fs.mkdirSync(dest_d, {recursive: true});
-    await lib.recursiveCopy(src_d, dest_d);
-  }
-}
-
-function writeScriptFile(config: ConfigFile, data: PackData, script: unknown) {
-  const manifest = readManifest(Constants.BP_MAN);
-  lib.updateConstantsFile(Constants.ADDON_SCRIPT, {
+function writeData(settings: BuildSettings, data: PackData, script: unknown) {
+  lib.updateConstantsFile(join(settings.srcDir, 'bedrock_studio', 'data.js'), {
     script: script,
-    host: config.host,
-    version: manifest.header.version.join('.'),
     npcSkins: Object.fromEntries(data.npcSkins),
   });
 }
 
 /** Write the behavior pack scene file */
-function writeSceneFile(scenes: SceneFileScene[]) {
+function writeDialogue(sceneFile: string, scenes: SceneFileScene[]) {
   const sceneFileFormat: SceneFile = {
     format_version: '1.17',
     'minecraft:npc_dialogue': {
       scenes: scenes,
     },
   };
-  lib.write(Constants.BP_SCENES, JSON.stringify(sceneFileFormat, undefined, 2));
+  lib.write(sceneFile, JSON.stringify(sceneFileFormat, undefined, 2));
 }
 
 /** Roll behavior pack into single file */
-async function rollupPack() {
-  console.info('Rolling up behavior pack script');
-  const bundle = await rollup({
-    input: Constants.ADDON_ENTRY,
-    external: /@minecraft/,
-  });
-  await bundle.write({file: Constants.BP_ROLLUP});
+async function rollupPack(entry: string, output: string) {
+  const bundle = await rollup({input: entry, external: /@minecraft/});
+  await bundle.write({file: output});
 }
 
 /** Parse and validate dialogue files */
 export async function parseScriptFiles(config: ConfigFile, data: PackData) {
   const referencedScenes = new Set<string>();
 
-  const scenes_dir = join(lib.root, 'static/scenes');
+  const scenes_dir = join(lib.root, 'data/scenes');
 
   const globalScenes = await lib.getFiles(scenes_dir, /\.(yaml|yml|json)$/);
 
@@ -336,7 +340,7 @@ function trimScriptData(data: PackData) {
 
 /** Construct behavior pack dialogue file */
 export function assembleScenes(data: PackData) {
-  const sceneFile: SceneFileScene[] = [];
+  const dialogueFile: SceneFileScene[] = [];
   const transitions: Dialogue.TransitionMap = {};
 
   for (const scene of data.scenes.values()) {
@@ -348,12 +352,12 @@ export function assembleScenes(data: PackData) {
     if (scene.npc_name !== undefined) {
       scn.npc_name = scene.npc_name;
     }
-    sceneFile.push(scn);
+    dialogueFile.push(scn);
     transitions[scn.scene_tag] = {scene: scene.id};
 
     let button: Dialogue.SuperButton;
     for (button of scene.buttons ?? []) {
-      const btnId = `${Constants.ID('btn', md5sum(button))}`;
+      const btnId = `${ID('btn', md5sum(button))}`;
 
       const transition: Dialogue.Transition = Object.assign({}, button);
       //@ts-ignore -- text exists on button
@@ -367,60 +371,37 @@ export function assembleScenes(data: PackData) {
     }
   }
 
-  return {transitions, sceneFile};
+  return {transitions, dialogueFile};
 }
 
-/** Create the mcaddon files, optionally updating the verison number if changed */
-async function createZipFiles() {
-  console.info('Checking bp: ', JSON.stringify(BUILD_INFO.rp_version));
-  updateManifest(
-    Constants.RP_MAN,
-    BUILD_INFO.rp_version,
-    BUILD_INFO.bp_version,
-  );
-  let hash = await zipPack(Constants.RP_OUTPUT, Constants.RP_NAME + '.mcaddon');
-  if (hash !== BUILD_INFO.rp_hash) {
-    BUILD_INFO.rp_version[2] = versionNumber();
-    console.info(
-      `Bumping RP version to ${JSON.stringify(BUILD_INFO.rp_version)}`,
-    );
-    updateManifest(
-      Constants.RP_MAN,
-      BUILD_INFO.rp_version,
-      BUILD_INFO.bp_version,
-    );
-    BUILD_INFO.rp_hash = await zipPack(
-      Constants.RP_OUTPUT,
-      Constants.RP_NAME + '.mcaddon',
-    );
-  } else {
-    console.info('RP unchanged.');
+async function packagePackFiles(
+    settings: BuildSettings, packName: string, packDep?: string
+) {
+  if (settings.build.packs === undefined) settings.build.packs = {};
+  let packBuild = settings.build.packs[packName];
+  if (packBuild === undefined) {
+    packBuild = { version: defaultVersion(), hash: '' };
+    settings.build.packs[packName] = packBuild;
   }
-  updateManifest(
-    Constants.BP_MAN,
-    BUILD_INFO.bp_version,
-    BUILD_INFO.rp_version,
-  );
-  hash = await zipPack(Constants.BP_OUTPUT, Constants.BP_NAME + '.mcaddon');
-  if (hash !== BUILD_INFO.bp_hash) {
-    BUILD_INFO.bp_version[2] = versionNumber();
-    console.info(
-      'Bumping BP version to ',
-      JSON.stringify(BUILD_INFO.bp_version),
-    );
-    updateManifest(
-      Constants.BP_MAN,
-      BUILD_INFO.bp_version,
-      BUILD_INFO.rp_version,
-    );
-    BUILD_INFO.bp_hash = await zipPack(
-      Constants.BP_OUTPUT,
-      Constants.BP_NAME + '.mcaddon',
-    );
-  } else {
-    console.info('BP unchanged.');
+
+  console.info(`Packaging ${packName}: `, JSON.stringify(packBuild));
+  const buildDir = join(settings.tempDir, packName);
+  const defVersion = defaultVersion();
+  const version = settings.build.packs?.[packName]?.version ?? defVersion;
+  const depVersion = settings.build.packs?.[packDep ?? '']?.version ?? defVersion;
+  const manifest = join(buildDir, 'manifest.json');
+
+  updateManifest(manifest, version, depVersion);
+  let hash = await zipPack(buildDir, join(settings.buildDir, packName) +  '.mcaddon');
+  if (hash === packBuild.hash) {
+    console.log(`Pack ${packName} unchanged.`);
+    return;
   }
-  fs.writeFileSync(Constants.BUILD_INFO, JSON.stringify(BUILD_INFO));
+  version[2] = versionNumber();
+  console.info(`Bumping ${packName} version to ${JSON.stringify(version)}`);
+  updateManifest(manifest, version, depVersion);
+  hash = await zipPack(buildDir, join(settings.buildDir, packName) +  '.mcaddon');
+  saveBuildFile(settings);
 }
 
 function updateManifest(path: string, version: Version, dep_version: Version) {
@@ -436,6 +417,10 @@ function updateManifest(path: string, version: Version, dep_version: Version) {
     }
   }
   fs.writeFileSync(path, JSON.stringify(man, undefined, 2));
+}
+
+function defaultVersion(): Version {
+  return [1, 0, versionNumber()];
 }
 
 export type validators = {[field: string]: (val: unknown) => string[]};
@@ -544,17 +529,17 @@ function _md5sum(input: string | Buffer) {
   return crypto.createHash('md5').update(input).digest('hex');
 }
 
+function versionNumber() {
+  return Math.floor(new Date().getTime() / 1000);
+}
+
 if (lib.isScriptRun('hubPack')) {
   const {argn} = lib.parseArgs(`
     Compiles and assembles the behavior pack code.
 
     npx hubPack [--config="/foo/bar/config.yaml] [--preserveTempFiles]
   `);
-  createPackFiles(lib.readConfig(argn.config), argn).catch(
+  createPacks(lib.readConfig(argn.config), argn).catch(
     lib.showErrorTraceback,
   );
-}
-
-function versionNumber() {
-  return Math.floor(new Date().getTime() / 1000);
 }

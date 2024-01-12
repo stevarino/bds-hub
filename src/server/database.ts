@@ -3,7 +3,9 @@ import {join} from 'node:path';
 import sqlite3 from 'sqlite3';
 import {open, Database} from 'sqlite';
 
-import {Dialogue, Obj} from '../types.js';
+import {Dialogue} from '../types.js';
+import { PlayerEvent } from '../types/common.js';
+import {Obj} from '../types/common.js';
 import {root} from '../scripts/lib.js';
 import {
   Event,
@@ -11,7 +13,7 @@ import {
   EventRequest,
   Location,
   LocationResult,
-} from '../behavior_pack/types/packTypes.js';
+} from '../types/common.js';
 
 type StringLookup = {id: number; value: string};
 type DBLocation = Omit<Location, 'dimension' | 'owner'> & {
@@ -101,7 +103,7 @@ export class DBHandle {
     return result as {[U in keyof T]: number};
   }
 
-  async addEvent(entity: string, event: Dialogue.PlayerEvent) {
+  async addEvent(entity: string, event: PlayerEvent) {
     const params = Object.assign(
       await this.stringsToIds({
         entity,

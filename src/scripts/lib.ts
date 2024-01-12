@@ -66,6 +66,28 @@ export function isScriptRun(name: string) {
   return (process.argv[1] as string).includes(name);
 }
 
+/**
+ * parseArgs - minimilist cli argument parser.
+ * 
+ * Accepts arguments in two forms:
+ * 
+ * argv: Unnanmed arguments as a list of strings, typically just words after
+ * the command.
+ * 
+ * argn: Named arguments as a key/value pair, as specified by the following
+ * patterns:
+ * 
+ *   -foo
+ *   -foo=bar
+ *   --foo
+ *   --foo=bar
+ * 
+ * If a value is not specified (ie the examples witout `bar`) an empty string
+ * is used as the value.
+ * 
+ * @param help 
+ * @returns 
+ */
 export function parseArgs(help?: string) {
   const argArray = process.argv.slice(2);
   const args: {
@@ -77,7 +99,7 @@ export function parseArgs(help?: string) {
   for (const arg of argArray) {
     if (arg.startsWith('-')) {
       // will always match something
-      const [, lhv, rhv] = arg.match(/([^=]+)=?(.*)/) as [
+      const [, lhv, rhv] = arg.match(/\-+([^=]+)=?(.*)/) as [
         string,
         string,
         string,

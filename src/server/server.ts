@@ -2,7 +2,7 @@ import * as http from 'node:http';
 import {ConfigFile, Obj, Dialogue, Requests} from '../types.js';
 import {DBHandle, openDatabase} from './database.js';
 import {DiscordClient} from './discord.js';
-import {WorldState} from '../behavior_pack/types/packTypes.js';
+import {WorldState} from '../types/common.js';
 
 export async function getServer(config: ConfigFile) {
   const db = await openDatabase(config.databaseFilename ?? 'bds_hub.db');

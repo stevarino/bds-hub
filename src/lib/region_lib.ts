@@ -2,7 +2,7 @@
  * region_lib - Minecraft specific wrappings for the Interval Tree data structure
  */
 
-import {Vector3} from './common.js';
+import {Vector3} from '../types/common.js';
 import {RangeLookup, IntervalTree} from './interval_tree.js';
 
 interface BaseRegion {
